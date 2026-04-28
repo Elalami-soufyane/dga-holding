@@ -17,7 +17,7 @@ const auth=firebase.auth();
 
 // PERMISSIONS PAR EMAIL
 const USERS={
-  'alami.soufyane@gmail.com':{role:'admin',name:'Soufyane Alami',pages:['dashboard','taches','carsland','arabian','assurance','fcorner','rapports','agenda']},
+  'alami.soufyane@gmail.com':{role:'admin',name:'Soufyane Alami',pages:['dashboard','taches','dga','carsland','arabian','assurance','fcorner','cashflow','rapports','agenda']},
   'meryem.mhamdi@benthamigroupe.ma':{role:'manager',name:'Meryem Mhamdi',pages:['carsland','arabian']}
 };
 
@@ -143,7 +143,9 @@ select option{background:#1A1A1A;}
 .ent-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:14px;font-weight:800;flex-shrink:0;}
 .ent-name{font-family:var(--font-head);font-size:18px;font-weight:700;}
 .ent-sub{font-size:11px;color:var(--muted);margin-top:2px;}
-.tabs{display:flex;gap:2px;background:rgba(255,255,255,.04);border-radius:var(--r2);padding:3px;margin-bottom:16px;flex-wrap:wrap;}
+.tabs{display:flex;gap:2px;background:rgba(255,255,255,.04);border-radius:var(--r2);padding:3px;margin-bottom:16px;flex-wrap:wrap;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{height:3px;}
+.tabs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
 .tab{flex:1;text-align:center;padding:7px 8px;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border-radius:5px;transition:all .15s;white-space:nowrap;}
 .tab.active{background:rgba(255,255,255,.1);color:var(--text);}
 .prog-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:12px;}
@@ -238,17 +240,20 @@ select option{background:#1A1A1A;}
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo"><div class="sb-logo-text">Holding Benthami</div><div class="sb-logo-sub">DGA — Soufyane</div></div>
   <nav class="sb-nav">
-    <div class="sb-section">Général</div>
-    <div class="sb-item active" onclick="navTo('dashboard',this)"><span class="sb-dot" style="background:#F5F5F0"></span>Dashboard</div>
-    <div class="sb-item" onclick="navTo('taches',this)"><span class="sb-dot" style="background:#FFB347"></span>Tâches</div>
-    <div class="sb-section">Sociétés</div>
-    <div class="sb-item" onclick="navTo('carsland',this)"><span class="sb-dot" style="background:var(--cl)"></span>Cars Land</div>
-    <div class="sb-item" onclick="navTo('arabian',this)"><span class="sb-dot" style="background:var(--at)"></span>Arabian Tours</div>
-    <div class="sb-item" onclick="navTo('assurance',this)"><span class="sb-dot" style="background:var(--as)"></span>1.2.3 Assurance</div>
-    <div class="sb-item" onclick="navTo('fcorner',this)"><span class="sb-dot" style="background:var(--fc)"></span>F Corner</div>
-    <div class="sb-section">Pilotage</div>
-    <div class="sb-item" onclick="navTo('rapports',this)"><span class="sb-dot" style="background:#5B9BD5"></span>Rapports Hebdo</div>
-    <div class="sb-item" onclick="navTo('agenda',this)"><span class="sb-dot" style="background:#F72585"></span>Agenda</div>
+    <div class="sb-section" data-section="general">Général</div>
+    <div class="sb-item active" data-page="dashboard" onclick="navTo('dashboard',this)"><span class="sb-dot" style="background:#F5F5F0"></span>Dashboard</div>
+    <div class="sb-item" data-page="taches" onclick="navTo('taches',this)"><span class="sb-dot" style="background:#FFB347"></span>Tâches</div>
+    <div class="sb-section" data-section="direction">Direction Générale</div>
+    <div class="sb-item" data-page="dga" onclick="navTo('dga',this)"><span class="sb-dot" style="background:#FFD700"></span>🎯 Pilotage DGA</div>
+    <div class="sb-section" data-section="societes">Sociétés</div>
+    <div class="sb-item" data-page="carsland" onclick="navTo('carsland',this)"><span class="sb-dot" style="background:var(--cl)"></span>Cars Land</div>
+    <div class="sb-item" data-page="arabian" onclick="navTo('arabian',this)"><span class="sb-dot" style="background:var(--at)"></span>Arabian Tours</div>
+    <div class="sb-item" data-page="assurance" onclick="navTo('assurance',this)"><span class="sb-dot" style="background:var(--as)"></span>1.2.3 Assurance</div>
+    <div class="sb-item" data-page="fcorner" onclick="navTo('fcorner',this)"><span class="sb-dot" style="background:var(--fc)"></span>F Corner</div>
+    <div class="sb-section" data-section="pilotage">Pilotage</div>
+    <div class="sb-item" data-page="cashflow" onclick="navTo('cashflow',this)"><span class="sb-dot" style="background:#10B981"></span>💰 Cash-flow Groupe</div>
+    <div class="sb-item" data-page="rapports" onclick="navTo('rapports',this)"><span class="sb-dot" style="background:#5B9BD5"></span>Rapports Hebdo</div>
+    <div class="sb-item" data-page="agenda" onclick="navTo('agenda',this)"><span class="sb-dot" style="background:#F72585"></span>Agenda</div>
   </nav>
   <div class="sb-footer" id="sb-date"></div>
 </aside>
@@ -261,17 +266,46 @@ select option{background:#1A1A1A;}
   </div>
   <div class="topbar-right">
     <div class="date-chip" id="top-date" style="cursor:pointer" onclick="toggleGlobalFilter()" title="Cliquer pour filtrer par date"></div>
-    <div id="global-filter" style="display:none;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:20px;padding:3px 6px;gap:4px;align-items:center">
-      <select id="gf-mode" onchange="applyGlobalFilter()" style="background:transparent;border:none;font-size:11px;padding:2px 4px;color:var(--text);outline:none">
+    <div id="global-filter" style="display:none;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:20px;padding:3px 6px;gap:4px;align-items:center;flex-wrap:wrap">
+      <select id="gf-mode" onchange="onGFModeChange()" style="background:transparent;border:none;font-size:11px;padding:2px 4px;color:var(--text);outline:none">
         <option value="date">📅 Jour</option>
         <option value="month" selected>📆 Mois</option>
         <option value="year">📊 Année</option>
+        <option value="last">⏪ N derniers mois</option>
+        <option value="ytd">📈 Année en cours (YTD)</option>
+        <option value="quarter">🗓️ Trimestre</option>
+        <option value="range">🎯 Période personnalisée</option>
       </select>
       <input type="date" id="gf-date" onchange="applyGlobalFilter()" style="background:transparent;border:none;padding:2px 4px;font-size:11px;color:var(--text);width:130px">
       <input type="month" id="gf-month" onchange="applyGlobalFilter()" style="background:transparent;border:none;padding:2px 4px;font-size:11px;color:var(--text);width:110px">
-      <button class="btn btn-sm" onclick="resetGlobalFilter()" style="padding:2px 6px;font-size:10px">↺</button>
+      <select id="gf-last-n" onchange="applyGlobalFilter()" style="display:none;background:transparent;border:none;font-size:11px;padding:2px 4px;color:var(--text);outline:none">
+        <option value="1">1 mois</option>
+        <option value="2">2 mois</option>
+        <option value="3" selected>3 mois</option>
+        <option value="6">6 mois</option>
+        <option value="9">9 mois</option>
+        <option value="12">12 mois</option>
+        <option value="24">24 mois</option>
+      </select>
+      <select id="gf-quarter" onchange="applyGlobalFilter()" style="display:none;background:transparent;border:none;font-size:11px;padding:2px 4px;color:var(--text);outline:none">
+        <option value="auto">Trimestre actuel</option>
+        <option value="prev">Trimestre précédent</option>
+        <option value="Q1">Q1 (Jan-Mar)</option>
+        <option value="Q2">Q2 (Avr-Juin)</option>
+        <option value="Q3">Q3 (Juil-Sep)</option>
+        <option value="Q4">Q4 (Oct-Déc)</option>
+      </select>
+      <span id="gf-range-wrap" style="display:none;gap:4px;align-items:center">
+        <span style="font-size:11px;color:var(--muted)">du</span>
+        <input type="date" id="gf-from" onchange="applyGlobalFilter()" style="background:transparent;border:none;padding:2px 4px;font-size:11px;color:var(--text);width:130px">
+        <span style="font-size:11px;color:var(--muted)">au</span>
+        <input type="date" id="gf-to" onchange="applyGlobalFilter()" style="background:transparent;border:none;padding:2px 4px;font-size:11px;color:var(--text);width:130px">
+      </span>
+      <button class="btn btn-sm" onclick="resetGlobalFilter()" style="padding:2px 6px;font-size:10px" title="Réinitialiser">↺</button>
     </div>
-    <div class="date-chip" id="sync-status" style="color:#FFB347">⏳</div>
+    <div class="date-chip" id="sync-status" style="color:#FFB347;cursor:pointer" onclick="showSyncDiag()" title="Cliquer pour diagnostic">⏳</div>
+    <button class="btn btn-sm" id="btn-auth" onclick="openModal('m-login')" style="display:none">🔐 Se connecter</button>
+    <span id="user-chip" class="date-chip" style="display:none;cursor:pointer" onclick="logoutUser()" title="Cliquer pour se déconnecter"></span>
     <button class="btn btn-sm btn-primary" onclick="saveAll()">☁️ Sauvegarder</button>
   </div>
 </div>
@@ -389,16 +423,29 @@ select option{background:#1A1A1A;}
     <div class="gridauto" id="cl-a-cumuls"></div>
     <div class="section-title">Par client & ville</div>
     <div class="grid2"><div id="cl-a-by-client"></div><div id="cl-a-by-ville"></div></div>
-    <div class="section-title">Historique</div>
+    <div class="divider"></div>
+    <div class="section-title" style="margin-bottom:6px">Historique</div>
+    <div class="section-title" style="margin-bottom:6px;font-size:13px">Filtre Mois</div>
+    <div id="cl-a-month-tabs" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"></div>
+    <div class="section-title" style="margin-bottom:6px;font-size:13px">Filtre Ville</div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="btn btn-sm" onclick="clVilleHistFilter='all';renderCLAssistHistory()">Toutes</button>
+      <button class="btn btn-sm" onclick="clVilleHistFilter='Fès';renderCLAssistHistory()"><span class="vpill ville-fes">Fès</span></button>
+      <button class="btn btn-sm" onclick="clVilleHistFilter='Rabat';renderCLAssistHistory()"><span class="vpill ville-rabat">Rabat</span></button>
+      <button class="btn btn-sm" onclick="clVilleHistFilter='Meknès';renderCLAssistHistory()"><span class="vpill ville-meknes">Meknès</span></button>
+    </div>
+    <div class="section-title" style="margin-bottom:6px;font-size:13px">Filtre Client</div>
     <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
       <button class="btn btn-sm" onclick="clHistFilter='all';renderCLAssistHistory()">Tous</button>
       <button class="btn btn-sm" onclick="clHistFilter='Cover Edge';renderCLAssistHistory()">Cover Edge</button>
       <button class="btn btn-sm" onclick="clHistFilter='Wafa Ima Assistance';renderCLAssistHistory()">Wafa Ima</button>
       <button class="btn btn-sm" onclick="clHistFilter='Maroc Assistance International';renderCLAssistHistory()">MAI</button>
     </div>
+    <div id="cl-a-month-summary" style="margin-bottom:10px"></div>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Ville</th><th>Client</th><th>Contrats</th><th>CA (MAD)</th><th>CA N-1</th><th>Δ%</th><th>Note</th><th>Actions</th></tr></thead><tbody id="cl-a-history"></tbody></table></div>
   </div>
   <div id="cl-tab-lld" style="display:none">
+    <div class="alert alert-blue" style="margin-bottom:10px;font-size:12px">📌 Section dédiée à la <b>Location Longue Durée</b> (B2B). Saisie mensuelle par client avec montant de loyer + comparaison N-1 automatique.</div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
       <div class="section-title" style="margin:0;flex:1">Clients LLD actifs</div>
       <button class="btn btn-sm" onclick="openImport('cl-lld')">📥 Importer historique LLD</button>
@@ -406,50 +453,168 @@ select option{background:#1A1A1A;}
     <button class="btn btn-primary btn-sm mb12" onclick="openModal('m-lld-client')">+ Ajouter client LLD</button>
     <div id="cl-lld-clients-list"></div>
     <div class="divider"></div>
-    <div class="section-title">Saisie mensuelle LLD</div>
-    <div class="form-row"><div><label class="flabel">Mois</label><input type="month" id="cl-lld-month"></div><div><label class="flabel">Flotte (nb)</label><input type="number" id="cl-lld-flotte" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">CA (MAD)</label><input type="number" id="cl-lld-ca" placeholder="0"></div><div><label class="flabel">Nouveaux</label><input type="number" id="cl-lld-new" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">Résiliations</label><input type="number" id="cl-lld-resil" placeholder="0"></div><div><label class="flabel">CA N-1</label><input type="number" id="cl-lld-n1" placeholder="0"></div></div>
+
+    <!-- KPI MANAGEMENT -->
+    <div class="section-title">📊 KPIs LLD — Mois sélectionné</div>
+    <div class="gridauto mb12" id="cl-lld-metrics"></div>
+
+    <!-- ALERTES & RECOMMANDATIONS -->
+    <div class="card mb12"><div class="card-title">⚠️ Alertes & Recommandations management</div><div id="cl-lld-alerts"></div></div>
+
+    <!-- SAISIE -->
+    <div class="section-title">📝 Saisie mensuelle LLD (par client)</div>
+    <div class="form-row">
+      <div><label class="flabel">Mois</label><input type="month" id="cl-lld-month" onchange="onCLLLDMonthChange()"></div>
+      <div><label class="flabel">Client LLD</label><select id="cl-lld-client" onchange="onCLLLDClientChange()"></select></div>
+    </div>
+    <div class="form-row">
+      <div><label class="flabel">Nb véhicules loués</label><input type="number" id="cl-lld-nb" placeholder="0"></div>
+      <div><label class="flabel">Loyer mensuel (MAD)</label><input type="number" id="cl-lld-ca" placeholder="0"></div>
+    </div>
+    <div class="form-row">
+      <div><label class="flabel">CA N-1 même mois (MAD) <span style="color:var(--muted);font-size:10px">· auto</span></label><input type="number" id="cl-lld-n1" placeholder="0" title="Auto-rempli depuis l'historique du même client"></div>
+      <div><label class="flabel">Note</label><input type="text" id="cl-lld-note" placeholder="Optionnel"></div>
+    </div>
     <input type="hidden" id="cl-lld-edit-id">
     <button class="btn btn-primary btn-block" id="cl-lld-btn" onclick="saveCLLLD()">Enregistrer</button>
     <div class="divider"></div>
-    <div class="gridauto" id="cl-lld-metrics"></div>
-    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Mois</th><th>Flotte</th><th>CA</th><th>Nvx</th><th>Résil.</th><th>N-1</th><th>Évol.</th><th>Actions</th></tr></thead><tbody id="cl-lld-history"></tbody></table></div>
+
+    <!-- ÉVOLUTION -->
+    <div class="section-title">📈 Évolution mensuelle (12 derniers mois)</div>
+    <div class="card mb12"><div id="cl-lld-evolution"></div></div>
+
+    <!-- TOP CLIENTS -->
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">🏆 Top clients (CA cumulé période)</div><div id="cl-lld-top-clients"></div></div>
+      <div class="card"><div class="card-title">📊 Concentration & Mix</div><div id="cl-lld-mix"></div></div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div class="section-title">Historique — saisies LLD</div>
+    <div class="section-title" style="margin-bottom:6px;font-size:13px">Filtre Mois</div>
+    <div id="cl-lld-month-tabs" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"></div>
+    <div class="section-title" style="margin-bottom:6px;font-size:13px">Filtre Client</div>
+    <div id="cl-lld-client-tabs" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"></div>
+    <div id="cl-lld-history-summary" style="margin-bottom:10px"></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Mois</th><th>Client</th><th>Véhicules</th><th>Loyer (MAD)</th><th>N-1</th><th>Δ% N-1</th><th>vs M-1</th><th>Note</th><th>Actions</th></tr></thead><tbody id="cl-lld-history"></tbody></table></div>
   </div>
   <div id="cl-tab-particuliers" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-      <div class="alert alert-blue" style="margin:0;flex:1">Saisie globale mensuelle.</div>
+      <div class="alert alert-blue" style="margin:0;flex:1">📌 Saisie mensuelle par <b>ville</b> : Nb clients + CA + CA N-1 (même mois année précédente).</div>
       <button class="btn btn-sm" onclick="openImport('cl-part')">📥 Importer historique</button>
     </div>
-    <div class="form-row"><div><label class="flabel">Mois</label><input type="month" id="cl-part-month"></div><div><label class="flabel">Nb clients</label><input type="number" id="cl-part-nb" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">CA (MAD)</label><input type="number" id="cl-part-ca" placeholder="0"></div><div><label class="flabel">CA N-1</label><input type="number" id="cl-part-n1" placeholder="0"></div></div>
+
+    <!-- KPI MANAGEMENT -->
+    <div class="section-title">📊 KPIs Particuliers — Mois sélectionné</div>
+    <div class="gridauto mb12" id="cl-part-metrics"></div>
+
+    <!-- ALERTES -->
+    <div class="card mb12"><div class="card-title">⚠️ Alertes & Recommandations management</div><div id="cl-part-alerts"></div></div>
+
+    <!-- SAISIE -->
+    <div class="section-title">📝 Saisie mensuelle (par ville)</div>
+    <div class="form-row">
+      <div><label class="flabel">Mois</label><input type="month" id="cl-part-month" onchange="onCLPartChange()"></div>
+      <div><label class="flabel">Ville</label><select id="cl-part-ville" onchange="onCLPartChange()"><option value="Fès">Fès</option><option value="Rabat">Rabat</option><option value="Meknès">Meknès</option><option value="Autre">Autre…</option></select></div>
+    </div>
+    <div class="form-row">
+      <div><label class="flabel">Ville (si Autre)</label><input type="text" id="cl-part-ville-custom" placeholder="Ex: Tanger"></div>
+      <div><label class="flabel">Nb clients</label><input type="number" id="cl-part-nb" placeholder="0"></div>
+    </div>
+    <div class="form-row">
+      <div><label class="flabel">CA (MAD)</label><input type="number" id="cl-part-ca" placeholder="0"></div>
+      <div><label class="flabel">CA N-1 même mois (MAD) <span style="color:var(--muted);font-size:10px">· auto</span></label><input type="number" id="cl-part-n1" placeholder="0" title="Auto-rempli depuis l'historique de la même ville"></div>
+    </div>
+    <div class="form-row"><div style="grid-column:1/-1"><label class="flabel">Note</label><input type="text" id="cl-part-note" placeholder="Optionnel"></div></div>
     <input type="hidden" id="cl-part-edit-id">
     <button class="btn btn-primary btn-block" id="cl-part-btn" onclick="saveCLPart()">Enregistrer</button>
     <div class="divider"></div>
-    <div class="gridauto" id="cl-part-metrics"></div>
-    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Mois</th><th>Nb clients</th><th>CA</th><th>N-1</th><th>Évol.</th><th>Actions</th></tr></thead><tbody id="cl-part-history"></tbody></table></div>
+
+    <!-- ÉVOLUTION -->
+    <div class="section-title">📈 Évolution mensuelle (12 derniers mois)</div>
+    <div class="card mb12"><div id="cl-part-evolution"></div></div>
+
+    <!-- ANALYSES -->
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">🏙️ Performance par ville (mois sélectionné)</div><div id="cl-part-by-ville"></div></div>
+      <div class="card"><div class="card-title">📊 Mix CA & comparatif N-1</div><div id="cl-part-mix"></div></div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div class="section-title">Historique — saisies Particuliers</div>
+    <div class="section-title" style="margin-bottom:6px;font-size:13px">Filtre Mois</div>
+    <div id="cl-part-month-tabs" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"></div>
+    <div class="section-title" style="margin-bottom:6px;font-size:13px">Filtre Ville</div>
+    <div id="cl-part-ville-tabs" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"></div>
+    <div id="cl-part-history-summary" style="margin-bottom:10px"></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Mois</th><th>Ville</th><th>Nb clients</th><th>CA</th><th>N-1</th><th>Δ% N-1</th><th>Panier</th><th>Note</th><th>Actions</th></tr></thead><tbody id="cl-part-history"></tbody></table></div>
   </div>
   <div id="cl-tab-stats" style="display:none">
+    <!-- BANDEAU PÉRIODE -->
+    <div class="card mb12" style="border-left:3px solid var(--cl)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:11px;color:var(--muted)">📅 Période d'analyse</div>
+          <div id="cl-stats-period-label" style="font-size:14px;font-weight:600;color:var(--cl)">—</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted)" id="cl-stats-period-info">—</div>
+        <button class="btn btn-sm" onclick="toggleGlobalFilter()">🔍 Modifier période</button>
+      </div>
+    </div>
+
+    <!-- FILTRES STATS -->
     <div class="card mb12">
-      <div class="card-title">🔎 Filtres Stats</div>
+      <div class="card-title">🔎 Filtres Stats (analyse fine)</div>
       <div class="form-row3">
-        <div><label class="flabel">Mois</label><input type="month" id="cl-stats-month" onchange="clStats.month=this.value;renderCarsLand()"></div>
+        <div><label class="flabel">Mois (référence)</label><input type="month" id="cl-stats-month" onchange="clStats.month=this.value;renderCarsLand()"></div>
         <div><label class="flabel">Ville</label><select id="cl-stats-ville" onchange="clStats.ville=this.value;renderCarsLand()"><option value="all">Toutes les villes</option><option value="Fès">Fès</option><option value="Rabat">Rabat</option><option value="Meknès">Meknès</option></select></div>
-        <div><label class="flabel">Client</label><select id="cl-stats-client" onchange="clStats.client=this.value;renderCarsLand()"><option value="all">Tous les clients</option><option value="Cover Edge">Cover Edge</option><option value="Wafa Ima Assistance">Wafa Ima Assistance</option><option value="Maroc Assistance International">Maroc Assistance International</option></select></div>
+        <div><label class="flabel">Client (Assistance/LLD)</label><select id="cl-stats-client" onchange="clStats.client=this.value;renderCarsLand()"><option value="all">Tous</option><option value="Cover Edge">Cover Edge</option><option value="Wafa Ima Assistance">Wafa Ima Assistance</option><option value="Maroc Assistance International">Maroc Assistance International</option></select></div>
       </div>
       <div class="form-row" style="margin-top:6px">
-        <div><label class="flabel">Catégorie / Segment</label><select id="cl-stats-segment" onchange="clStats.segment=this.value;renderCarsLand()"><option value="all">Tous segments</option><option value="Assistance">Assistance</option><option value="LLD">LLD</option><option value="Particuliers">Particuliers</option></select></div>
+        <div><label class="flabel">Segment</label><select id="cl-stats-segment" onchange="clStats.segment=this.value;renderCarsLand()"><option value="all">Tous segments</option><option value="Assistance">Assistance</option><option value="LLD">LLD</option><option value="Particuliers">Particuliers</option></select></div>
         <div style="display:flex;align-items:end"><button class="btn btn-block" onclick="clStats={month:curMonth(),ville:'all',client:'all',segment:'all'};document.getElementById('cl-stats-month').value=curMonth();document.getElementById('cl-stats-ville').value='all';document.getElementById('cl-stats-client').value='all';document.getElementById('cl-stats-segment').value='all';renderCarsLand()">↺ Réinitialiser</button></div>
       </div>
       <div id="cl-stats-filter-info" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
     </div>
+
+    <!-- SCORE DE SANTÉ -->
+    <div class="card mb12"><div class="card-title">🩺 Score de santé Cars Land</div><div id="cl-stats-health"></div></div>
+
+    <!-- KPI HEAD -->
+    <div class="section-title">🎯 Indicateurs clés (mois de référence)</div>
     <div class="gridauto mb12" id="cl-stats-kpi"></div>
+
+    <!-- KPI YTD -->
+    <div class="section-title">📅 Cumul YTD vs N-1</div>
+    <div class="gridauto mb12" id="cl-stats-ytd"></div>
+
+    <!-- MIX SEGMENTS -->
+    <div class="section-title">🔄 Mix CA par segment</div>
     <div class="grid3 mb12" id="cl-stats-segments"></div>
-    <div class="card mb12"><div class="card-title">Répartition CA — Segments</div><div id="cl-stats-repartition"></div></div>
-    <div class="grid2"><div class="card"><div class="card-title">Contrats par client</div><div id="cl-stats-assist-client"></div></div><div class="card"><div class="card-title">Contrats par ville</div><div id="cl-stats-assist-ville"></div></div></div>
-    <div class="divider"></div>
-    <div class="section-title">Évolution CA mensuelle</div>
-    <div class="card"><div id="cl-stats-evolution"></div></div>
+    <div class="card mb12"><div class="card-title">Répartition CA — Segments (mois)</div><div id="cl-stats-repartition"></div></div>
+
+    <!-- ÉVOLUTION -->
+    <div class="section-title">📈 Évolution CA — 12 derniers mois</div>
+    <div class="card mb12"><div id="cl-stats-evolution"></div></div>
+
+    <!-- COMPARATIF N-1 PAR SEGMENT -->
+    <div class="card mb12"><div class="card-title">🆚 Comparatif N / N-1 par segment</div><div id="cl-stats-yoy"></div></div>
+
+    <!-- CLASSEMENTS -->
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">🏆 Top clients (toutes sources, période)</div><div id="cl-stats-top-clients"></div></div>
+      <div class="card"><div class="card-title">🏙️ Top villes (toutes sources, période)</div><div id="cl-stats-top-villes"></div></div>
+    </div>
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">Contrats Assistance par client</div><div id="cl-stats-assist-client"></div></div>
+      <div class="card"><div class="card-title">Contrats Assistance par ville</div><div id="cl-stats-assist-ville"></div></div>
+    </div>
+
+    <!-- HEATMAP -->
+    <div class="card mb12"><div class="card-title">🌡️ Heatmap mensuelle — Segments × Mois</div><div id="cl-stats-heatmap"></div></div>
+
+    <!-- ALERTES & RECOS -->
+    <div class="card mb12"><div class="card-title">⚠️ Alertes & Recommandations management actionnables</div><div id="cl-stats-alerts"></div></div>
   </div>
   <div id="cl-tab-pipeline" style="display:none">
     <button class="btn btn-primary btn-sm mb12" onclick="openPipeModal('cl')">+ Ajouter mission</button>
@@ -648,6 +813,90 @@ select option{background:#1A1A1A;}
   <div id="fc-tab-analyse" style="display:none"><div id="fc-analyse"></div></div>
 </div>
 
+<!-- ══════════════════════════════ CASH-FLOW GROUPE ══════════════════════════════ -->
+<div class="page" id="p-cashflow">
+  <div class="ent-header">
+    <div class="ent-icon" style="background:rgba(16,185,129,.15);color:#10B981">💰</div>
+    <div><div class="ent-name">Cash-flow Groupe</div><div class="ent-sub">Trésorerie consolidée des 4 entités · Vue DGA</div></div>
+  </div>
+
+  <!-- Bandeau filtre actif -->
+  <div class="card mb12" style="border-left:3px solid #10B981">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:11px;color:var(--muted)">📅 Période analysée</div>
+        <div id="cf-range-label" style="font-size:14px;font-weight:600;color:#10B981">—</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted)" id="cf-range-info">—</div>
+      <button class="btn btn-sm" onclick="toggleGlobalFilter()">🔍 Modifier période</button>
+    </div>
+  </div>
+
+  <!-- Sélecteur multi-mois (1, 2 ou 3 mois spécifiques, même non contigus) -->
+  <div class="card mb12" style="border-left:3px solid #6366F1">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#6366F1">🎯 Sélection multi-mois</div>
+        <div style="font-size:11px;color:var(--muted)">Cochez 1 à 3 mois (même non consécutifs) pour analyser uniquement ces périodes</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <select id="cf-months-year" onchange="cfRenderMonthChips()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;color:var(--text)"></select>
+        <button class="btn btn-sm" onclick="cfClearMonthsFilter()" title="Effacer la sélection">↺ Effacer</button>
+        <button class="btn btn-sm btn-primary" onclick="cfApplyMonthsFilter()">✓ Appliquer</button>
+      </div>
+    </div>
+    <div id="cf-month-chips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    <div id="cf-months-info" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
+  </div>
+
+  <!-- KPIs principaux -->
+  <div class="section-title">🎯 Synthèse trésorerie consolidée</div>
+  <div class="gridauto mb12" id="cf-kpi"></div>
+
+  <!-- Score santé -->
+  <div class="card mb12" id="cf-health-card">
+    <div class="card-title">🩺 Score de santé trésorerie Groupe</div>
+    <div id="cf-health"></div>
+  </div>
+
+  <!-- Détail par entité -->
+  <div class="section-title">🏢 Détail par entité</div>
+  <div class="gridauto mb12" id="cf-entities"></div>
+
+  <!-- Charts -->
+  <div class="grid2 mb12">
+    <div class="card"><div class="card-title">📊 Répartition CA par entité</div><div id="cf-pie-ca"></div></div>
+    <div class="card"><div class="card-title">💸 Décomposition trésorerie</div><div id="cf-pie-cash"></div></div>
+  </div>
+
+  <!-- Évolution mensuelle -->
+  <div class="card mb12">
+    <div class="card-title">📈 Évolution mensuelle (encaissements vs décaissements)</div>
+    <div id="cf-evolution"></div>
+  </div>
+
+  <!-- Mouvements détaillés -->
+  <div class="grid2 mb12">
+    <div class="card"><div class="card-title">📥 Top encaissements (caisse)</div><div id="cf-top-enc"></div></div>
+    <div class="card"><div class="card-title">📤 Top décaissements (caisse)</div><div id="cf-top-dec"></div></div>
+  </div>
+
+  <!-- Alertes management -->
+  <div class="card mb12">
+    <div class="card-title">⚠️ Alertes & Recommandations management</div>
+    <div id="cf-alerts"></div>
+  </div>
+
+  <!-- Tableau détaillé -->
+  <div class="section-title">📋 Détail des mouvements de caisse — toutes entités</div>
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap" id="cf-entity-tabs">
+    <button class="btn btn-sm btn-primary" onclick="setCfEntFilter('all')">Toutes</button>
+    <button class="btn btn-sm" onclick="setCfEntFilter('as')">🛡️ 1.2.3 Assurance</button>
+    <button class="btn btn-sm" onclick="setCfEntFilter('fc')">☕ F Corner</button>
+  </div>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Entité</th><th>Encaissement</th><th>Décaissement</th><th>Banque</th><th>Solde calculé</th><th>Type</th></tr></thead><tbody id="cf-history"></tbody></table></div>
+</div>
+
 <!-- ══════════════════════════════ RAPPORTS ══════════════════════════════ -->
 <div class="page" id="p-rapports">
   <!-- FILTRES -->
@@ -699,20 +948,153 @@ select option{background:#1A1A1A;}
   <div class="card"><div class="card-title">Tous les événements</div><div id="agenda-list"></div></div>
 </div>
 
+<!-- ══════════════════════════════ PILOTAGE DGA ══════════════════════════════ -->
+<div class="page" id="p-dga">
+  <!-- Bandeau d'accueil DGA -->
+  <div class="card mb12" style="border-left:3px solid #FFD700;background:linear-gradient(135deg, rgba(255,215,0,0.08), transparent)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:var(--font-head);font-size:20px;font-weight:700;color:#FFD700;margin-bottom:4px">🎯 Pilotage Direction Générale</div>
+        <div style="font-size:12px;color:var(--muted)">Soufyane Alami — DGA Holding Benthami</div>
+      </div>
+      <div style="text-align:right">
+        <div class="date-chip" id="dga-current-date" style="font-size:13px"></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px" id="dga-data-freshness">⏳ Vérification…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS DGA -->
+  <div class="tabs mb12">
+    <div class="tab active" onclick="switchDGATab('matin',this)" id="dga-tab-matin">🌅 Check Matin (5 min)</div>
+    <div class="tab" onclick="switchDGATab('semaine',this)" id="dga-tab-semaine">📊 Pilotage Semaine</div>
+    <div class="tab" onclick="switchDGATab('mois',this)" id="dga-tab-mois">📋 Rapport DG Mensuel</div>
+  </div>
+
+  <!-- ═══════ VUE MATIN ═══════ -->
+  <div id="dga-matin">
+    <div id="dga-data-alert" class="mb12"></div>
+
+    <div class="card mb12" style="border-left:3px solid #FFD700">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="card-title" style="margin:0">CA Groupe — Hier</div>
+          <div style="font-family:var(--font-head);font-size:28px;font-weight:700;color:#FFD700" id="dga-ca-groupe-hier">0 MAD</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--muted)" id="dga-date-hier"></div>
+          <div id="dga-evo-hier" style="font-size:13px;margin-top:4px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">📊 Performances par entité — Hier</div>
+    <div class="grid4 mb12" id="dga-matin-kpis"></div>
+
+    <div class="section-title">🔴 Points d'attention immédiats</div>
+    <div id="dga-matin-alertes"></div>
+
+    <div class="section-title" style="margin-top:16px">✅ Actions prioritaires du jour</div>
+    <div id="dga-matin-actions"></div>
+
+    <div class="section-title" style="margin-top:16px">⏰ Tâches en retard</div>
+    <div id="dga-matin-retard"></div>
+  </div>
+
+  <!-- ═══════ VUE SEMAINE ═══════ -->
+  <div id="dga-semaine" style="display:none">
+    <div class="section-title">🎯 Progression vs Objectifs mensuels</div>
+    <div id="dga-semaine-progress"></div>
+
+    <div class="section-title">📈 CA Groupe — 7 derniers jours</div>
+    <div class="card mb12"><div id="dga-semaine-tendance"></div></div>
+
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title" style="color:var(--green)">🏆 En avance sur objectifs</div><div id="dga-semaine-top"></div></div>
+      <div class="card"><div class="card-title" style="color:var(--red)">⚠️ En retard sur objectifs</div><div id="dga-semaine-bottom"></div></div>
+    </div>
+
+    <div class="card mb12">
+      <div class="card-title">📋 Ordre du jour — Réunion hebdomadaire</div>
+      <div id="dga-semaine-reunion"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ VUE MOIS ═══════ -->
+  <div id="dga-mois" style="display:none">
+    <div class="card mb12" style="border-left:3px solid #FFD700">
+      <div class="card-title">📄 Synthèse exécutive — Rapport mois</div>
+      <div id="dga-mois-synthese"></div>
+    </div>
+
+    <div class="section-title">📊 Indicateurs clés</div>
+    <div class="gridauto mb12" id="dga-mois-kpis"></div>
+
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">Répartition CA par entité</div><div id="dga-mois-repartition"></div></div>
+      <div class="card"><div class="card-title">Évolution CA Groupe (6 mois)</div><div id="dga-mois-evolution"></div></div>
+    </div>
+
+    <div class="card mb12">
+      <div class="card-title">🔍 Faits marquants & Analyse</div>
+      <div id="dga-mois-faits"></div>
+    </div>
+
+    <div class="card mb12" style="border-left:3px solid var(--green)">
+      <div class="card-title">💡 Recommandations pour le mois prochain</div>
+      <div id="dga-mois-recommandations"></div>
+    </div>
+
+    <button class="btn btn-primary btn-block" onclick="window.print()">🖨️ Imprimer / Exporter le rapport</button>
+  </div>
+</div>
+
 </div><!-- /content -->
 </main>
 </div>
 
 <!-- MOBILE NAV -->
 <div id="mobile-nav" style="display:none">
-  <button class="mob-btn active" id="mob-dashboard" onclick="navToMob('dashboard')"><span class="mob-icon">🏠</span>Dashboard</button>
-  <button class="mob-btn" id="mob-carsland" onclick="navToMob('carsland')"><span class="mob-icon">🚗</span>Cars Land</button>
-  <button class="mob-btn" id="mob-arabian" onclick="navToMob('arabian')"><span class="mob-icon">📋</span>Arabian</button>
-  <button class="mob-btn" id="mob-assurance" onclick="navToMob('assurance')"><span class="mob-icon">🛡️</span>Assurance</button>
+  <button class="mob-btn active" id="mob-dashboard" data-page="dashboard" onclick="navToMob('dashboard')"><span class="mob-icon">🏠</span>Dashboard</button>
+  <button class="mob-btn" id="mob-carsland" data-page="carsland" onclick="navToMob('carsland')"><span class="mob-icon">🚗</span>Cars Land</button>
+  <button class="mob-btn" id="mob-arabian" data-page="arabian" onclick="navToMob('arabian')"><span class="mob-icon">📋</span>Arabian</button>
+  <button class="mob-btn" id="mob-assurance" data-page="assurance" onclick="navToMob('assurance')"><span class="mob-icon">🛡️</span>Assurance</button>
   <button class="mob-btn" id="mob-menu" onclick="toggleSidebar()"><span class="mob-icon">☰</span>Menu</button>
 </div>
 
 <!-- ══════════════════════════════ MODALS ══════════════════════════════ -->
+<div class="modal-overlay" id="m-login">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-hdr"><h3>🔐 Connexion Firebase</h3><button class="modal-close" onclick="closeModal('m-login')">×</button></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">
+      Connectez-vous avec votre email autorisé pour accéder à la base de données partagée du groupe.
+    </div>
+    <div class="form-full"><label class="flabel">Email</label><input type="email" id="login-email" placeholder="alami.soufyane@gmail.com" autocomplete="email"></div>
+    <div class="form-full"><label class="flabel">Mot de passe</label><input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div id="login-error" style="display:none;font-size:12px;color:var(--red);background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25);padding:8px 10px;border-radius:6px;margin:8px 0"></div>
+    <button class="btn btn-primary btn-block" onclick="doLogin()">Se connecter</button>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-sm" style="flex:1" onclick="doForgotPwd()" title="Recevoir un email de réinitialisation">🔑 Mot de passe oublié</button>
+      <button class="btn btn-sm" style="flex:1" onclick="doSignup()" title="Créer un compte (admin uniquement)">➕ Créer compte</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted2);margin-top:14px;text-align:center;line-height:1.4">
+      Comptes autorisés :<br>
+      <code style="font-size:10px">alami.soufyane@gmail.com</code> · <code style="font-size:10px">meryem.mhamdi@benthamigroupe.ma</code>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="m-syncdiag">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-hdr"><h3>☁️ Diagnostic Firebase</h3><button class="modal-close" onclick="closeModal('m-syncdiag')">×</button></div>
+    <div id="sync-diag-content" style="font-size:12px;line-height:1.6"></div>
+    <div style="display:flex;gap:6px;margin-top:14px">
+      <button class="btn btn-sm" style="flex:1" onclick="loadFromFirebase();closeModal('m-syncdiag')">🔄 Recharger depuis Firebase</button>
+      <button class="btn btn-sm" style="flex:1" onclick="openModal('m-login');closeModal('m-syncdiag')">🔐 Se connecter</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="m-task">
   <div class="modal-box">
     <div class="modal-hdr"><h3 id="m-task-title">Nouvelle tâche</h3><button class="modal-close" onclick="closeModal('m-task')">×</button></div>
@@ -807,7 +1189,9 @@ let DB={
   at:[],pipe:{cl:[],at:[]},contrats:[],caisse:{as:[],fc:[]},fc:[],reports:[],agenda:[],
   objectifs:{cl:{},at:{},fc:{}}
 };
-let atHistFilter='all',atMonthFilter='all',clHistFilter='all',firebaseReady=false;
+let atHistFilter='all',atMonthFilter='all',clHistFilter='all',clVilleHistFilter='all',clMonthFilter='all',firebaseReady=false;
+let clLldClientFilter='all',clLldMonthFilter='all';
+let clPartVilleFilter='all',clPartMonthFilter='all';
 let activePeriods={week:true,month:true,year:true};
 // Stats filters (month/city/client/segment)
 let clStats={month:'',ville:'all',client:'all',segment:'all'};
@@ -816,35 +1200,223 @@ let atStats={month:'',ville:'all',client:'all'};
 // ════════════════════════════
 // FIREBASE
 // ════════════════════════════
+let lastSyncError=null;let lastSyncInfo='';
 function save(){
-  if(firebaseReady){db.ref('hb_dga').set(DB).then(()=>showToast('☁️ Sauvegardé')).catch(e=>showToast('❌ '+e.message));}
-  else{try{localStorage.setItem('hb_v7',JSON.stringify(DB));}catch(e){}showToast('💾 Local');}
+  // Blocage si user authentifié mais non autorisé
+  if(currentUser&&!currentUserConfig){showToast('🔒 Compte non autorisé — sauvegarde bloquée');return;}
+  if(firebaseReady){db.ref('hb_dga').set(DB).then(()=>showToast('☁️ Sauvegardé')).catch(e=>{lastSyncError=e;showToast('❌ '+e.message);});}
+  else{try{localStorage.setItem('hb_v7',JSON.stringify(DB));}catch(e){}showToast('💾 Sauvé localement (non connecté à Firebase)');}
 }
 function saveAll(){save();}
+function applyDB(d){
+  if(!d)return;
+  DB.tasks=d.tasks||DB.tasks||[];
+  DB.cl=d.cl||{assistance:[],lld:[],particuliers:[],lldClients:[]};
+  DB.cl.assistance=DB.cl.assistance||[];DB.cl.lld=DB.cl.lld||[];
+  DB.cl.particuliers=DB.cl.particuliers||[];DB.cl.lldClients=DB.cl.lldClients||[];
+  DB.at=d.at||[];DB.pipe=d.pipe||{cl:[],at:[]};
+  DB.pipe.cl=DB.pipe.cl||[];DB.pipe.at=DB.pipe.at||[];
+  DB.contrats=d.contrats||[];DB.caisse=d.caisse||{as:[],fc:[]};
+  DB.caisse.as=DB.caisse.as||[];DB.caisse.fc=DB.caisse.fc||[];
+  DB.fc=d.fc||[];DB.reports=d.reports||[];DB.agenda=d.agenda||[];
+  DB.objectifs=d.objectifs||{cl:{},at:{},fc:{}};
+  DB.objectifs.cl=DB.objectifs.cl||{};DB.objectifs.at=DB.objectifs.at||{};DB.objectifs.fc=DB.objectifs.fc||{};
+}
 function loadFromFirebase(){
-  setSyncStatus('⏳');
-  db.ref('hb_dga').once('value').then(snap=>{
+  setSyncStatus('⏳');lastSyncError=null;
+  return db.ref('hb_dga').once('value').then(snap=>{
     const d=snap.val();
     if(d){
-      DB.tasks=d.tasks||DB.tasks;
-      DB.cl=d.cl||{assistance:[],lld:[],particuliers:[],lldClients:[]};
-      DB.cl.assistance=DB.cl.assistance||[];DB.cl.lld=DB.cl.lld||[];
-      DB.cl.particuliers=DB.cl.particuliers||[];DB.cl.lldClients=DB.cl.lldClients||[];
-      DB.at=d.at||[];DB.pipe=d.pipe||{cl:[],at:[]};
-      DB.pipe.cl=DB.pipe.cl||[];DB.pipe.at=DB.pipe.at||[];
-      DB.contrats=d.contrats||[];DB.caisse=d.caisse||{as:[],fc:[]};
-      DB.caisse.as=DB.caisse.as||[];DB.caisse.fc=DB.caisse.fc||[];
-      DB.fc=d.fc||[];DB.reports=d.reports||[];DB.agenda=d.agenda||[];
-      DB.objectifs=d.objectifs||{cl:{},at:{},fc:{}};
-      DB.objectifs.cl=DB.objectifs.cl||{};DB.objectifs.at=DB.objectifs.at||{};DB.objectifs.fc=DB.objectifs.fc||{};
+      applyDB(d);
+      const counts=`tâches:${(DB.tasks||[]).length} · CL-assist:${(DB.cl.assistance||[]).length} · CL-LLD:${(DB.cl.lld||[]).length} · CL-Part:${(DB.cl.particuliers||[]).length} · AT:${(DB.at||[]).length} · AS:${(DB.contrats||[]).length} · FC:${(DB.fc||[]).length}`;
+      lastSyncInfo='Données chargées : '+counts;
+      firebaseReady=true;setSyncStatus('☁️');showToast('☁️ Base chargée — '+counts);
+    }else{
+      lastSyncInfo='La base Firebase « hb_dga » est vide.';
+      firebaseReady=true;setSyncStatus('☁️');
+      // si la base est vide mais qu'il y a du local, garder le local
+      try{const l=JSON.parse(localStorage.getItem('hb_v7')||'null');if(l&&Object.keys(l).length){applyDB(l);showToast('💾 Base Firebase vide — données locales conservées');}}catch(x){}
     }
-    firebaseReady=true;setSyncStatus('☁️');renderDash();
-  }).catch(()=>{
-    try{const l=JSON.parse(localStorage.getItem('hb_v7')||'{}');if(Object.keys(l).length)Object.assign(DB,l);}catch(x){}
+    renderDash();renderArabian&&renderArabian();renderCarsLand&&renderCarsLand();renderAssurance&&renderAssurance();renderFCorner&&renderFCorner();
+  }).catch(err=>{
+    lastSyncError=err;
+    try{const l=JSON.parse(localStorage.getItem('hb_v7')||'{}');if(Object.keys(l).length){applyDB(l);showToast('⚠️ Firebase inaccessible — données locales chargées');}}catch(x){}
     setSyncStatus('⚠️');renderDash();
+    console.error('[Firebase load error]',err);
   });
 }
 function setSyncStatus(t){const el=document.getElementById('sync-status');if(el)el.textContent=t;}
+
+// ════════════════════════════
+// AUTHENTIFICATION
+// ════════════════════════════
+// Pages auxquelles tout utilisateur authentifié non listé peut accéder par défaut
+const DEFAULT_ALLOWED_PAGES=['dashboard','taches','dga','carsland','arabian','assurance','fcorner','cashflow','rapports','agenda'];
+function getAllowedPages(){
+  // Pas de user connecté : on laisse l'UI navigable (la base reste protégée par les rules Firebase)
+  if(!currentUser)return DEFAULT_ALLOWED_PAGES.slice();
+  // User connecté & répertorié : ses pages explicites (ou tout si admin)
+  if(currentUserConfig){
+    if(currentUserConfig.role==='admin')return DEFAULT_ALLOWED_PAGES.slice();
+    if(Array.isArray(currentUserConfig.pages))return currentUserConfig.pages.slice();
+    return DEFAULT_ALLOWED_PAGES.slice();
+  }
+  // User authentifié mais NON répertorié dans USERS{} : aucun accès
+  return [];
+}
+function isPageAllowed(page){return getAllowedPages().indexOf(page)>=0;}
+function applyPermissions(){
+  const allowed=getAllowedPages();
+  // 1) Sidebar items
+  document.querySelectorAll('.sb-item[data-page]').forEach(it=>{
+    const p=it.getAttribute('data-page');
+    it.style.display=allowed.indexOf(p)>=0?'':'none';
+  });
+  // 2) Sidebar sections — masquer si tous les items de la section sont cachés
+  const nav=document.querySelector('.sb-nav');
+  if(nav){
+    const children=Array.from(nav.children);
+    for(let i=0;i<children.length;i++){
+      const c=children[i];
+      if(c.classList.contains('sb-section')){
+        // chercher les items qui suivent jusqu'à la prochaine section
+        let hasVisible=false;
+        for(let j=i+1;j<children.length;j++){
+          const next=children[j];
+          if(next.classList.contains('sb-section'))break;
+          if(next.classList.contains('sb-item')&&next.style.display!=='none'){hasVisible=true;break;}
+        }
+        c.style.display=hasVisible?'':'none';
+      }
+    }
+  }
+  // 3) Mobile bottom-nav
+  document.querySelectorAll('.mob-btn[data-page]').forEach(b=>{
+    const p=b.getAttribute('data-page');
+    b.style.display=allowed.indexOf(p)>=0?'':'none';
+  });
+  // 4) Si la page courante n'est plus autorisée, basculer sur la première autorisée
+  const cur=document.querySelector('.page.active');
+  const curId=cur?cur.id.replace(/^p-/,''):null;
+  if(currentUser&&allowed.length===0){
+    // Authentifié mais pas dans USERS{} : afficher écran "accès refusé"
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    let denied=document.getElementById('p-denied');
+    if(!denied){
+      denied=document.createElement('div');denied.id='p-denied';denied.className='page';
+      denied.innerHTML='<div class="card" style="max-width:520px;margin:60px auto;text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:14px">🔒</div><h2 style="font-family:var(--font-head);margin-bottom:8px">Accès refusé</h2><div style="color:var(--muted);margin-bottom:18px;line-height:1.6">Votre compte <code id="denied-email"></code> n\'est pas autorisé à accéder à cette application.<br>Contactez l\'administrateur (Soufyane Alami) pour obtenir l\'accès.</div><button class="btn btn-primary" onclick="logoutUser()">👋 Se déconnecter</button></div>';
+      document.querySelector('.content').appendChild(denied);
+    }
+    const eEmail=document.getElementById('denied-email');if(eEmail)eEmail.textContent=currentUser.email||'';
+    denied.classList.add('active');
+    document.getElementById('page-title').textContent='Accès refusé';
+  }else if(curId&&allowed.indexOf(curId)<0){
+    const target=allowed[0]||'dashboard';
+    const sideItem=document.querySelector('.sb-item[data-page="'+target+'"]');
+    navTo(target,sideItem);
+  }
+  // 5) Mettre à jour le sb-logo avec le rôle/nom
+  const logoSub=document.querySelector('.sb-logo-sub');
+  if(logoSub){
+    if(currentUser&&currentUserConfig){logoSub.textContent=currentUserConfig.role.toUpperCase()+' — '+currentUserConfig.name;}
+    else if(currentUser){logoSub.textContent='Connecté — '+(currentUser.email||'');}
+    else{logoSub.textContent='Non connecté';}
+  }
+}
+function applyUserUI(user){
+  const btnLogin=document.getElementById('btn-auth');
+  const userChip=document.getElementById('user-chip');
+  if(user){
+    if(btnLogin)btnLogin.style.display='none';
+    if(userChip){
+      const cfg=USERS[user.email];
+      const label=cfg?cfg.name:(user.email||'connecté');
+      userChip.style.display='';userChip.textContent='👤 '+label;
+      userChip.style.color=cfg&&cfg.role==='admin'?'var(--green)':'#5B9BD5';
+      userChip.title=(cfg?cfg.role+' · '+user.email:user.email)+' — cliquer pour se déconnecter';
+    }
+  }else{
+    if(btnLogin)btnLogin.style.display='';
+    if(userChip)userChip.style.display='none';
+  }
+  applyPermissions();
+}
+function showAuthError(msg){
+  const el=document.getElementById('login-error');
+  if(el){el.style.display='';el.textContent=msg;}
+}
+function doLogin(){
+  const email=getVal('login-email').trim();const pwd=getVal('login-pwd');
+  if(!email||!pwd){showAuthError('Email et mot de passe requis');return;}
+  const el=document.getElementById('login-error');if(el)el.style.display='none';
+  setSyncStatus('⏳');
+  auth.signInWithEmailAndPassword(email,pwd).then(()=>{
+    closeModal('m-login');setVal('login-pwd','');showToast('✅ Connecté');
+  }).catch(err=>{
+    let msg=err.message||'Erreur';
+    if(err.code==='auth/user-not-found')msg='Utilisateur introuvable. Cliquez sur « Créer compte » si c\'est votre première connexion.';
+    else if(err.code==='auth/wrong-password'||err.code==='auth/invalid-credential')msg='Mot de passe incorrect.';
+    else if(err.code==='auth/invalid-email')msg='Email invalide.';
+    else if(err.code==='auth/too-many-requests')msg='Trop de tentatives — réessayer plus tard ou réinitialiser le mot de passe.';
+    showAuthError(msg);setSyncStatus('⚠️');
+  });
+}
+function doSignup(){
+  const email=getVal('login-email').trim();const pwd=getVal('login-pwd');
+  if(!email||!pwd){showAuthError('Email et mot de passe requis (min. 6 caractères)');return;}
+  if(!USERS[email]){showAuthError('Email non autorisé. Seuls '+Object.keys(USERS).join(' et ')+' peuvent créer un compte.');return;}
+  if(pwd.length<6){showAuthError('Mot de passe : 6 caractères minimum');return;}
+  auth.createUserWithEmailAndPassword(email,pwd).then(()=>{
+    closeModal('m-login');setVal('login-pwd','');showToast('✅ Compte créé et connecté');
+  }).catch(err=>{
+    let msg=err.message||'Erreur';
+    if(err.code==='auth/email-already-in-use')msg='Cet email a déjà un compte. Utilisez « Se connecter ».';
+    else if(err.code==='auth/weak-password')msg='Mot de passe trop faible (6 caractères minimum).';
+    showAuthError(msg);
+  });
+}
+function doForgotPwd(){
+  const email=getVal('login-email').trim();
+  if(!email){showAuthError('Saisir d\'abord votre email puis cliquer « Mot de passe oublié »');return;}
+  auth.sendPasswordResetEmail(email).then(()=>{
+    showToast('📧 Email de réinitialisation envoyé à '+email);
+  }).catch(err=>showAuthError(err.message||'Erreur envoi email'));
+}
+function logoutUser(){
+  if(!confirm('Se déconnecter ? Les modifications non sauvegardées seront perdues.'))return;
+  auth.signOut().then(()=>{firebaseReady=false;setSyncStatus('⚠️');showToast('👋 Déconnecté');});
+}
+function showSyncDiag(){
+  const u=auth.currentUser;
+  const lines=[];
+  lines.push('<div><b>État connexion :</b> '+(firebaseReady?'<span style="color:var(--green)">✅ Connecté à Firebase</span>':'<span style="color:var(--red)">❌ Non connecté</span>')+'</div>');
+  lines.push('<div><b>Utilisateur :</b> '+(u?u.email:'<span style="color:var(--yellow)">Non authentifié</span>')+'</div>');
+  lines.push('<div><b>Base :</b> hb_dga</div>');
+  lines.push('<div><b>URL :</b> <code style="font-size:10px">app-dga-holding-benthami…europe-west1</code></div>');
+  if(lastSyncInfo)lines.push('<div style="margin-top:8px;padding:8px;background:rgba(255,255,255,.04);border-radius:6px;font-size:11px"><b>Dernière sync :</b><br>'+lastSyncInfo+'</div>');
+  if(lastSyncError){
+    lines.push('<div style="margin-top:8px;padding:8px;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25);border-radius:6px;font-size:11px"><b style="color:var(--red)">Dernière erreur :</b><br>'+(lastSyncError.code?'<code>'+lastSyncError.code+'</code><br>':'')+(lastSyncError.message||'')+'</div>');
+    if(lastSyncError.code==='PERMISSION_DENIED'||(lastSyncError.message||'').toLowerCase().includes('permission')){
+      lines.push('<div style="margin-top:8px;padding:8px;background:rgba(255,179,71,.08);border:1px solid rgba(255,179,71,.25);border-radius:6px;font-size:11px"><b>💡 Solution probable :</b><br>Les règles de votre base Firebase exigent une authentification. Cliquez « Se connecter » ci-dessous pour accéder à votre base existante.</div>');
+    }
+  }
+  document.getElementById('sync-diag-content').innerHTML=lines.join('');
+  openModal('m-syncdiag');
+}
+
+// onAuthStateChanged : se déclenche au chargement et à chaque login/logout
+auth.onAuthStateChanged(user=>{
+  currentUser=user;
+  currentUserConfig=user?USERS[user.email]:null;
+  applyUserUI(user);
+  if(user){
+    // (re)charger depuis Firebase à chaque connexion
+    loadFromFirebase();
+  }else{
+    // pas connecté : tenter un chargement public (au cas où les rules le permettent), sinon fallback local
+    loadFromFirebase();
+  }
+});
 
 // ════════════════════════════
 // UTILS
@@ -852,12 +1424,41 @@ function setSyncStatus(t){const el=document.getElementById('sync-status');if(el)
 function fmt(n){return Number(n||0).toLocaleString('fr-MA');}
 function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('fr-MA',{day:'2-digit',month:'2-digit',year:'numeric'});}
 function today(){return new Date().toISOString().split('T')[0];}
-// Filtre global : GLOBAL_REF={date:'YYYY-MM-DD',mode:'date'|'month'|'year'} ou null=aujourd'hui
+// Filtre global : GLOBAL_REF={date,mode:'date'|'month'|'year'|'last'|'ytd'|'quarter'|'range'|'months',from,to,n,quarter,months} ou null=aujourd'hui
 let GLOBAL_REF=null;
 function refDate(){return(GLOBAL_REF&&GLOBAL_REF.date)||today();}
 function refMode(){return(GLOBAL_REF&&GLOBAL_REF.mode)||'month';}
 function curMonth(){return refDate().substring(0,7);}
 function curYear(){return refDate().substring(0,4);}
+// === Système de plage de dates (range) ===
+// Retourne {from:'YYYY-MM-DD',to:'YYYY-MM-DD',label:'...',mode:'...'}
+function getRange(){
+  const td=today();
+  if(!GLOBAL_REF){const m=td.substring(0,7);const dim=daysInMonth(m);return{from:m+'-01',to:m+'-'+String(dim).padStart(2,'0'),label:'Mois en cours ('+m+')',mode:'month'};}
+  const r=GLOBAL_REF;
+  if(r.mode==='date'){return{from:r.date,to:r.date,label:fmtDate(r.date),mode:'date'};}
+  if(r.mode==='month'){const m=r.date.substring(0,7);const dim=daysInMonth(m);return{from:m+'-01',to:m+'-'+String(dim).padStart(2,'0'),label:'Mois '+m,mode:'month'};}
+  if(r.mode==='year'){const y=r.date.substring(0,4);return{from:y+'-01-01',to:y+'-12-31',label:'Année '+y,mode:'year'};}
+  if(r.mode==='last'){const n=r.n||3;const ref=new Date(td+'T00:00:00');const fromD=new Date(ref);fromD.setMonth(fromD.getMonth()-n+1);fromD.setDate(1);const fromS=fromD.toISOString().split('T')[0];return{from:fromS,to:td,label:n+' derniers mois',mode:'last',n};}
+  if(r.mode==='ytd'){const y=td.substring(0,4);return{from:y+'-01-01',to:td,label:'YTD '+y,mode:'ytd'};}
+  if(r.mode==='quarter'){return{from:r.from,to:r.to,label:r.label||'Trimestre',mode:'quarter'};}
+  if(r.mode==='range'){return{from:r.from,to:r.to,label:'Du '+fmtDate(r.from)+' au '+fmtDate(r.to),mode:'range'};}
+  if(r.mode==='months'){
+    const ms=(r.months||[]).slice().sort();
+    if(!ms.length){const m=td.substring(0,7);const dim=daysInMonth(m);return{from:m+'-01',to:m+'-'+String(dim).padStart(2,'0'),label:'Mois en cours ('+m+')',mode:'month'};}
+    const first=ms[0],last=ms[ms.length-1];const dim=daysInMonth(last);
+    const lbl=ms.length===1?'Mois '+ms[0]:ms.length+' mois sélectionnés ('+ms.join(', ')+')';
+    return{from:first+'-01',to:last+'-'+String(dim).padStart(2,'0'),label:lbl,mode:'months',months:ms};
+  }
+  return{from:td.substring(0,7)+'-01',to:td,label:td.substring(0,7),mode:'month'};
+}
+function inRange(d){if(!d)return false;const r=getRange();if(r.mode==='months'&&r.months){return r.months.indexOf(d.substring(0,7))>=0;}return d>=r.from&&d<=r.to;}
+function rangeMonths(){const r=getRange();if(r.mode==='months'&&r.months)return r.months.slice().sort();const out=[];let cur=r.from.substring(0,7);const end=r.to.substring(0,7);while(cur<=end){out.push(cur);const[y,m]=cur.split('-').map(Number);const nd=new Date(y,m,1);cur=nd.toISOString().substring(0,7);if(out.length>60)break;}return out;}
+function rangeDays(){const r=getRange();const out=[];if(r.mode==='months'&&r.months){r.months.slice().sort().forEach(m=>{const dim=daysInMonth(m);for(let i=1;i<=dim;i++)out.push(m+'-'+String(i).padStart(2,'0'));});return out;}const s=new Date(r.from+'T00:00:00');const e=new Date(r.to+'T00:00:00');for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1)){out.push(d.toISOString().split('T')[0]);if(out.length>800)break;}return out;}
+function rangeNbDays(){const r=getRange();if(r.mode==='months'&&r.months)return r.months.reduce((a,m)=>a+daysInMonth(m),0);const s=new Date(r.from+'T00:00:00');const e=new Date(r.to+'T00:00:00');return Math.round((e-s)/86400000)+1;}
+// Plage N-1 — même longueur, décalée d'un an
+function rangeN1(){const r=getRange();const decY=s=>{const d=new Date(s+'T00:00:00');d.setFullYear(d.getFullYear()-1);return d.toISOString().split('T')[0];};if(r.mode==='months'&&r.months){const ms=r.months.map(m=>{const[y,mm]=m.split('-');return(Number(y)-1)+'-'+mm;});return{from:decY(r.from),to:decY(r.to),months:ms,mode:'months'};}return{from:decY(r.from),to:decY(r.to)};}
+function inRangeN1(d){if(!d)return false;const r=rangeN1();if(r.mode==='months'&&r.months)return r.months.indexOf(d.substring(0,7))>=0;return d>=r.from&&d<=r.to;}
 function getMonth(d){return d?d.substring(0,7):'';}
 function getYear(d){return d?d.substring(0,4):'';}
 function getWeek(d){if(!d)return 0;const dt=new Date(d+'T00:00:00Z');const day=dt.getUTCDay()||7;dt.setUTCDate(dt.getUTCDate()+4-day);const yr=new Date(Date.UTC(dt.getUTCFullYear(),0,1));return Math.ceil((((dt-yr)/86400000)+1)/7);}
@@ -886,13 +1487,25 @@ function scoreColor(p){return p>=80?'var(--green)':p>=50?'var(--yellow)':'var(--
 // NAVIGATION
 // ════════════════════════════
 function navTo(id,el){
+  // Garde-fou : si l'utilisateur n'a pas accès à cette page, rediriger vers sa première page autorisée
+  if(currentUser&&!isPageAllowed(id)){
+    const allowed=getAllowedPages();
+    if(allowed.length){
+      showToast('🔒 Accès refusé à cette page');
+      const target=allowed[0];
+      if(target===id)return; // évite boucle
+      const sideItem=document.querySelector('.sb-item[data-page="'+target+'"]');
+      return navTo(target,sideItem);
+    }
+    return;
+  }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
-  document.getElementById('p-'+id).classList.add('active');
+  const pageEl=document.getElementById('p-'+id);if(pageEl)pageEl.classList.add('active');
   if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',taches:'Tâches',carsland:'Cars Land',arabian:'Arabian Tours',assurance:'1.2.3 Assurance',fcorner:'F Corner',rapports:'Rapports Hebdo',agenda:'Agenda'};
+  const titles={dashboard:'Dashboard',taches:'Tâches',dga:'🎯 Pilotage DGA',carsland:'Cars Land',arabian:'Arabian Tours',assurance:'1.2.3 Assurance',fcorner:'F Corner',cashflow:'💰 Cash-flow Groupe',rapports:'Rapports Hebdo',agenda:'Agenda'};
   document.getElementById('page-title').textContent=titles[id]||id;
-  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,rapports:renderReports,agenda:renderAgenda};
+  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),dga:renderDGA,carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,cashflow:renderCashflow,rapports:renderReports,agenda:renderAgenda};
   if(renders[id])renders[id]();
 }
 function navToMob(id){
@@ -945,13 +1558,19 @@ function toggleGlobalFilter(){
   gf.style.display=open?'inline-flex':'none';topDate.style.opacity=open?'.5':'1';
   if(open){
     setVal('gf-date',refDate());setVal('gf-month',curMonth());
-    updateGFVisibility();
+    if(!getVal('gf-from'))setVal('gf-from',curMonth()+'-01');
+    if(!getVal('gf-to'))setVal('gf-to',today());
+    onGFModeChange();
   }
 }
+function onGFModeChange(){updateGFVisibility();applyGlobalFilter();}
 function updateGFVisibility(){
   const mode=getVal('gf-mode');
   document.getElementById('gf-date').style.display=mode==='date'?'inline-block':'none';
-  document.getElementById('gf-month').style.display=mode==='month'?'inline-block':'none';
+  document.getElementById('gf-month').style.display=(mode==='month'||mode==='year')?'inline-block':'none';
+  document.getElementById('gf-last-n').style.display=mode==='last'?'inline-block':'none';
+  document.getElementById('gf-quarter').style.display=mode==='quarter'?'inline-block':'none';
+  document.getElementById('gf-range-wrap').style.display=mode==='range'?'inline-flex':'none';
 }
 function applyGlobalFilter(){
   updateGFVisibility();
@@ -959,6 +1578,17 @@ function applyGlobalFilter(){
   if(mode==='date'){const v=getVal('gf-date');if(!v)return;GLOBAL_REF={date:v,mode:'date'};}
   else if(mode==='month'){const v=getVal('gf-month');if(!v)return;GLOBAL_REF={date:v+'-15',mode:'month'};}
   else if(mode==='year'){const v=getVal('gf-month')||(curYear()+'-01');GLOBAL_REF={date:(v.substring(0,4))+'-06-15',mode:'year'};}
+  else if(mode==='last'){const n=Number(getVal('gf-last-n'))||3;GLOBAL_REF={date:today(),mode:'last',n};}
+  else if(mode==='ytd'){const y=today().substring(0,4);GLOBAL_REF={date:today(),mode:'ytd',from:y+'-01-01',to:today()};}
+  else if(mode==='quarter'){
+    const q=getVal('gf-quarter')||'auto';const td=today();const y=Number(td.substring(0,4));const mo=Number(td.substring(5,7));
+    let qNum;if(q==='auto')qNum=Math.ceil(mo/3);else if(q==='prev')qNum=Math.ceil(mo/3)-1||4;else qNum=Number(q.substring(1));
+    let qY=y;if(q==='prev'&&Math.ceil(mo/3)===1)qY=y-1;
+    const sM=(qNum-1)*3+1;const eM=qNum*3;const eD=daysInMonth(qY+'-'+String(eM).padStart(2,'0'));
+    const from=qY+'-'+String(sM).padStart(2,'0')+'-01';const to=qY+'-'+String(eM).padStart(2,'0')+'-'+String(eD).padStart(2,'0');
+    GLOBAL_REF={date:from,mode:'quarter',from,to,label:'Q'+qNum+' '+qY};
+  }
+  else if(mode==='range'){const f=getVal('gf-from'),t=getVal('gf-to');if(!f||!t)return;if(f>t){showToast('⚠️ Date de début > date de fin');return;}GLOBAL_REF={date:f,mode:'range',from:f,to:t};}
   refreshTopDate();rerenderActivePage();
 }
 function resetGlobalFilter(){
@@ -968,17 +1598,13 @@ function resetGlobalFilter(){
 }
 function refreshTopDate(){
   const el=document.getElementById('top-date');if(!el)return;
-  const mode=refMode();const r=refDate();
   if(!GLOBAL_REF){el.textContent=new Date().toLocaleDateString('fr-MA',{day:'numeric',month:'long',year:'numeric'})+' · Sem. '+curWeek()+' ('+fmtWeekRange()+')';el.style.color='';return;}
-  if(mode==='date')el.textContent='🔍 '+new Date(r).toLocaleDateString('fr-MA',{day:'numeric',month:'long',year:'numeric'});
-  else if(mode==='month')el.textContent='🔍 '+new Date(r).toLocaleDateString('fr-MA',{month:'long',year:'numeric'});
-  else if(mode==='year')el.textContent='🔍 Année '+r.substring(0,4);
-  el.style.color='var(--yellow)';
+  const r=getRange();el.textContent='🔍 '+r.label+' ('+rangeNbDays()+'j)';el.style.color='var(--yellow)';
 }
 function rerenderActivePage(){
   const page=document.querySelector('.page.active');if(!page)return;
   const id=page.id.replace('p-','');
-  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,rapports:renderReports,agenda:renderAgenda};
+  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),dga:renderDGA,carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,cashflow:renderCashflow,rapports:renderReports,agenda:renderAgenda};
   if(renders[id])renders[id]();
 }
 
@@ -1004,8 +1630,8 @@ function setPeriod(p,btn){
 // ════════════════════════════
 const IMP_SCHEMAS={
   'cl-assist':{label:'Cars Land — Assistance (quotidien)',cols:['date','ville','client','contrats','ca','n1','note'],help:'Colonnes attendues : <b>date</b>, <b>ville</b> (Fès/Rabat/Meknès), <b>client</b> (Cover Edge / Wafa Ima Assistance / Maroc Assistance International), <b>contrats</b>, <b>ca</b>, <b>n1</b> (CA N-1 même jour, optionnel), <b>note</b>'},
-  'cl-lld':{label:'Cars Land — LLD (mensuel)',cols:['month','flotte','ca','newC','resil','n1'],help:'Colonnes : <b>month</b> (YYYY-MM), <b>flotte</b>, <b>ca</b>, <b>newC</b> (nouveaux), <b>resil</b> (résiliations), <b>n1</b> (CA N-1)'},
-  'cl-part':{label:'Cars Land — Particuliers (mensuel)',cols:['month','nb','ca','n1'],help:'Colonnes : <b>month</b> (YYYY-MM), <b>nb</b> (clients), <b>ca</b>, <b>n1</b> (CA N-1)'},
+  'cl-lld':{label:'Cars Land — LLD (mensuel par client)',cols:['month','client','nb','ca','n1','note'],help:'Colonnes : <b>month</b> (YYYY-MM), <b>client</b> (entreprise, ex: Benthami Motors), <b>nb</b> (nb véhicules), <b>ca</b> (loyer mensuel), <b>n1</b> (CA N-1 même mois, optionnel), <b>note</b> (optionnel). <em>Une ligne par client et par mois.</em>'},
+  'cl-part':{label:'Cars Land — Particuliers (mensuel par ville)',cols:['month','ville','nb','ca','n1','note'],help:'Colonnes : <b>month</b> (YYYY-MM), <b>ville</b> (Fès/Rabat/Meknès/Autre), <b>nb</b> (clients), <b>ca</b>, <b>n1</b> (CA N-1, optionnel), <b>note</b> (optionnel). <em>Une ligne par ville et par mois.</em>'},
   'at':{label:'Arabian Tours — Missions (quotidien)',cols:['date','ville','client','constats','ca','n1','obj','note'],help:'Colonnes : <b>date</b>, <b>ville</b> (Fès/Rabat/Marrakech), <b>client</b>, <b>constats</b> (missions), <b>ca</b>, <b>n1</b> (optionnel), <b>obj</b> (optionnel), <b>note</b> (optionnel)'},
   'as':{label:'1.2.3 Assurance — Contrats (production)',cols:['date','type','branche','marque','porteur','lieu','nb','prime','n1','comm'],help:'Colonnes : <b>date</b>, <b>type</b> (nouvelle/renouvellement/avenant), <b>branche</b> (AUTO/FLOTTE/ACCIDENTS CORPORELS/ACCIDENTS DE TRAVAIL/RISQUES DIVERS), <b>marque</b> (apporteur), <b>porteur</b>, <b>lieu</b>, <b>nb</b>, <b>prime</b>, <b>n1</b> (prime N-1), <b>comm</b> (commission, optionnel)'},
   'fc':{label:'F Corner / Venezia Ice — Ventes (quotidien)',cols:['date','tickets','ca','foodcost','n1','note'],help:'Colonnes : <b>date</b>, <b>tickets</b> (nb couverts), <b>ca</b> (CA TTC MAD), <b>foodcost</b> (coût matières MAD, optionnel), <b>n1</b> (CA même jour N-1, optionnel), <b>note</b> (optionnel)'}
@@ -1049,12 +1675,27 @@ function doImport(){
     DB.cl.assistance.sort((a,b)=>b.date.localeCompare(a.date));
   }else if(target==='cl-lld'){
     if(mode==='replace')DB.cl.lld=[];
-    rows.forEach((r,i)=>{const mo=normalizeMonth(getS(r,'month')||getS(r,'mois'));if(!mo)return;const ex=DB.cl.lld.findIndex(e=>e.month===mo);const entry={id:Date.now()+i,month:mo,flotte:getN(r,'flotte'),ca:getN(r,'ca'),newC:getN(r,'newc')||getN(r,'nouveaux'),resil:getN(r,'resil'),n1:getN(r,'n1')};if(ex>=0)DB.cl.lld[ex]=entry;else DB.cl.lld.push(entry);added++;});
-    DB.cl.lld.sort((a,b)=>b.month.localeCompare(a.month));
+    rows.forEach((r,i)=>{
+      const mo=normalizeMonth(getS(r,'month')||getS(r,'mois'));if(!mo)return;
+      const client=(getS(r,'client')||'').trim();
+      const nb=getN(r,'nb')||getN(r,'flotte')||getN(r,'vehicules')||getN(r,'vehs');
+      const entry={id:Date.now()+i,month:mo,client:client,nb:nb,flotte:nb,ca:getN(r,'ca'),newC:getN(r,'newc')||getN(r,'nouveaux'),resil:getN(r,'resil'),n1:getN(r,'n1'),note:getS(r,'note')};
+      const ex=DB.cl.lld.findIndex(e=>e.month===mo&&(e.client||'')===client);
+      if(ex>=0)DB.cl.lld[ex]={...entry,id:DB.cl.lld[ex].id};else DB.cl.lld.push(entry);
+      added++;
+    });
+    DB.cl.lld.sort((a,b)=>b.month.localeCompare(a.month)||(a.client||'').localeCompare(b.client||''));
   }else if(target==='cl-part'){
     if(mode==='replace')DB.cl.particuliers=[];
-    rows.forEach((r,i)=>{const mo=normalizeMonth(getS(r,'month')||getS(r,'mois'));if(!mo)return;const ex=DB.cl.particuliers.findIndex(e=>e.month===mo);const entry={id:Date.now()+i,month:mo,nb:getN(r,'nb'),ca:getN(r,'ca'),n1:getN(r,'n1')};if(ex>=0)DB.cl.particuliers[ex]=entry;else DB.cl.particuliers.push(entry);added++;});
-    DB.cl.particuliers.sort((a,b)=>b.month.localeCompare(a.month));
+    rows.forEach((r,i)=>{
+      const mo=normalizeMonth(getS(r,'month')||getS(r,'mois'));if(!mo)return;
+      const ville=(getS(r,'ville')||'').trim();
+      const entry={id:Date.now()+i,month:mo,ville:ville,nb:getN(r,'nb'),ca:getN(r,'ca'),n1:getN(r,'n1'),note:getS(r,'note')};
+      const ex=DB.cl.particuliers.findIndex(e=>e.month===mo&&(e.ville||'')===ville);
+      if(ex>=0)DB.cl.particuliers[ex]={...entry,id:DB.cl.particuliers[ex].id};else DB.cl.particuliers.push(entry);
+      added++;
+    });
+    DB.cl.particuliers.sort((a,b)=>b.month.localeCompare(a.month)||(a.ville||'').localeCompare(b.ville||''));
   }else if(target==='at'){
     if(mode==='replace')DB.at=[];
     rows.forEach((r,i)=>{const d=normalizeDate(getS(r,'date'));if(!d)return;DB.at.push({id:Date.now()+i,date:d,ville:normalizeVille(getS(r,'ville'),AT_VILLES),client:getS(r,'client')||'—',constats:getN(r,'constats')||getN(r,'missions'),ca:getN(r,'ca'),obj:getN(r,'obj'),n1:getN(r,'n1'),note:getS(r,'note')});added++;});
@@ -1139,15 +1780,15 @@ function renderDash(){
   const weekCla=DB.cl.assistance.filter(e=>getWeek(e.date)===w&&getYear(e.date)===y);
   const yearAt=DB.at.filter(e=>getYear(e.date)===y);
   const yearCla=DB.cl.assistance.filter(e=>getYear(e.date)===y);
-  const lldCur=(DB.cl.lld||[]).find(e=>e.month===m)||{ca:0,flotte:0,n1:0};
-  const partCur=(DB.cl.particuliers||[]).find(e=>e.month===m)||{ca:0,nb:0,n1:0};
+  const lldCur=aggCLLldMonth(m);
+  const partCur=aggCLPartMonth(m);
   const clMonth=monthCla.reduce((a,b)=>a+b.ca,0)+lldCur.ca+partCur.ca;
   const atMonth=monthAt.reduce((a,b)=>a+b.ca,0);
   const fcMonth=DB.fc.filter(e=>getMonth(e.date)===m).reduce((a,b)=>a+b.rec,0);
   const asMonth=DB.contrats.filter(c=>getMonth(c.date)===m).reduce((a,b)=>a+b.prime,0);
   const totalMonth=clMonth+atMonth+fcMonth+asMonth;
 
-  const clWeek=weekCla.reduce((a,b)=>a+b.ca,0)+(DB.cl.lld.find(e=>e.month===m)||{ca:0}).ca/4;
+  const clWeek=weekCla.reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(m).ca/4;
   const atWeek=weekAt.reduce((a,b)=>a+b.ca,0);
   const fcWeek=DB.fc.filter(e=>getWeek(e.date)===w&&getYear(e.date)===y).reduce((a,b)=>a+b.rec,0);
   const asWeek=DB.contrats.filter(c=>getWeek(c.date)===w&&getYear(c.date)===y).reduce((a,b)=>a+b.prime,0);
@@ -1169,7 +1810,7 @@ function renderDash(){
 
   // N-1 comparisons
   const prevMonth=new Date(new Date().getFullYear(),new Date().getMonth()-1,1).toISOString().substring(0,7);
-  const prevClMonth=DB.cl.assistance.filter(e=>getMonth(e.date)===prevMonth).reduce((a,b)=>a+b.ca,0)+(DB.cl.lld.find(e=>e.month===prevMonth)||{ca:0}).ca+(DB.cl.particuliers.find(e=>e.month===prevMonth)||{ca:0}).ca;
+  const prevClMonth=DB.cl.assistance.filter(e=>getMonth(e.date)===prevMonth).reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(prevMonth).ca+aggCLPartMonth(prevMonth).ca;
   const prevAtMonth=DB.at.filter(e=>getMonth(e.date)===prevMonth).reduce((a,b)=>a+b.ca,0);
   const prevTotalMonth=prevClMonth+prevAtMonth;
   const mEvo=prevTotalMonth>0?Math.round((totalMonth-prevTotalMonth)/prevTotalMonth*100):0;
@@ -1185,10 +1826,11 @@ function renderDash(){
   const objGrp=getObjectif('cl',m)+getObjectif('at',m)+(getObjectif('as',m)||0)+(getObjectif('fc',m)||0);
   // N-1 même mois
   const lastY=String(Number(y)-1);const prevYM=lastY+'-'+m.substring(5);
-  const clN1=DB.cl.assistance.filter(e=>getMonth(e.date)===prevYM).reduce((a,b)=>a+(b.n1||b.ca||0),0)+((DB.cl.lld.find(e=>e.month===prevYM)||{}).n1||(DB.cl.lld.find(e=>e.month===prevYM)||{}).ca||0)+((DB.cl.particuliers.find(e=>e.month===prevYM)||{}).n1||(DB.cl.particuliers.find(e=>e.month===prevYM)||{}).ca||0);
+  const _lldPYM=aggCLLldMonth(prevYM),_partPYM=aggCLPartMonth(prevYM);
+  const clN1=DB.cl.assistance.filter(e=>getMonth(e.date)===prevYM).reduce((a,b)=>a+(b.n1||b.ca||0),0)+(_lldPYM.n1||_lldPYM.ca||0)+(_partPYM.n1||_partPYM.ca||0);
   const atN1Prev=DB.at.filter(e=>getMonth(e.date)===prevYM).reduce((a,b)=>a+(b.ca||0),0);
   // Estimation N-1 via champ n1 du mois courant
-  const clN1Cur=DB.cl.assistance.filter(e=>getMonth(e.date)===m).reduce((a,b)=>a+(b.n1||0),0)+((DB.cl.lld.find(e=>e.month===m)||{}).n1||0)+((DB.cl.particuliers.find(e=>e.month===m)||{}).n1||0);
+  const clN1Cur=DB.cl.assistance.filter(e=>getMonth(e.date)===m).reduce((a,b)=>a+(b.n1||0),0)+(lldCur.n1||0)+(partCur.n1||0);
   const atN1Cur=monthAt.reduce((a,b)=>a+(b.n1||0),0);
   const n1Grp=(clN1||clN1Cur)+(atN1Prev||atN1Cur);
   const evoN1=n1Grp>0?Math.round((totalMonth-n1Grp)/n1Grp*100):0;
@@ -1259,14 +1901,14 @@ function renderDash(){
   // GRAPHIQUE EVOLUTION 6 MOIS
   const months6=[];for(let i=5;i>=0;i--){const d=new Date(new Date().getFullYear(),new Date().getMonth()-i,1);months6.push(d.toISOString().substring(0,7));}
   const maxM=Math.max(...months6.map(mo=>{
-    const clM=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0)+(DB.cl.lld.find(e=>e.month===mo)||{ca:0}).ca+(DB.cl.particuliers.find(e=>e.month===mo)||{ca:0}).ca;
+    const clM=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(mo).ca+aggCLPartMonth(mo).ca;
     const atM=DB.at.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);
     const fcM=DB.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.rec,0);
     const asM=DB.contrats.filter(c=>getMonth(c.date)===mo).reduce((a,b)=>a+b.prime,0);
     return clM+atM+fcM+asM;
   }),1);
   document.getElementById('dash-evolution').innerHTML=`<div class="chart-bar-wrap">${months6.map(mo=>{
-    const clM=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0)+(DB.cl.lld.find(e=>e.month===mo)||{ca:0}).ca+(DB.cl.particuliers.find(e=>e.month===mo)||{ca:0}).ca;
+    const clM=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(mo).ca+aggCLPartMonth(mo).ca;
     const atM=DB.at.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);
     const fcM=DB.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.rec,0);
     const asM=DB.contrats.filter(c=>getMonth(c.date)===mo).reduce((a,b)=>a+b.prime,0);
@@ -1353,6 +1995,38 @@ const CL_VILLES=['Fès','Rabat','Meknès'];
 const CL_VC={'Fès':'#2D7DD2','Rabat':'#00C896','Meknès':'#F4831F'};
 const CL_VCL={'Fès':'ville-fes','Rabat':'ville-rabat','Meknès':'ville-meknes'};
 const CL_CC={'Cover Edge':'#2D7DD2','Wafa Ima Assistance':'#00C896','Maroc Assistance International':'#F4831F'};
+const MOIS_FR_FULL=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const MOIS_FR_ABBR=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+function fmtMoLong(mo){if(!mo)return '—';const[y,m]=mo.split('-');return(MOIS_FR_FULL[Number(m)-1]||m)+' '+y;}
+function fmtMoShort(mo){if(!mo)return '—';const[y,m]=mo.split('-');return(MOIS_FR_ABBR[Number(m)-1]||m)+' '+y.substring(2);}
+function prevMonthOf(mo){if(!mo)return '';const[y,m]=mo.split('-').map(Number);const d=new Date(y,m-2,1);return d.toISOString().substring(0,7);}
+function n1MonthOf(mo){if(!mo)return '';const[y,m]=mo.split('-');return(Number(y)-1)+'-'+m;}
+// === Agrégateurs LLD/Particuliers : un mois peut contenir plusieurs saisies (par client / par ville) ===
+function aggCLLldMonth(mo){
+  const arr=(DB.cl.lld||[]).filter(e=>e.month===mo);
+  if(!arr.length)return{ca:0,n1:0,flotte:0,nb:0,newC:0,resil:0,clients:0,entries:[]};
+  return{
+    ca:arr.reduce((a,b)=>a+(b.ca||0),0),
+    n1:arr.reduce((a,b)=>a+(b.n1||0),0),
+    flotte:arr.reduce((a,b)=>a+(b.flotte||b.nb||0),0),
+    nb:arr.reduce((a,b)=>a+(b.nb||b.flotte||0),0),
+    newC:arr.reduce((a,b)=>a+(b.newC||0),0),
+    resil:arr.reduce((a,b)=>a+(b.resil||0),0),
+    clients:new Set(arr.filter(e=>e.client).map(e=>e.client)).size,
+    entries:arr
+  };
+}
+function aggCLPartMonth(mo){
+  const arr=(DB.cl.particuliers||[]).filter(e=>e.month===mo);
+  if(!arr.length)return{ca:0,n1:0,nb:0,villes:0,entries:[]};
+  return{
+    ca:arr.reduce((a,b)=>a+(b.ca||0),0),
+    n1:arr.reduce((a,b)=>a+(b.n1||0),0),
+    nb:arr.reduce((a,b)=>a+(b.nb||0),0),
+    villes:new Set(arr.filter(e=>e.ville).map(e=>e.ville)).size,
+    entries:arr
+  };
+}
 
 function saveCLAssistance(){
   const d=getVal('cl-a-date');if(!d){showToast('Date requise');return;}
@@ -1373,12 +2047,47 @@ function editCLAssist(id){
   document.getElementById('cl-tab-assistance').scrollIntoView({behavior:'smooth'});showToast('Saisie chargée pour modification');
 }
 function deleteCLAssist(id){if(!confirm('Supprimer ?'))return;DB.cl.assistance=DB.cl.assistance.filter(e=>e.id!==id);save();renderCarsLand();}
+function setCLMonthFilter(mo){clMonthFilter=mo;renderCLAssistMonthTabs();renderCLAssistHistory();}
+function renderCLAssistMonthTabs(){
+  const cont=document.getElementById('cl-a-month-tabs');if(!cont)return;
+  const months=[...new Set([...DB.cl.assistance.map(e=>getMonth(e.date)).filter(Boolean),curMonth()])].sort().reverse().slice(0,12);
+  const all=`<button class="btn btn-sm ${clMonthFilter==='all'?'btn-primary':''}" onclick="setCLMonthFilter('all')">Tous</button>`;
+  const btns=months.map(mo=>{const active=clMonthFilter===mo;const ca=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.ca||0),0);return`<button class="btn btn-sm ${active?'btn-primary':''}" onclick="setCLMonthFilter('${mo}')" title="${mo} · CA ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+  cont.innerHTML=all+btns;
+}
 function renderCLAssistHistory(){
-  const entries=clHistFilter==='all'?DB.cl.assistance:DB.cl.assistance.filter(e=>e.client===clHistFilter);
-  document.getElementById('cl-a-history').innerHTML=entries.slice(0,30).map(e=>{
+  renderCLAssistMonthTabs();
+  let entries=DB.cl.assistance;
+  if(clMonthFilter!=='all')entries=entries.filter(e=>getMonth(e.date)===clMonthFilter);
+  if(clVilleHistFilter!=='all')entries=entries.filter(e=>e.ville===clVilleHistFilter);
+  if(clHistFilter!=='all')entries=entries.filter(e=>e.client===clHistFilter);
+  // Synthèse — barre management
+  const sumEl=document.getElementById('cl-a-month-summary');
+  if(sumEl){
+    const fCa=entries.reduce((a,b)=>a+(b.ca||0),0);
+    const fC=entries.reduce((a,b)=>a+(b.contrats||0),0);
+    const fN1=entries.reduce((a,b)=>a+(b.n1||0),0);
+    const fObj=clMonthFilter!=='all'?getObjectif('cl',clMonthFilter):0;
+    const evo=fN1>0?Math.round((fCa-fN1)/fN1*100):0;
+    const objPct=fObj>0?Math.round(fCa/fObj*100):0;
+    const panier=fC>0?Math.round(fCa/fC):0;
+    const moisLabel=clMonthFilter==='all'?'Tous mois':fmtMoLong(clMonthFilter);
+    const villeLabel=clVilleHistFilter==='all'?'Toutes villes':clVilleHistFilter;
+    const cliLabel=clHistFilter==='all'?'Tous clients':clHistFilter;
+    sumEl.innerHTML=entries.length?`<div class="card" style="padding:10px;background:rgba(0,200,150,0.05);border-left:3px solid var(--cl)">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">📊 Synthèse · ${moisLabel} · ${villeLabel} · ${cliLabel} · ${entries.length} saisie(s)</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px">
+        <div><b>CA :</b> <span style="color:var(--cl);font-weight:700">${fmt(fCa)} MAD</span></div>
+        <div><b>Contrats :</b> ${fmt(fC)}</div>
+        <div><b>Panier moyen :</b> ${fC>0?fmt(panier):'—'} MAD</div>
+        ${fN1>0?`<div><b>vs N-1 :</b> <span style="color:${evo>=0?'var(--green)':'var(--red)'};font-weight:700">${evo>=0?'+':''}${evo}%</span> (${fmt(fN1)} MAD)</div>`:''}
+        ${fObj>0?`<div><b>vs Objectif :</b> <span style="color:${objPct>=100?'var(--green)':objPct>=70?'var(--yellow)':'var(--red)'};font-weight:700">${objPct}%</span> (obj. ${fmt(fObj)})</div>`:''}
+      </div></div>`:'';
+  }
+  document.getElementById('cl-a-history').innerHTML=entries.slice(0,60).map(e=>{
     const n1=e.n1||0;const ev=n1>0?Math.round((e.ca-n1)/n1*100):0;
     const evCol=ev>=0?'var(--green)':'var(--red)';const evTxt=n1>0?(ev>=0?'+':'')+ev+'%':'—';
-    return `<tr><td>${fmtDate(e.date)}</td><td><span class="vpill ${CL_VCL[e.ville]}">${e.ville}</span></td>
+    return `<tr><td>${fmtDate(e.date)}</td><td><span class="vpill ${CL_VCL[e.ville]||''}">${e.ville}</span></td>
     <td>${e.client}</td><td>${fmt(e.contrats)}</td><td>${fmt(e.ca)} MAD</td>
     <td style="color:var(--muted)">${n1?fmt(n1)+' MAD':'—'}</td>
     <td style="color:${n1>0?evCol:'var(--muted)'};font-weight:600">${evTxt}</td>
@@ -1389,16 +2098,38 @@ function renderCLAssistHistory(){
 
 function saveCLLLD(){
   const mo=getVal('cl-lld-month');if(!mo){showToast('Mois requis');return;}
+  const client=getVal('cl-lld-client');if(!client){showToast('Client requis — créez-en un d\'abord');return;}
   const editId=getVal('cl-lld-edit-id');
-  const entry={id:editId?Number(editId):Date.now(),month:mo,flotte:getNum('cl-lld-flotte'),ca:getNum('cl-lld-ca'),newC:getNum('cl-lld-new'),resil:getNum('cl-lld-resil'),n1:getNum('cl-lld-n1')};
+  const entry={id:editId?Number(editId):Date.now(),month:mo,client,nb:getNum('cl-lld-nb'),flotte:getNum('cl-lld-nb'),ca:getNum('cl-lld-ca'),n1:getNum('cl-lld-n1'),note:getVal('cl-lld-note')||'',newC:0,resil:0};
   if(editId){const i=DB.cl.lld.findIndex(e=>e.id===Number(editId));if(i>=0)DB.cl.lld[i]=entry;}
-  else{const ei=DB.cl.lld.findIndex(e=>e.month===mo);if(ei>=0)DB.cl.lld[ei]=entry;else DB.cl.lld.push(entry);}
-  DB.cl.lld.sort((a,b)=>b.month.localeCompare(a.month));
-  setVal('cl-lld-edit-id','');document.getElementById('cl-lld-btn').textContent='Enregistrer';
-  save();renderCarsLand();showToast('LLD enregistré');
+  else{
+    // Une seule saisie par (mois, client) — remplace si existe
+    const ei=DB.cl.lld.findIndex(e=>e.month===mo&&e.client===client);
+    if(ei>=0)DB.cl.lld[ei]={...entry,id:DB.cl.lld[ei].id};else DB.cl.lld.push(entry);
+  }
+  DB.cl.lld.sort((a,b)=>b.month.localeCompare(a.month)||(a.client||'').localeCompare(b.client||''));
+  setVal('cl-lld-edit-id','');setVal('cl-lld-nb','');setVal('cl-lld-ca','');setVal('cl-lld-n1','');setVal('cl-lld-note','');
+  document.getElementById('cl-lld-btn').textContent='Enregistrer';
+  save();renderCarsLand();showToast('Saisie LLD enregistrée — '+client+' / '+fmtMoLong(mo));
 }
-function editCLLLD(id){const e=DB.cl.lld.find(x=>x.id===id);if(!e)return;setVal('cl-lld-month',e.month);setVal('cl-lld-flotte',e.flotte);setVal('cl-lld-ca',e.ca);setVal('cl-lld-new',e.newC);setVal('cl-lld-resil',e.resil);setVal('cl-lld-n1',e.n1);setVal('cl-lld-edit-id',e.id);document.getElementById('cl-lld-btn').textContent='✏️ Modifier';showToast('Saisie LLD chargée');}
-function deleteCLLLD(id){if(!confirm('Supprimer ?'))return;DB.cl.lld=DB.cl.lld.filter(e=>e.id!==id);save();renderCarsLand();}
+function editCLLLD(id){const e=DB.cl.lld.find(x=>x.id===id);if(!e)return;setVal('cl-lld-month',e.month);setVal('cl-lld-client',e.client||'');setVal('cl-lld-nb',e.nb||e.flotte||0);setVal('cl-lld-ca',e.ca);setVal('cl-lld-n1',e.n1||0);setVal('cl-lld-note',e.note||'');setVal('cl-lld-edit-id',e.id);document.getElementById('cl-lld-btn').textContent='✏️ Modifier';document.getElementById('cl-tab-lld').scrollIntoView({behavior:'smooth'});showToast('Saisie LLD chargée');}
+function deleteCLLLD(id){if(!confirm('Supprimer cette saisie LLD ?'))return;DB.cl.lld=DB.cl.lld.filter(e=>e.id!==id);save();renderCarsLand();}
+function setCLLLDMonthFilter(mo){clLldMonthFilter=mo;renderCLLLDHistory();}
+function setCLLLDClientFilter(c){clLldClientFilter=c;renderCLLLDHistory();}
+// Auto-remplit CA N-1 et nb depuis l'historique du même client/mois
+function onCLLLDClientChange(){onCLLLDMonthChange();}
+function onCLLLDMonthChange(){
+  const mo=getVal('cl-lld-month');const client=getVal('cl-lld-client');
+  if(!mo||!client)return;
+  // Auto-fill nb véhicules from lldClients catalogue (si pas encore saisi)
+  const cli=DB.cl.lldClients.find(c=>c.nom===client);
+  if(cli&&!getVal('cl-lld-nb'))setVal('cl-lld-nb',cli.nb||'');
+  if(cli&&!getVal('cl-lld-ca'))setVal('cl-lld-ca',cli.ca||'');
+  // Auto-fill N-1 depuis historique
+  const n1mo=n1MonthOf(mo);
+  const histN1=DB.cl.lld.find(e=>e.month===n1mo&&e.client===client);
+  if(histN1&&!getVal('cl-lld-n1'))setVal('cl-lld-n1',histN1.ca||0);
+}
 
 function saveLLDClient(){
   const nom=getVal('lld-client-nom').trim();if(!nom){showToast('Nom requis');return;}
@@ -1413,46 +2144,69 @@ function deleteLLDClient(id){if(!confirm('Supprimer ?'))return;DB.cl.lldClients=
 
 function saveCLPart(){
   const mo=getVal('cl-part-month');if(!mo){showToast('Mois requis');return;}
+  const vSel=getVal('cl-part-ville');const vCustom=(getVal('cl-part-ville-custom')||'').trim();
+  const ville=vSel==='Autre'&&vCustom?vCustom:vSel;
+  if(!ville){showToast('Ville requise');return;}
   const editId=getVal('cl-part-edit-id');
-  const entry={id:editId?Number(editId):Date.now(),month:mo,nb:getNum('cl-part-nb'),ca:getNum('cl-part-ca'),n1:getNum('cl-part-n1')};
+  const entry={id:editId?Number(editId):Date.now(),month:mo,ville,nb:getNum('cl-part-nb'),ca:getNum('cl-part-ca'),n1:getNum('cl-part-n1'),note:getVal('cl-part-note')||''};
   if(editId){const i=DB.cl.particuliers.findIndex(e=>e.id===Number(editId));if(i>=0)DB.cl.particuliers[i]=entry;}
-  else{const ei=DB.cl.particuliers.findIndex(e=>e.month===mo);if(ei>=0)DB.cl.particuliers[ei]=entry;else DB.cl.particuliers.push(entry);}
-  DB.cl.particuliers.sort((a,b)=>b.month.localeCompare(a.month));
-  setVal('cl-part-edit-id','');document.getElementById('cl-part-btn').textContent='Enregistrer';
-  save();renderCarsLand();showToast('Particuliers enregistré');
+  else{
+    const ei=DB.cl.particuliers.findIndex(e=>e.month===mo&&(e.ville||'')===ville);
+    if(ei>=0)DB.cl.particuliers[ei]={...entry,id:DB.cl.particuliers[ei].id};else DB.cl.particuliers.push(entry);
+  }
+  DB.cl.particuliers.sort((a,b)=>b.month.localeCompare(a.month)||(a.ville||'').localeCompare(b.ville||''));
+  setVal('cl-part-edit-id','');setVal('cl-part-nb','');setVal('cl-part-ca','');setVal('cl-part-n1','');setVal('cl-part-note','');setVal('cl-part-ville-custom','');
+  document.getElementById('cl-part-btn').textContent='Enregistrer';
+  save();renderCarsLand();showToast('Particuliers enregistré — '+ville+' / '+fmtMoLong(mo));
 }
-function editCLPart(id){const e=DB.cl.particuliers.find(x=>x.id===id);if(!e)return;setVal('cl-part-month',e.month);setVal('cl-part-nb',e.nb);setVal('cl-part-ca',e.ca);setVal('cl-part-n1',e.n1);setVal('cl-part-edit-id',e.id);document.getElementById('cl-part-btn').textContent='✏️ Modifier';showToast('Saisie chargée');}
-function deleteCLPart(id){if(!confirm('Supprimer ?'))return;DB.cl.particuliers=DB.cl.particuliers.filter(e=>e.id!==id);save();renderCarsLand();}
+function editCLPart(id){const e=DB.cl.particuliers.find(x=>x.id===id);if(!e)return;setVal('cl-part-month',e.month);const v=e.ville||'Fès';if(['Fès','Rabat','Meknès'].indexOf(v)>=0){setVal('cl-part-ville',v);setVal('cl-part-ville-custom','');}else{setVal('cl-part-ville','Autre');setVal('cl-part-ville-custom',v);}setVal('cl-part-nb',e.nb);setVal('cl-part-ca',e.ca);setVal('cl-part-n1',e.n1||0);setVal('cl-part-note',e.note||'');setVal('cl-part-edit-id',e.id);document.getElementById('cl-part-btn').textContent='✏️ Modifier';document.getElementById('cl-tab-particuliers').scrollIntoView({behavior:'smooth'});showToast('Saisie chargée');}
+function deleteCLPart(id){if(!confirm('Supprimer cette saisie Particuliers ?'))return;DB.cl.particuliers=DB.cl.particuliers.filter(e=>e.id!==id);save();renderCarsLand();}
+function setCLPartMonthFilter(mo){clPartMonthFilter=mo;renderCLPartHistory();}
+function setCLPartVilleFilter(v){clPartVilleFilter=v;renderCLPartHistory();}
+function onCLPartChange(){
+  const mo=getVal('cl-part-month');const vSel=getVal('cl-part-ville');const vCustom=(getVal('cl-part-ville-custom')||'').trim();
+  const ville=vSel==='Autre'&&vCustom?vCustom:vSel;
+  if(!mo||!ville)return;
+  const n1mo=n1MonthOf(mo);
+  const hist=DB.cl.particuliers.find(e=>e.month===n1mo&&(e.ville||'')===ville);
+  if(hist&&!getVal('cl-part-n1'))setVal('cl-part-n1',hist.ca||0);
+}
 
 function renderCarsLand(){
+  renderCLAssistTab();
+  renderCLLLDTab();
+  renderCLPartTab();
+  renderCLStatsTab();
+  if(document.getElementById('cl-pipe-0'))renderPipeline('cl');
+}
+
+// ─── ASSISTANCE TAB ────────────────────────────────────────────
+function renderCLAssistTab(){
   const m=curMonth(),y=curYear(),w=curWeek();
   const assist=DB.cl.assistance;
   const monthA=assist.filter(e=>getMonth(e.date)===m);
   const weekA=assist.filter(e=>getWeek(e.date)===w&&getYear(e.date)===y);
-  const lldCur=DB.cl.lld.find(e=>e.month===m)||{ca:0,flotte:0,newC:0,resil:0,n1:0};
-  const partCur=DB.cl.particuliers.find(e=>e.month===m)||{ca:0,nb:0,n1:0};
+  const aggLld=aggCLLldMonth(m);const aggPart=aggCLPartMonth(m);
   const caAssist=monthA.reduce((a,b)=>a+b.ca,0);
   const contratsAssist=monthA.reduce((a,b)=>a+b.contrats,0);
-  const totalCA=caAssist+lldCur.ca+partCur.ca;
+  const totalCA=caAssist+aggLld.ca+aggPart.ca;
 
-  // OBJECTIF MENSUEL — progressive
   const objMonth=getVal('obj-cl-month')||curMonth();
   if(!getVal('obj-cl-month'))setVal('obj-cl-month',objMonth);
   setVal('obj-cl-value',getObjectif('cl',objMonth)||'');
   const objValue=getObjectif('cl',objMonth);
-  const caForObj=objMonth===m?totalCA:((assist.filter(e=>getMonth(e.date)===objMonth).reduce((a,b)=>a+b.ca,0))+(DB.cl.lld.find(e=>e.month===objMonth)||{ca:0}).ca+(DB.cl.particuliers.find(e=>e.month===objMonth)||{ca:0}).ca);
+  const aLld=aggCLLldMonth(objMonth),aPart=aggCLPartMonth(objMonth);
+  const caForObj=objMonth===m?totalCA:(assist.filter(e=>getMonth(e.date)===objMonth).reduce((a,b)=>a+b.ca,0)+aLld.ca+aPart.ca);
   const objWrap=document.getElementById('cl-obj-progress');
   if(objWrap)objWrap.innerHTML=progressiveHTML(caForObj,objValue,objMonth);
   const wk=document.getElementById('cl-week-info');
   if(wk)wk.innerHTML='📅 Semaine '+w+' · '+fmtWeekRange();
 
-  // Analyse N-1 Assistance — vue management
   const n1AssistMois=monthA.reduce((a,b)=>a+(b.n1||0),0);
   const n1AssistSem=weekA.reduce((a,b)=>a+(b.n1||0),0);
   const caAssistSem=weekA.reduce((a,b)=>a+b.ca,0);
   const evoAM=n1AssistMois>0?Math.round((caAssist-n1AssistMois)/n1AssistMois*100):0;
   const evoAS=n1AssistSem>0?Math.round((caAssistSem-n1AssistSem)/n1AssistSem*100):0;
-  // Panier moyen (CA / contrats) — KPI management
   const panMois=contratsAssist>0?Math.round(caAssist/contratsAssist):0;
   const dm=daysInMonth(m),dp=Math.min(dayOfMonth(refDate()),dm);
   const projMois=dp>0?Math.round(caAssist*dm/dp):caAssist;
@@ -1473,80 +2227,476 @@ function renderCarsLand(){
   if(byV){const maxV=Math.max(...CL_VILLES.map(v=>monthA.filter(e=>e.ville===v).reduce((a,b)=>a+b.contrats,0)),1);byV.innerHTML=CL_VILLES.map(v=>{const vC=monthA.filter(e=>e.ville===v).reduce((a,b)=>a+b.contrats,0);const vCA=monthA.filter(e=>e.ville===v).reduce((a,b)=>a+b.ca,0);return`<div class="prog-row"><span class="prog-label"><span class="vpill ${CL_VCL[v]}">${v}</span></span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(vC/maxV*100)}%;background:${CL_VC[v]}"></div></div><span class="prog-val">${fmt(vC)} · ${fmt(vCA)}</span></div>`;}).join('');}
 
   renderCLAssistHistory();
+}
 
+// ─── LLD TAB ────────────────────────────────────────────────────
+function renderCLLLDTab(){
+  const m=curMonth();
   const sc={'actif':'var(--green)','en_cours':'var(--yellow)','resilié':'var(--red)'};
   const sl={'actif':'Actif','en_cours':'Renouvellement','resilié':'Résilié'};
+
+  // Liste clients LLD
   const lclEl=document.getElementById('cl-lld-clients-list');
-  if(lclEl)lclEl.innerHTML=DB.cl.lldClients.length?`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Entreprise</th><th>Ville</th><th>Véhicules</th><th>CA/mois</th><th>Début</th><th>Durée</th><th>Statut</th><th>Actions</th></tr></thead><tbody>${DB.cl.lldClients.map(c=>`<tr><td>${c.nom}</td><td><span class="vpill ${CL_VCL[c.ville]||''}">${c.ville}</span></td><td>${fmt(c.nb)}</td><td>${fmt(c.ca)} MAD</td><td>${fmtDate(c.debut)}</td><td>${c.duree?c.duree+' mois':'—'}</td><td><span style="color:${sc[c.statut]||'var(--muted)'}">● ${sl[c.statut]||c.statut}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editLLDClient(${c.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteLLDClient(${c.id})">×</button></div></td></tr>`).join('')}</tbody></table></div>`:'<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucun client LLD — cliquez "+ Ajouter"</div>';
+  if(lclEl)lclEl.innerHTML=DB.cl.lldClients.length?`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Entreprise</th><th>Ville</th><th>Véhicules</th><th>Loyer/mois</th><th>Début</th><th>Durée</th><th>Statut</th><th>Actions</th></tr></thead><tbody>${DB.cl.lldClients.map(c=>`<tr><td>${c.nom}</td><td><span class="vpill ${CL_VCL[c.ville]||''}">${c.ville}</span></td><td>${fmt(c.nb)}</td><td>${fmt(c.ca)} MAD</td><td>${fmtDate(c.debut)}</td><td>${c.duree?c.duree+' mois':'—'}</td><td><span style="color:${sc[c.statut]||'var(--muted)'}">● ${sl[c.statut]||c.statut}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editLLDClient(${c.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteLLDClient(${c.id})">×</button></div></td></tr>`).join('')}</tbody></table></div>`:'<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucun client LLD — cliquez "+ Ajouter"</div>';
 
+  // Dropdown de saisie : clients du catalogue
+  const cliSel=document.getElementById('cl-lld-client');
+  if(cliSel){const cur=cliSel.value;const opts=DB.cl.lldClients.map(c=>`<option value="${c.nom}">${c.nom}${c.ville?' — '+c.ville:''}</option>`).join('');cliSel.innerHTML=opts||'<option value="">— Créez d\'abord un client —</option>';if(cur)cliSel.value=cur;}
+  if(!getVal('cl-lld-month'))setVal('cl-lld-month',m);
+
+  // KPI mois courant
+  const cur=aggCLLldMonth(m);
+  const prev=aggCLLldMonth(prevMonthOf(m));
+  const n1agg=aggCLLldMonth(n1MonthOf(m));
+  const yieldVeh=cur.flotte>0?Math.round(cur.ca/cur.flotte):0;
+  const evoN1=cur.n1>0?Math.round((cur.ca-cur.n1)/cur.n1*100):(n1agg.ca>0?Math.round((cur.ca-n1agg.ca)/n1agg.ca*100):0);
+  const evoM1=prev.ca>0?Math.round((cur.ca-prev.ca)/prev.ca*100):0;
+  const fleetEvo=prev.flotte>0?Math.round((cur.flotte-prev.flotte)/prev.flotte*100):0;
+  // YTD
+  const yr=curYear();
+  const ytdMonths=[];for(let i=1;i<=12;i++){const mo=yr+'-'+String(i).padStart(2,'0');if(mo<=m)ytdMonths.push(mo);}
+  const ytdCA=ytdMonths.reduce((a,mo)=>a+aggCLLldMonth(mo).ca,0);
+  const ytdN1=ytdMonths.reduce((a,mo)=>{const n1m=n1MonthOf(mo);const v=aggCLLldMonth(mo);const n1v=aggCLLldMonth(n1m);return a+(v.n1>0?v.n1:n1v.ca);},0);
+  const ytdEvo=ytdN1>0?Math.round((ytdCA-ytdN1)/ytdN1*100):0;
   const lM=document.getElementById('cl-lld-metrics');
-  if(lM){const evo=lldCur.n1>0?Math.round((lldCur.ca-lldCur.n1)/lldCur.n1*100):0;lM.innerHTML=`<div class="metric"><div class="metric-label">Flotte</div><div class="metric-val" style="color:var(--cl)">${fmt(lldCur.flotte)}</div><div class="metric-sub">véhicules actifs</div></div><div class="metric"><div class="metric-label">CA LLD Mois</div><div class="metric-val">${fmt(lldCur.ca)}</div><div class="metric-sub">MAD</div></div><div class="metric"><div class="metric-label">Nouveaux</div><div class="metric-val" style="color:var(--green)">+${fmt(lldCur.newC)}</div></div><div class="metric"><div class="metric-label">Résiliations</div><div class="metric-val" style="color:var(--red)">-${fmt(lldCur.resil)}</div></div><div class="metric"><div class="metric-label">Évol. N/N-1</div><div class="metric-val" style="color:${evo>=0?'var(--green)':'var(--red)'}">${evo>=0?'+':''}${evo}%</div></div>`;}
+  if(lM)lM.innerHTML=`
+    <div class="metric"><div class="metric-label">CA LLD Mois</div><div class="metric-val" style="color:var(--cl)">${fmt(cur.ca)}</div><div class="metric-sub">MAD · ${fmtMoLong(m)}</div></div>
+    <div class="metric"><div class="metric-label">📊 vs N-1</div><div class="metric-val" style="color:${(cur.n1||n1agg.ca)>0?(evoN1>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${(cur.n1||n1agg.ca)>0?(evoN1>=0?'+':'')+evoN1+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(cur.n1||n1agg.ca)} MAD</div></div>
+    <div class="metric"><div class="metric-label">📊 vs M-1</div><div class="metric-val" style="color:${prev.ca>0?(evoM1>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${prev.ca>0?(evoM1>=0?'+':'')+evoM1+'%':'—'}</div><div class="metric-sub">M-1 : ${fmt(prev.ca)} MAD</div></div>
+    <div class="metric"><div class="metric-label">🚗 Flotte louée</div><div class="metric-val" style="color:var(--cl)">${fmt(cur.flotte)}</div><div class="metric-sub">${prev.flotte>0?(fleetEvo>=0?'+':'')+fleetEvo+'% vs M-1':'véhicules'}</div></div>
+    <div class="metric"><div class="metric-label">💎 Yield/véh.</div><div class="metric-val">${fmt(yieldVeh)}</div><div class="metric-sub">MAD/véh./mois</div></div>
+    <div class="metric"><div class="metric-label">👥 Clients actifs (mois)</div><div class="metric-val">${cur.clients}</div><div class="metric-sub">/${DB.cl.lldClients.filter(c=>c.statut==='actif').length} catalogue</div></div>
+    <div class="metric"><div class="metric-label">📅 Cumul YTD</div><div class="metric-val">${fmt(ytdCA)}</div><div class="metric-sub">MAD · ${ytdN1>0?(ytdEvo>=0?'+':'')+ytdEvo+'% vs N-1':'—'}</div></div>
+    <div class="metric"><div class="metric-label">💰 MRR (loyer récurrent)</div><div class="metric-val" style="color:var(--cl)">${fmt(cur.ca)}</div><div class="metric-sub">MAD/mois récurrents</div></div>`;
+
+  // ALERTES & RECOS
+  const alerts=[];
+  // Concentration risk : un client > 50% du CA
+  if(cur.entries.length){
+    const totals={};cur.entries.forEach(e=>{if(e.client)totals[e.client]=(totals[e.client]||0)+(e.ca||0);});
+    const sorted=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+    if(sorted.length){const topPct=Math.round(sorted[0][1]/cur.ca*100);if(topPct>50)alerts.push({type:'red',ico:'⚖️',title:'Concentration client critique',msg:`<b>${sorted[0][0]}</b> représente <b>${topPct}%</b> du CA LLD du mois — risque de dépendance. Diversifiez le portefeuille pour réduire la fragilité.`});else if(topPct>35)alerts.push({type:'yellow',ico:'⚖️',title:'Concentration client élevée',msg:`<b>${sorted[0][0]}</b> représente <b>${topPct}%</b> du CA LLD. Surveiller, prospecter en parallèle.`});}
+  }
+  // Churn : clients qui étaient actifs M-1 mais pas M
+  if(prev.entries.length){
+    const prevClients=new Set(prev.entries.map(e=>e.client).filter(Boolean));
+    const curClients=new Set(cur.entries.map(e=>e.client).filter(Boolean));
+    const lost=[...prevClients].filter(c=>!curClients.has(c));
+    if(lost.length)alerts.push({type:'red',ico:'🚨',title:'Client(s) potentiellement perdu(s)',msg:`Saisie absente ce mois pour : <b>${lost.join(', ')}</b>. Vérifiez : résiliation, retard de saisie, ou besoin de relance ?`});
+    const gained=[...curClients].filter(c=>!prevClients.has(c));
+    if(gained.length)alerts.push({type:'green',ico:'🎉',title:'Nouveau(x) client(s) ce mois',msg:`Bienvenue à : <b>${gained.join(', ')}</b>. Capitalisez sur cette dynamique commerciale.`});
+  }
+  // Baisse client > 20%
+  cur.entries.forEach(e=>{
+    const pE=prev.entries.find(p=>p.client===e.client);
+    if(pE&&pE.ca>0){const ev=Math.round((e.ca-pE.ca)/pE.ca*100);if(ev<=-20)alerts.push({type:'yellow',ico:'📉',title:'Baisse loyer client : '+e.client,msg:`${ev}% vs M-1 (${fmt(pE.ca)} → ${fmt(e.ca)} MAD). Vérifier : restitution véhicules, négociation tarifaire, ou problème opérationnel.`});}
+  });
+  // Évolution N-1 négative
+  if(cur.n1>0&&evoN1<=-15)alerts.push({type:'red',ico:'⚠️',title:'Recul vs N-1 important',msg:`CA LLD en baisse de <b>${evoN1}%</b> vs N-1. Action : audit du portefeuille, réactivation des prospects dormants, revoir tarification.`});
+  if(!alerts.length)alerts.push({type:'green',ico:'✅',title:'Portefeuille LLD stable',msg:'Aucun signal d\'alerte. Continuez la saisie mensuelle pour des analyses plus fines.'});
+  const alEl=document.getElementById('cl-lld-alerts');
+  if(alEl)alEl.innerHTML=alerts.map(a=>`<div class="alert alert-${a.type}" style="margin-bottom:8px"><strong>${a.ico} ${a.title}</strong><br><span style="font-size:12px">${a.msg}</span></div>`).join('');
+
+  // ÉVOLUTION 12 mois
+  const months12=[];const refD=new Date(refDate()+'T00:00:00');for(let i=11;i>=0;i--){const d=new Date(refD);d.setMonth(d.getMonth()-i);months12.push(d.toISOString().substring(0,7));}
+  const evolEl=document.getElementById('cl-lld-evolution');
+  if(evolEl){
+    const data=months12.map(mo=>({mo,ca:aggCLLldMonth(mo).ca,n1:aggCLLldMonth(mo).n1||aggCLLldMonth(n1MonthOf(mo)).ca}));
+    const maxV=Math.max(...data.map(d=>Math.max(d.ca,d.n1)),1);
+    if(data.every(d=>d.ca===0&&d.n1===0))evolEl.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucune donnée LLD</div>';
+    else evolEl.innerHTML=`<div style="display:flex;align-items:flex-end;gap:10px;height:220px;padding:10px 0;overflow-x:auto">${data.map(d=>{const hCA=Math.round(d.ca/maxV*100);const hN1=Math.round(d.n1/maxV*100);const ev=d.n1>0?Math.round((d.ca-d.n1)/d.n1*100):0;return`<div style="display:flex;flex-direction:column;align-items:center;min-width:56px"><div style="font-size:10px;color:${ev>=0?'var(--green)':'var(--red)'};font-weight:600">${d.n1>0?(ev>=0?'+':'')+ev+'%':''}</div><div style="display:flex;gap:3px;align-items:flex-end;height:170px"><div style="width:18px;height:${hCA}%;background:var(--cl);border-radius:3px 3px 0 0" title="N: ${fmt(d.ca)}"></div><div style="width:18px;height:${hN1}%;background:rgba(255,255,255,.25);border-radius:3px 3px 0 0" title="N-1: ${fmt(d.n1)}"></div></div><div style="font-size:11px;color:var(--muted);margin-top:4px">${fmtMoShort(d.mo)}</div></div>`;}).join('')}</div><div style="display:flex;gap:12px;font-size:11px;color:var(--muted);justify-content:center;margin-top:8px"><span>🟢 N (CA mois)</span><span>⚪ N-1</span></div>`;
+  }
+
+  // TOP CLIENTS période (12 derniers mois)
+  const topEl=document.getElementById('cl-lld-top-clients');
+  if(topEl){
+    const totals={};DB.cl.lld.filter(e=>months12.indexOf(e.month)>=0).forEach(e=>{if(e.client){totals[e.client]=totals[e.client]||{ca:0,nb:0,months:0};totals[e.client].ca+=(e.ca||0);totals[e.client].nb=Math.max(totals[e.client].nb,e.flotte||e.nb||0);totals[e.client].months+=1;}});
+    const sorted=Object.entries(totals).sort((a,b)=>b[1].ca-a[1].ca).slice(0,8);
+    if(!sorted.length)topEl.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune saisie LLD</div>';
+    else{const max=sorted[0][1].ca;topEl.innerHTML=sorted.map(([n,v])=>`<div class="prog-row"><span class="prog-label">${n}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v.ca/max*100)}%;background:var(--cl)"></div></div><span class="prog-val">${fmt(v.ca)} · ${v.nb} véh.</span></div>`).join('');}
+  }
+
+  // MIX & CONCENTRATION
+  const mixEl=document.getElementById('cl-lld-mix');
+  if(mixEl){
+    const totalsM={};cur.entries.forEach(e=>{if(e.client)totalsM[e.client]=(totalsM[e.client]||0)+(e.ca||0);});
+    const sorted=Object.entries(totalsM).sort((a,b)=>b[1]-a[1]);
+    const tot=cur.ca||1;
+    // HHI (indice Herfindahl)
+    const hhi=Math.round(sorted.reduce((a,[,v])=>a+Math.pow(v/tot*100,2),0));
+    const hhiTxt=hhi>2500?'Très concentré':hhi>1500?'Modérément concentré':'Diversifié';
+    const hhiCol=hhi>2500?'var(--red)':hhi>1500?'var(--yellow)':'var(--green)';
+    if(!sorted.length)mixEl.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune saisie ce mois</div>';
+    else mixEl.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:6px">HHI : <b style="color:${hhiCol}">${hhi}</b> · ${hhiTxt}</div>`+sorted.slice(0,6).map(([n,v])=>{const pct=Math.round(v/tot*100);return`<div class="prog-row"><span class="prog-label">${n}</span><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:var(--cl)"></div></div><span class="prog-val">${pct}%</span></div>`;}).join('');
+  }
+
+  // FILTRES historique
+  const monthTabs=document.getElementById('cl-lld-month-tabs');
+  if(monthTabs){
+    const months=[...new Set(DB.cl.lld.map(e=>e.month).filter(Boolean))].sort().reverse().slice(0,12);
+    const all=`<button class="btn btn-sm ${clLldMonthFilter==='all'?'btn-primary':''}" onclick="setCLLLDMonthFilter('all')">Tous</button>`;
+    monthTabs.innerHTML=all+months.map(mo=>{const ca=aggCLLldMonth(mo).ca;return`<button class="btn btn-sm ${clLldMonthFilter===mo?'btn-primary':''}" onclick="setCLLLDMonthFilter('${mo}')" title="${mo} · ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+  }
+  const cliTabs=document.getElementById('cl-lld-client-tabs');
+  if(cliTabs){
+    const clients=[...new Set(DB.cl.lld.map(e=>e.client).filter(Boolean))];
+    const all=`<button class="btn btn-sm ${clLldClientFilter==='all'?'btn-primary':''}" onclick="setCLLLDClientFilter('all')">Tous</button>`;
+    cliTabs.innerHTML=all+clients.map(c=>`<button class="btn btn-sm ${clLldClientFilter===c?'btn-primary':''}" onclick="setCLLLDClientFilter('${c.replace(/'/g,"\\'")}')">👤 ${c}</button>`).join('');
+  }
+
+  renderCLLLDHistory();
+}
+function renderCLLLDHistory(){
+  let entries=DB.cl.lld.slice();
+  if(clLldMonthFilter!=='all')entries=entries.filter(e=>e.month===clLldMonthFilter);
+  if(clLldClientFilter!=='all')entries=entries.filter(e=>e.client===clLldClientFilter);
+  const sumEl=document.getElementById('cl-lld-history-summary');
+  if(sumEl){
+    const fCa=entries.reduce((a,b)=>a+(b.ca||0),0);
+    const fNb=entries.reduce((a,b)=>a+(b.flotte||b.nb||0),0);
+    const fN1=entries.reduce((a,b)=>a+(b.n1||0),0);
+    const evo=fN1>0?Math.round((fCa-fN1)/fN1*100):0;
+    const moisLabel=clLldMonthFilter==='all'?'Tous mois':fmtMoLong(clLldMonthFilter);
+    const cliLabel=clLldClientFilter==='all'?'Tous clients':clLldClientFilter;
+    sumEl.innerHTML=entries.length?`<div class="card" style="padding:10px;background:rgba(0,200,150,0.05);border-left:3px solid var(--cl)">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">📊 Synthèse · ${moisLabel} · ${cliLabel} · ${entries.length} saisie(s)</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px">
+        <div><b>CA LLD :</b> <span style="color:var(--cl);font-weight:700">${fmt(fCa)} MAD</span></div>
+        <div><b>Véhicules :</b> ${fmt(fNb)}</div>
+        <div><b>Yield/véh. :</b> ${fNb>0?fmt(Math.round(fCa/fNb)):'—'} MAD</div>
+        ${fN1>0?`<div><b>vs N-1 :</b> <span style="color:${evo>=0?'var(--green)':'var(--red)'};font-weight:700">${evo>=0?'+':''}${evo}%</span> (${fmt(fN1)} MAD)</div>`:''}
+      </div></div>`:'';
+  }
   const lldH=document.getElementById('cl-lld-history');
-  if(lldH)lldH.innerHTML=DB.cl.lld.slice(0,12).map(e=>{const evo=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):0;return`<tr><td>${e.month}</td><td>${fmt(e.flotte)}</td><td>${fmt(e.ca)}</td><td style="color:var(--green)">+${fmt(e.newC)}</td><td style="color:var(--red)">-${fmt(e.resil)}</td><td>${fmt(e.n1)}</td><td style="color:${evo>=0?'var(--green)':'var(--red)'}">${evo>=0?'+':''}${evo}%</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLLLD(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLLLD(${e.id})">×</button></div></td></tr>`;}).join('');
+  if(lldH){
+    lldH.innerHTML=entries.slice(0,80).map(e=>{
+      const evN1=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):null;
+      const prevMo=prevMonthOf(e.month);
+      const prevE=DB.cl.lld.find(x=>x.month===prevMo&&x.client===e.client);
+      const evM1=prevE&&prevE.ca>0?Math.round((e.ca-prevE.ca)/prevE.ca*100):null;
+      return`<tr><td>${fmtMoShort(e.month)}</td><td>${e.client||'—'}</td><td>${fmt(e.flotte||e.nb||0)}</td><td>${fmt(e.ca)}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${evN1==null?'var(--muted)':evN1>=0?'var(--green)':'var(--red)'};font-weight:600">${evN1==null?'—':(evN1>=0?'+':'')+evN1+'%'}</td><td style="color:${evM1==null?'var(--muted)':evM1>=0?'var(--green)':'var(--red)'};font-weight:600">${evM1==null?'—':(evM1>=0?'+':'')+evM1+'%'}</td><td style="color:var(--muted);font-size:11px">${e.note||'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLLLD(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLLLD(${e.id})">×</button></div></td></tr>`;
+    }).join('')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie LLD pour ce filtre</td></tr>';
+  }
+}
 
+// ─── PARTICULIERS TAB ───────────────────────────────────────────
+function renderCLPartTab(){
+  const m=curMonth();
+  if(!getVal('cl-part-month'))setVal('cl-part-month',m);
+  const cur=aggCLPartMonth(m);
+  const prev=aggCLPartMonth(prevMonthOf(m));
+  const n1agg=aggCLPartMonth(n1MonthOf(m));
+  const evoN1=cur.n1>0?Math.round((cur.ca-cur.n1)/cur.n1*100):(n1agg.ca>0?Math.round((cur.ca-n1agg.ca)/n1agg.ca*100):0);
+  const evoM1=prev.ca>0?Math.round((cur.ca-prev.ca)/prev.ca*100):0;
+  const panier=cur.nb>0?Math.round(cur.ca/cur.nb):0;
+  const panierN1=n1agg.nb>0?Math.round(n1agg.ca/n1agg.nb):0;
+  const panierEvo=panierN1>0?Math.round((panier-panierN1)/panierN1*100):0;
+  const yr=curYear();
+  const ytdMonths=[];for(let i=1;i<=12;i++){const mo=yr+'-'+String(i).padStart(2,'0');if(mo<=m)ytdMonths.push(mo);}
+  const ytdCA=ytdMonths.reduce((a,mo)=>a+aggCLPartMonth(mo).ca,0);
+  const ytdNb=ytdMonths.reduce((a,mo)=>a+aggCLPartMonth(mo).nb,0);
+  const ytdN1=ytdMonths.reduce((a,mo)=>{const v=aggCLPartMonth(mo);const n1v=aggCLPartMonth(n1MonthOf(mo));return a+(v.n1>0?v.n1:n1v.ca);},0);
+  const ytdEvo=ytdN1>0?Math.round((ytdCA-ytdN1)/ytdN1*100):0;
   const pM=document.getElementById('cl-part-metrics');
-  if(pM){const evo=partCur.n1>0?Math.round((partCur.ca-partCur.n1)/partCur.n1*100):0;pM.innerHTML=`<div class="metric"><div class="metric-label">Clients</div><div class="metric-val" style="color:var(--cl)">${fmt(partCur.nb)}</div></div><div class="metric"><div class="metric-label">CA Mois</div><div class="metric-val">${fmt(partCur.ca)}</div><div class="metric-sub">MAD</div></div><div class="metric"><div class="metric-label">Évol. N/N-1</div><div class="metric-val" style="color:${evo>=0?'var(--green)':'var(--red)'}">${evo>=0?'+':''}${evo}%</div></div>`;}
-  const partH=document.getElementById('cl-part-history');
-  if(partH)partH.innerHTML=DB.cl.particuliers.slice(0,12).map(e=>{const evo=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):0;return`<tr><td>${e.month}</td><td>${fmt(e.nb)}</td><td>${fmt(e.ca)}</td><td>${fmt(e.n1)}</td><td style="color:${evo>=0?'var(--green)':'var(--red)'}">${evo>=0?'+':''}${evo}%</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLPart(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLPart(${e.id})">×</button></div></td></tr>`;}).join('');
+  if(pM)pM.innerHTML=`
+    <div class="metric"><div class="metric-label">CA Mois</div><div class="metric-val" style="color:var(--cl)">${fmt(cur.ca)}</div><div class="metric-sub">MAD · ${fmtMoLong(m)}</div></div>
+    <div class="metric"><div class="metric-label">📊 vs N-1</div><div class="metric-val" style="color:${(cur.n1||n1agg.ca)>0?(evoN1>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${(cur.n1||n1agg.ca)>0?(evoN1>=0?'+':'')+evoN1+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(cur.n1||n1agg.ca)} MAD</div></div>
+    <div class="metric"><div class="metric-label">📊 vs M-1</div><div class="metric-val" style="color:${prev.ca>0?(evoM1>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${prev.ca>0?(evoM1>=0?'+':'')+evoM1+'%':'—'}</div><div class="metric-sub">M-1 : ${fmt(prev.ca)} MAD</div></div>
+    <div class="metric"><div class="metric-label">👥 Nb clients</div><div class="metric-val" style="color:var(--cl)">${fmt(cur.nb)}</div><div class="metric-sub">${prev.nb>0?(cur.nb-prev.nb>=0?'+':'')+(cur.nb-prev.nb)+' vs M-1':'clients'}</div></div>
+    <div class="metric"><div class="metric-label">🛒 Panier moyen</div><div class="metric-val">${fmt(panier)}</div><div class="metric-sub">${panierN1>0?(panierEvo>=0?'+':'')+panierEvo+'% vs N-1':'MAD/client'}</div></div>
+    <div class="metric"><div class="metric-label">🏙️ Villes actives</div><div class="metric-val">${cur.villes}</div><div class="metric-sub">distinctes ce mois</div></div>
+    <div class="metric"><div class="metric-label">📅 Cumul YTD</div><div class="metric-val">${fmt(ytdCA)}</div><div class="metric-sub">${fmt(ytdNb)} clients · ${ytdN1>0?(ytdEvo>=0?'+':'')+ytdEvo+'% vs N-1':''}</div></div>
+    <div class="metric"><div class="metric-label">🎯 Conversion (proxy)</div><div class="metric-val">${cur.nb>0?fmt(Math.round(cur.ca/cur.nb)):'—'}</div><div class="metric-sub">CA par client</div></div>`;
 
-  // STATS — avec filtres (month / ville / client / segment)
+  // ALERTES
+  const alerts=[];
+  if(cur.n1>0&&evoN1<=-15)alerts.push({type:'red',ico:'⚠️',title:'Recul vs N-1',msg:`CA Particuliers en baisse de <b>${evoN1}%</b> vs même mois N-1 (${fmt(cur.n1)} MAD). Action : revoir l'effort commercial, vérifier la concurrence locale, plan de relance ciblé.`});
+  if(prev.ca>0&&evoM1<=-15)alerts.push({type:'yellow',ico:'📉',title:'Baisse vs M-1',msg:`CA en recul de <b>${evoM1}%</b> par rapport au mois précédent. Vérifier la saisonnalité ou identifier la cause.`});
+  if(panierN1>0&&panierEvo<=-10)alerts.push({type:'yellow',ico:'🛒',title:'Panier moyen en baisse',msg:`Panier moyen ${fmt(panier)} MAD vs ${fmt(panierN1)} MAD N-1 (<b>${panierEvo}%</b>). Indique soit un mix produit dégradé, soit une pression tarifaire — analysez par ville.`});
+  // Top ville en baisse
+  cur.entries.forEach(e=>{
+    const pE=prev.entries.find(p=>(p.ville||'')===(e.ville||''));
+    if(pE&&pE.ca>0){const ev=Math.round((e.ca-pE.ca)/pE.ca*100);if(ev<=-25)alerts.push({type:'yellow',ico:'🏙️',title:'Recul ville : '+e.ville,msg:`CA ${e.ville} : ${fmt(pE.ca)} → ${fmt(e.ca)} MAD (${ev}%). Vérifier l'équipe locale, la concurrence, ou la saisonnalité.`});}
+  });
+  // Croissance forte
+  if(cur.n1>0&&evoN1>=20)alerts.push({type:'green',ico:'🚀',title:'Croissance forte vs N-1',msg:`+${evoN1}% vs N-1. Profitez de cette dynamique : reconduisez les actions gagnantes, anticipez la capacité.`});
+  // Concentration ville
+  if(cur.entries.length){
+    const sorted=cur.entries.slice().sort((a,b)=>b.ca-a.ca);
+    if(sorted.length){const topPct=Math.round(sorted[0].ca/cur.ca*100);if(topPct>60)alerts.push({type:'yellow',ico:'⚖️',title:'Concentration ville',msg:`<b>${sorted[0].ville}</b> représente ${topPct}% du CA Particuliers. Diversifiez la prospection sur les autres villes.`});}
+  }
+  if(!alerts.length)alerts.push({type:'green',ico:'✅',title:'Activité Particuliers stable',msg:'Aucun signal d\'alerte. Maintenez la rigueur de saisie et continuez à suivre les KPIs.'});
+  const alEl=document.getElementById('cl-part-alerts');
+  if(alEl)alEl.innerHTML=alerts.map(a=>`<div class="alert alert-${a.type}" style="margin-bottom:8px"><strong>${a.ico} ${a.title}</strong><br><span style="font-size:12px">${a.msg}</span></div>`).join('');
+
+  // ÉVOLUTION 12 mois
+  const months12=[];const refD=new Date(refDate()+'T00:00:00');for(let i=11;i>=0;i--){const d=new Date(refD);d.setMonth(d.getMonth()-i);months12.push(d.toISOString().substring(0,7));}
+  const evolEl=document.getElementById('cl-part-evolution');
+  if(evolEl){
+    const data=months12.map(mo=>({mo,ca:aggCLPartMonth(mo).ca,n1:aggCLPartMonth(mo).n1||aggCLPartMonth(n1MonthOf(mo)).ca,nb:aggCLPartMonth(mo).nb}));
+    const maxV=Math.max(...data.map(d=>Math.max(d.ca,d.n1)),1);
+    if(data.every(d=>d.ca===0&&d.n1===0))evolEl.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucune donnée Particuliers</div>';
+    else evolEl.innerHTML=`<div style="display:flex;align-items:flex-end;gap:10px;height:220px;padding:10px 0;overflow-x:auto">${data.map(d=>{const hCA=Math.round(d.ca/maxV*100);const hN1=Math.round(d.n1/maxV*100);const ev=d.n1>0?Math.round((d.ca-d.n1)/d.n1*100):0;return`<div style="display:flex;flex-direction:column;align-items:center;min-width:56px"><div style="font-size:10px;color:${ev>=0?'var(--green)':'var(--red)'};font-weight:600">${d.n1>0?(ev>=0?'+':'')+ev+'%':''}</div><div style="display:flex;gap:3px;align-items:flex-end;height:160px"><div style="width:18px;height:${hCA}%;background:var(--cl);border-radius:3px 3px 0 0" title="N: ${fmt(d.ca)}"></div><div style="width:18px;height:${hN1}%;background:rgba(255,255,255,.25);border-radius:3px 3px 0 0" title="N-1: ${fmt(d.n1)}"></div></div><div style="font-size:11px;color:var(--muted);margin-top:4px">${fmtMoShort(d.mo)}</div><div style="font-size:9px;color:var(--muted)">${d.nb}cl.</div></div>`;}).join('')}</div><div style="display:flex;gap:12px;font-size:11px;color:var(--muted);justify-content:center;margin-top:8px"><span>🟢 N (CA mois)</span><span>⚪ N-1</span></div>`;
+  }
+
+  // PERFORMANCE PAR VILLE (mois)
+  const byVilleEl=document.getElementById('cl-part-by-ville');
+  if(byVilleEl){
+    const villes=[...new Set([...cur.entries.map(e=>e.ville),...prev.entries.map(e=>e.ville),...CL_VILLES])].filter(Boolean);
+    const data=villes.map(v=>{const c=cur.entries.find(e=>e.ville===v)||{ca:0,nb:0,n1:0};const p=prev.entries.find(e=>e.ville===v)||{ca:0,nb:0};const ev=p.ca>0?Math.round((c.ca-p.ca)/p.ca*100):0;return{v,ca:c.ca,nb:c.nb,n1:c.n1,evM1:p.ca>0?ev:null};});
+    const max=Math.max(...data.map(d=>d.ca),1);
+    if(data.every(d=>d.ca===0))byVilleEl.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune donnée ce mois</div>';
+    else byVilleEl.innerHTML=data.map(d=>`<div class="prog-row"><span class="prog-label"><span class="vpill ${CL_VCL[d.v]||''}">${d.v}</span></span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(d.ca/max*100)}%;background:${CL_VC[d.v]||'var(--cl)'}"></div></div><span class="prog-val">${fmt(d.ca)} · ${d.nb}cl. ${d.evM1!=null?'<span style="color:'+(d.evM1>=0?'var(--green)':'var(--red)')+';font-size:10px">'+(d.evM1>=0?'+':'')+d.evM1+'%</span>':''}</span></div>`).join('');
+  }
+
+  // MIX & COMPARATIF N-1
+  const mixEl=document.getElementById('cl-part-mix');
+  if(mixEl){
+    const sorted=cur.entries.slice().sort((a,b)=>b.ca-a.ca);
+    const tot=cur.ca||1;
+    if(!sorted.length)mixEl.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune saisie ce mois</div>';
+    else mixEl.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:6px">Répartition CA par ville (mois courant)</div>`+sorted.map(e=>{const pct=Math.round(e.ca/tot*100);const evN1=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):null;return`<div class="prog-row"><span class="prog-label"><span class="vpill ${CL_VCL[e.ville]||''}">${e.ville}</span></span><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${CL_VC[e.ville]||'var(--cl)'}"></div></div><span class="prog-val">${pct}% ${evN1!=null?'· <span style="color:'+(evN1>=0?'var(--green)':'var(--red)')+';font-size:10px">'+(evN1>=0?'+':'')+evN1+'% N-1</span>':''}</span></div>`;}).join('');
+  }
+
+  // FILTRES
+  const monthTabs=document.getElementById('cl-part-month-tabs');
+  if(monthTabs){
+    const months=[...new Set(DB.cl.particuliers.map(e=>e.month).filter(Boolean))].sort().reverse().slice(0,12);
+    const all=`<button class="btn btn-sm ${clPartMonthFilter==='all'?'btn-primary':''}" onclick="setCLPartMonthFilter('all')">Tous</button>`;
+    monthTabs.innerHTML=all+months.map(mo=>{const ca=aggCLPartMonth(mo).ca;return`<button class="btn btn-sm ${clPartMonthFilter===mo?'btn-primary':''}" onclick="setCLPartMonthFilter('${mo}')" title="${mo} · ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+  }
+  const villeTabs=document.getElementById('cl-part-ville-tabs');
+  if(villeTabs){
+    const villes=[...new Set(DB.cl.particuliers.map(e=>e.ville).filter(Boolean))];
+    const all=`<button class="btn btn-sm ${clPartVilleFilter==='all'?'btn-primary':''}" onclick="setCLPartVilleFilter('all')">Toutes</button>`;
+    villeTabs.innerHTML=all+villes.map(v=>`<button class="btn btn-sm ${clPartVilleFilter===v?'btn-primary':''}" onclick="setCLPartVilleFilter('${v.replace(/'/g,"\\'")}')"><span class="vpill ${CL_VCL[v]||''}">${v}</span></button>`).join('');
+  }
+
+  renderCLPartHistory();
+}
+function renderCLPartHistory(){
+  let entries=DB.cl.particuliers.slice();
+  if(clPartMonthFilter!=='all')entries=entries.filter(e=>e.month===clPartMonthFilter);
+  if(clPartVilleFilter!=='all')entries=entries.filter(e=>(e.ville||'')===clPartVilleFilter);
+  const sumEl=document.getElementById('cl-part-history-summary');
+  if(sumEl){
+    const fCa=entries.reduce((a,b)=>a+(b.ca||0),0);
+    const fNb=entries.reduce((a,b)=>a+(b.nb||0),0);
+    const fN1=entries.reduce((a,b)=>a+(b.n1||0),0);
+    const evo=fN1>0?Math.round((fCa-fN1)/fN1*100):0;
+    const moisLabel=clPartMonthFilter==='all'?'Tous mois':fmtMoLong(clPartMonthFilter);
+    const villeLabel=clPartVilleFilter==='all'?'Toutes villes':clPartVilleFilter;
+    sumEl.innerHTML=entries.length?`<div class="card" style="padding:10px;background:rgba(0,200,150,0.05);border-left:3px solid var(--cl)">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">📊 Synthèse · ${moisLabel} · ${villeLabel} · ${entries.length} saisie(s)</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px">
+        <div><b>CA :</b> <span style="color:var(--cl);font-weight:700">${fmt(fCa)} MAD</span></div>
+        <div><b>Clients :</b> ${fmt(fNb)}</div>
+        <div><b>Panier moyen :</b> ${fNb>0?fmt(Math.round(fCa/fNb)):'—'} MAD</div>
+        ${fN1>0?`<div><b>vs N-1 :</b> <span style="color:${evo>=0?'var(--green)':'var(--red)'};font-weight:700">${evo>=0?'+':''}${evo}%</span> (${fmt(fN1)} MAD)</div>`:''}
+      </div></div>`:'';
+  }
+  const partH=document.getElementById('cl-part-history');
+  if(partH){
+    partH.innerHTML=entries.slice(0,80).map(e=>{
+      const evN1=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):null;
+      const panier=e.nb>0?Math.round(e.ca/e.nb):0;
+      return`<tr><td>${fmtMoShort(e.month)}</td><td><span class="vpill ${CL_VCL[e.ville]||''}">${e.ville||'—'}</span></td><td>${fmt(e.nb)}</td><td>${fmt(e.ca)}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${evN1==null?'var(--muted)':evN1>=0?'var(--green)':'var(--red)'};font-weight:600">${evN1==null?'—':(evN1>=0?'+':'')+evN1+'%'}</td><td>${fmt(panier)}</td><td style="color:var(--muted);font-size:11px">${e.note||'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLPart(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLPart(${e.id})">×</button></div></td></tr>`;
+    }).join('')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie pour ce filtre</td></tr>';
+  }
+}
+
+// ─── STATS TAB (refonte management) ────────────────────────────
+function renderCLStatsTab(){
   if(!clStats.month)clStats.month=curMonth();
   const sMo=clStats.month;
   const sVille=clStats.ville;const sClient=clStats.client;const sSeg=clStats.segment;
+  const assist=DB.cl.assistance;
+
+  // Bandeau période globale (cohérence avec filtre global)
+  const r=getRange();
+  const labelEl=document.getElementById('cl-stats-period-label');if(labelEl)labelEl.textContent=r.label;
+  const infoEl=document.getElementById('cl-stats-period-info');if(infoEl)infoEl.textContent='Du '+fmtDate(r.from)+' au '+fmtDate(r.to);
+
   const fMonthA=assist.filter(e=>getMonth(e.date)===sMo&&(sVille==='all'||e.ville===sVille)&&(sClient==='all'||e.client===sClient));
-  const fLld=DB.cl.lld.find(e=>e.month===sMo)||{ca:0,flotte:0,newC:0,resil:0,n1:0};
-  const fPart=DB.cl.particuliers.find(e=>e.month===sMo)||{ca:0,nb:0,n1:0};
+  const aLld=aggCLLldMonth(sMo);const aPart=aggCLPartMonth(sMo);
+  const fLldEntries=sClient==='all'?aLld.entries:aLld.entries.filter(e=>e.client===sClient);
+  const fPartEntries=sVille==='all'?aPart.entries:aPart.entries.filter(e=>(e.ville||'')===sVille);
+  const fLld={ca:fLldEntries.reduce((a,b)=>a+(b.ca||0),0),n1:fLldEntries.reduce((a,b)=>a+(b.n1||0),0),flotte:fLldEntries.reduce((a,b)=>a+(b.flotte||b.nb||0),0)};
+  const fPart={ca:fPartEntries.reduce((a,b)=>a+(b.ca||0),0),n1:fPartEntries.reduce((a,b)=>a+(b.n1||0),0),nb:fPartEntries.reduce((a,b)=>a+(b.nb||0),0)};
   const fCaAssist=fMonthA.reduce((a,b)=>a+b.ca,0);
   const fContratsAssist=fMonthA.reduce((a,b)=>a+b.contrats,0);
   const segAssistActive=(sSeg==='all'||sSeg==='Assistance');
-  const segLldActive=(sSeg==='all'||sSeg==='LLD')&&sClient==='all'&&sVille==='all';
-  const segPartActive=(sSeg==='all'||sSeg==='Particuliers')&&sClient==='all'&&sVille==='all';
+  const segLldActive=(sSeg==='all'||sSeg==='LLD');
+  const segPartActive=(sSeg==='all'||sSeg==='Particuliers');
   const fAssistCA=segAssistActive?fCaAssist:0;
   const fLldCA=segLldActive?fLld.ca:0;
   const fPartCA=segPartActive?fPart.ca:0;
   const fTotal=fAssistCA+fLldCA+fPartCA;
 
   const fInfoEl=document.getElementById('cl-stats-filter-info');
-  if(fInfoEl){const parts=['📆 '+sMo];if(sVille!=='all')parts.push('🏙️ '+sVille);if(sClient!=='all')parts.push('👤 '+sClient);if(sSeg!=='all')parts.push('📊 '+sSeg);parts.push(fMonthA.length+' saisie(s) Assistance filtrée(s)');fInfoEl.textContent=parts.join(' · ');}
+  if(fInfoEl){const parts=['📆 '+fmtMoLong(sMo)];if(sVille!=='all')parts.push('🏙️ '+sVille);if(sClient!=='all')parts.push('👤 '+sClient);if(sSeg!=='all')parts.push('📊 '+sSeg);fInfoEl.textContent=parts.join(' · ');}
   const sMoEl=document.getElementById('cl-stats-month');if(sMoEl&&!sMoEl.value)sMoEl.value=sMo;
 
-  // N-1 et Objectif sur période filtrée
   const fN1Assist=segAssistActive?fMonthA.reduce((a,b)=>a+(b.n1||0),0):0;
-  const fN1Lld=segLldActive?(fLld.n1||0):0;
-  const fN1Part=segPartActive?(fPart.n1||0):0;
+  const fN1Lld=segLldActive?fLld.n1:0;
+  const fN1Part=segPartActive?fPart.n1:0;
   const fN1Total=fN1Assist+fN1Lld+fN1Part;
   const fEvoN1=fN1Total>0?Math.round((fTotal-fN1Total)/fN1Total*100):0;
   const fObj=getObjectif('cl',sMo);
   const fObjPct=fObj>0?Math.round(fTotal/fObj*100):0;
   const fGap=fObj-fTotal;
-  // Performance commerciale (panier moyen filtré)
   const fPanier=fContratsAssist>0?Math.round(fCaAssist/fContratsAssist):0;
+
+  // M-1 comparatif (mois précédent total)
+  const prevMo=prevMonthOf(sMo);
+  const prevTotal=assist.filter(e=>getMonth(e.date)===prevMo).reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(prevMo).ca+aggCLPartMonth(prevMo).ca;
+  const fEvoM1=prevTotal>0?Math.round((fTotal-prevTotal)/prevTotal*100):0;
+
+  // SCORE SANTÉ
+  let healthScore=50;const factors=[];
+  if(fObj>0){const objImpact=Math.min(30,Math.round((fObjPct-70)/2));healthScore+=objImpact;factors.push({label:'Atteinte objectif',value:fObjPct+'%',impact:objImpact});}
+  if(fN1Total>0){const n1Impact=Math.max(-25,Math.min(25,fEvoN1));healthScore+=n1Impact;factors.push({label:'Évolution N-1',value:(fEvoN1>=0?'+':'')+fEvoN1+'%',impact:n1Impact});}
+  if(prevTotal>0){const m1Impact=Math.max(-15,Math.min(15,Math.round(fEvoM1/2)));healthScore+=m1Impact;factors.push({label:'Évolution M-1',value:(fEvoM1>=0?'+':'')+fEvoM1+'%',impact:m1Impact});}
+  // Diversification mix
+  const mixVar=[fAssistCA,fLldCA,fPartCA].filter(v=>v>0).length;
+  const divImpact=mixVar===3?10:mixVar===2?5:-5;healthScore+=divImpact;factors.push({label:'Diversification segments',value:mixVar+'/3 actifs',impact:divImpact});
+  healthScore=Math.max(0,Math.min(100,healthScore));
+  const hCol=healthScore>=75?'var(--green)':healthScore>=50?'var(--yellow)':'var(--red)';
+  const hLbl=healthScore>=75?'Excellent':healthScore>=60?'Bon':healthScore>=40?'À surveiller':'Critique';
+  const hEl=document.getElementById('cl-stats-health');
+  if(hEl)hEl.innerHTML=`<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div style="text-align:center;min-width:120px"><div style="font-size:42px;font-weight:800;color:${hCol};line-height:1">${healthScore}</div><div style="font-size:11px;color:var(--muted)">/ 100</div><div style="font-size:13px;font-weight:600;color:${hCol};margin-top:4px">${hLbl}</div></div><div style="flex:1;min-width:240px">${factors.map(f=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)"><span>${f.label}</span><span><b>${f.value}</b> <span style="color:${f.impact>=0?'var(--green)':'var(--red)'};margin-left:6px">${f.impact>=0?'+':''}${f.impact}pts</span></span></div>`).join('')}</div></div>`;
+
+  // KPI HEAD
   const sK=document.getElementById('cl-stats-kpi');
   if(sK)sK.innerHTML=`
-    <div class="metric"><div class="metric-label">CA Total (filtré)</div><div class="metric-val" style="color:var(--cl)">${fmt(fTotal)}</div><div class="metric-sub">MAD — ${sMo}</div></div>
+    <div class="metric"><div class="metric-label">CA Total (filtré)</div><div class="metric-val" style="color:var(--cl)">${fmt(fTotal)}</div><div class="metric-sub">MAD — ${fmtMoLong(sMo)}</div></div>
     <div class="metric"><div class="metric-label">🎯 vs Objectif</div><div class="metric-val" style="color:${fObjPct>=100?'var(--green)':fObjPct>=70?'var(--yellow)':'var(--red)'}">${fObj>0?fObjPct+'%':'—'}</div><div class="metric-sub">${fObj>0?(fGap>=0?'Reste '+fmt(fGap):'+'+fmt(-fGap)+' vs obj.'):'Objectif non défini'}</div></div>
     <div class="metric"><div class="metric-label">📊 vs N-1</div><div class="metric-val" style="color:${fN1Total>0?(fEvoN1>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${fN1Total>0?(fEvoN1>=0?'+':'')+fEvoN1+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(fN1Total)} MAD</div></div>
-    <div class="metric"><div class="metric-label">🛒 Panier moyen</div><div class="metric-val">${fmt(fPanier)}</div><div class="metric-sub">MAD/contrat</div></div>
-    <div class="metric"><div class="metric-label">Clients LLD actifs</div><div class="metric-val">${DB.cl.lldClients.filter(c=>c.statut==='actif'&&(sVille==='all'||c.ville===sVille)).length}</div><div class="metric-sub">entreprises${sVille!=='all'?' · '+sVille:''}</div></div>
-    <div class="metric"><div class="metric-label">CA Assistance</div><div class="metric-val">${fmt(fAssistCA)}</div><div class="metric-sub">${fmt(fContratsAssist)} contrats</div></div>
-    <div class="metric"><div class="metric-label">CA LLD</div><div class="metric-val">${fmt(fLldCA)}</div><div class="metric-sub">${fmt(fLld.flotte)} véh.</div></div>
-    <div class="metric"><div class="metric-label">CA Particuliers</div><div class="metric-val">${fmt(fPartCA)}</div><div class="metric-sub">${fmt(fPart.nb)} clients</div></div>`;
+    <div class="metric"><div class="metric-label">📊 vs M-1</div><div class="metric-val" style="color:${prevTotal>0?(fEvoM1>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${prevTotal>0?(fEvoM1>=0?'+':'')+fEvoM1+'%':'—'}</div><div class="metric-sub">M-1 : ${fmt(prevTotal)} MAD</div></div>
+    <div class="metric"><div class="metric-label">🛒 Panier Assistance</div><div class="metric-val">${fmt(fPanier)}</div><div class="metric-sub">MAD/contrat</div></div>
+    <div class="metric"><div class="metric-label">💎 Yield/véh. LLD</div><div class="metric-val">${fLld.flotte>0?fmt(Math.round(fLld.ca/fLld.flotte)):'—'}</div><div class="metric-sub">MAD/véh./mois</div></div>
+    <div class="metric"><div class="metric-label">👥 Panier Particuliers</div><div class="metric-val">${fPart.nb>0?fmt(Math.round(fPart.ca/fPart.nb)):'—'}</div><div class="metric-sub">MAD/client</div></div>
+    <div class="metric"><div class="metric-label">Clients LLD actifs</div><div class="metric-val">${DB.cl.lldClients.filter(c=>c.statut==='actif'&&(sVille==='all'||c.ville===sVille)).length}</div><div class="metric-sub">entreprises${sVille!=='all'?' · '+sVille:''}</div></div>`;
 
+  // YTD
+  const yr=sMo.substring(0,4);
+  const ytdMonths=[];for(let i=1;i<=12;i++){const mo=yr+'-'+String(i).padStart(2,'0');if(mo<=sMo)ytdMonths.push(mo);}
+  let ytdAssist=0,ytdLld=0,ytdPart=0,ytdN1Tot=0;
+  ytdMonths.forEach(mo=>{
+    ytdAssist+=assist.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);
+    ytdLld+=aggCLLldMonth(mo).ca;
+    ytdPart+=aggCLPartMonth(mo).ca;
+    const aN1=assist.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.n1||0),0);
+    const lN1=aggCLLldMonth(mo).n1||aggCLLldMonth(n1MonthOf(mo)).ca;
+    const pN1=aggCLPartMonth(mo).n1||aggCLPartMonth(n1MonthOf(mo)).ca;
+    ytdN1Tot+=aN1+lN1+pN1;
+  });
+  const ytdTotal=ytdAssist+ytdLld+ytdPart;
+  const ytdEvo=ytdN1Tot>0?Math.round((ytdTotal-ytdN1Tot)/ytdN1Tot*100):0;
+  const ytdEl=document.getElementById('cl-stats-ytd');
+  if(ytdEl)ytdEl.innerHTML=`
+    <div class="metric"><div class="metric-label">CA YTD Total</div><div class="metric-val" style="color:var(--cl)">${fmt(ytdTotal)}</div><div class="metric-sub">MAD · ${ytdMonths.length} mois</div></div>
+    <div class="metric"><div class="metric-label">📊 YTD vs N-1</div><div class="metric-val" style="color:${ytdN1Tot>0?(ytdEvo>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${ytdN1Tot>0?(ytdEvo>=0?'+':'')+ytdEvo+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(ytdN1Tot)}</div></div>
+    <div class="metric"><div class="metric-label">YTD Assistance</div><div class="metric-val">${fmt(ytdAssist)}</div><div class="metric-sub">${ytdTotal>0?Math.round(ytdAssist/ytdTotal*100)+'%':'—'} du total</div></div>
+    <div class="metric"><div class="metric-label">YTD LLD</div><div class="metric-val">${fmt(ytdLld)}</div><div class="metric-sub">${ytdTotal>0?Math.round(ytdLld/ytdTotal*100)+'%':'—'} du total</div></div>
+    <div class="metric"><div class="metric-label">YTD Particuliers</div><div class="metric-val">${fmt(ytdPart)}</div><div class="metric-sub">${ytdTotal>0?Math.round(ytdPart/ytdTotal*100)+'%':'—'} du total</div></div>`;
+
+  // SEGMENTS
   const sSegs=document.getElementById('cl-stats-segments');
   if(sSegs)sSegs.innerHTML=`<div class="metric" style="${segAssistActive?'':'opacity:.35'}"><div class="metric-label"><span class="vpill seg-assist">Assistance</span></div><div class="metric-val" style="font-size:18px">${fmt(fAssistCA)}</div><div class="metric-sub">${fmt(fContratsAssist)} contrats</div></div><div class="metric" style="${segLldActive?'':'opacity:.35'}"><div class="metric-label"><span class="vpill seg-lld">LLD</span></div><div class="metric-val" style="font-size:18px">${fmt(fLldCA)}</div><div class="metric-sub">${fmt(fLld.flotte)} véhicules</div></div><div class="metric" style="${segPartActive?'':'opacity:.35'}"><div class="metric-label"><span class="vpill seg-part">Particuliers</span></div><div class="metric-val" style="font-size:18px">${fmt(fPartCA)}</div><div class="metric-sub">${fmt(fPart.nb)} clients</div></div>`;
 
   const sR=document.getElementById('cl-stats-repartition');
   if(sR){const tot=fTotal||1;sR.innerHTML=[{n:'Assistance',v:fAssistCA,c:'#5B9BD5'},{n:'LLD',v:fLldCA,c:'var(--cl)'},{n:'Particuliers',v:fPartCA,c:'#FFB347'}].map(s=>`<div class="prog-row"><span class="prog-label">${s.n}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(s.v/tot*100)}%;background:${s.c}"></div></div><span class="prog-val">${Math.round(s.v/tot*100)}% · ${fmt(s.v)}</span></div>`).join('');}
 
+  // ÉVOLUTION 12 mois
+  const months12=[];const refD=new Date(sMo+'-01T00:00:00');for(let i=11;i>=0;i--){const d=new Date(refD);d.setMonth(d.getMonth()-i);months12.push(d.toISOString().substring(0,7));}
+  const sEvol=document.getElementById('cl-stats-evolution');
+  if(sEvol){
+    const data=months12.map(mo=>{const aCA=assist.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);const lCA=aggCLLldMonth(mo).ca;const pCA=aggCLPartMonth(mo).ca;return{mo,a:aCA,l:lCA,p:pCA,t:aCA+lCA+pCA};});
+    const max=Math.max(...data.map(d=>d.t),1);
+    if(data.every(d=>d.t===0))sEvol.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucune donnée</div>';
+    else sEvol.innerHTML=`<div style="display:flex;align-items:flex-end;gap:8px;height:240px;padding:10px 0;overflow-x:auto">${data.map(d=>{const hT=Math.round(d.t/max*100);const hA=d.t>0?Math.round(d.a/d.t*hT):0;const hL=d.t>0?Math.round(d.l/d.t*hT):0;const hP=d.t>0?Math.round(d.p/d.t*hT):0;return`<div style="display:flex;flex-direction:column;align-items:center;min-width:50px" title="${fmtMoShort(d.mo)} · ${fmt(d.t)}"><div style="font-size:10px;font-weight:600">${fmt(d.t)}</div><div style="display:flex;flex-direction:column-reverse;height:180px;width:24px"><div style="height:${hA}%;background:#5B9BD5"></div><div style="height:${hL}%;background:var(--cl)"></div><div style="height:${hP}%;background:#FFB347"></div></div><div style="font-size:11px;color:var(--muted);margin-top:4px">${fmtMoShort(d.mo)}</div></div>`;}).join('')}</div><div style="display:flex;gap:14px;font-size:11px;color:var(--muted);justify-content:center;margin-top:8px"><span style="color:#5B9BD5">█ Assistance</span><span style="color:var(--cl)">█ LLD</span><span style="color:#FFB347">█ Particuliers</span></div>`;
+  }
+
+  // YOY par segment (mois)
+  const yoyEl=document.getElementById('cl-stats-yoy');
+  if(yoyEl){
+    const segs=[
+      {n:'Assistance',ca:fAssistCA,n1:fN1Assist,col:'#5B9BD5'},
+      {n:'LLD',ca:fLldCA,n1:fN1Lld||aggCLLldMonth(n1MonthOf(sMo)).ca,col:'var(--cl)'},
+      {n:'Particuliers',ca:fPartCA,n1:fN1Part||aggCLPartMonth(n1MonthOf(sMo)).ca,col:'#FFB347'}
+    ];
+    yoyEl.innerHTML=segs.map(s=>{const ev=s.n1>0?Math.round((s.ca-s.n1)/s.n1*100):0;const evC=s.n1>0?(ev>=0?'var(--green)':'var(--red)'):'var(--muted)';return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="font-weight:600;color:${s.col}">${s.n}</span><span><b>N :</b> ${fmt(s.ca)} <span style="color:var(--muted)">· N-1 :</span> ${fmt(s.n1)} <span style="color:${evC};font-weight:700;margin-left:8px">${s.n1>0?(ev>=0?'+':'')+ev+'%':'—'}</span></span></div>`;}).join('');
+  }
+
+  // TOP CLIENTS toutes sources (période 12 mois)
+  const topCliEl=document.getElementById('cl-stats-top-clients');
+  if(topCliEl){
+    const totals={};
+    assist.filter(e=>months12.indexOf(getMonth(e.date))>=0).forEach(e=>{const k=e.client||'—';totals[k]=(totals[k]||0)+(e.ca||0);});
+    DB.cl.lld.filter(e=>months12.indexOf(e.month)>=0).forEach(e=>{const k=e.client||'—';totals[k]=(totals[k]||0)+(e.ca||0);});
+    const sorted=Object.entries(totals).filter(([k])=>k!=='—').sort((a,b)=>b[1]-a[1]).slice(0,10);
+    if(!sorted.length)topCliEl.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune donnée</div>';
+    else{const max=sorted[0][1];topCliEl.innerHTML=sorted.map(([n,v])=>`<div class="prog-row"><span class="prog-label">${n}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v/max*100)}%;background:var(--cl)"></div></div><span class="prog-val">${fmt(v)} MAD</span></div>`).join('');}
+  }
+
+  // TOP VILLES toutes sources
+  const topVilEl=document.getElementById('cl-stats-top-villes');
+  if(topVilEl){
+    const totals={};
+    assist.filter(e=>months12.indexOf(getMonth(e.date))>=0).forEach(e=>{const k=e.ville||'—';totals[k]=(totals[k]||0)+(e.ca||0);});
+    DB.cl.particuliers.filter(e=>months12.indexOf(e.month)>=0&&e.ville).forEach(e=>{totals[e.ville]=(totals[e.ville]||0)+(e.ca||0);});
+    DB.cl.lldClients.forEach(c=>{if(c.ville){const cliCa=DB.cl.lld.filter(e=>e.client===c.nom&&months12.indexOf(e.month)>=0).reduce((a,b)=>a+(b.ca||0),0);totals[c.ville]=(totals[c.ville]||0)+cliCa;}});
+    const sorted=Object.entries(totals).filter(([k])=>k!=='—').sort((a,b)=>b[1]-a[1]).slice(0,8);
+    if(!sorted.length)topVilEl.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune donnée</div>';
+    else{const max=sorted[0][1];topVilEl.innerHTML=sorted.map(([n,v])=>`<div class="prog-row"><span class="prog-label"><span class="vpill ${CL_VCL[n]||''}">${n}</span></span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v/max*100)}%;background:${CL_VC[n]||'var(--cl)'}"></div></div><span class="prog-val">${fmt(v)} MAD</span></div>`).join('');}
+  }
+
+  // CONTRATS par client / ville (mois courant Assistance)
   const sAC=document.getElementById('cl-stats-assist-client');
   if(sAC){const maxC=Math.max(...CL_CLIENTS.map(c=>fMonthA.filter(e=>e.client===c).reduce((a,b)=>a+b.contrats,0)),1);sAC.innerHTML=CL_CLIENTS.map(c=>{const v=fMonthA.filter(e=>e.client===c).reduce((a,b)=>a+b.contrats,0);const hide=sClient!=='all'&&sClient!==c;return`<div class="prog-row" style="${hide?'opacity:.3':''}"><span class="prog-label" style="color:${CL_CC[c]}">${c.split(' ')[0]}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v/maxC*100)}%;background:${CL_CC[c]}"></div></div><span class="prog-val">${fmt(v)}</span></div>`;}).join('');}
-
   const sAV=document.getElementById('cl-stats-assist-ville');
   if(sAV){const maxV=Math.max(...CL_VILLES.map(v=>fMonthA.filter(e=>e.ville===v).reduce((a,b)=>a+b.contrats,0)),1);sAV.innerHTML=CL_VILLES.map(v=>{const val=fMonthA.filter(e=>e.ville===v).reduce((a,b)=>a+b.contrats,0);const hide=sVille!=='all'&&sVille!==v;return`<div class="prog-row" style="${hide?'opacity:.3':''}"><span class="prog-label"><span class="vpill ${CL_VCL[v]}">${v}</span></span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(val/maxV*100)}%;background:${CL_VC[v]}"></div></div><span class="prog-val">${fmt(val)}</span></div>`;}).join('');}
 
-  const sEvol=document.getElementById('cl-stats-evolution');
-  if(sEvol){const months=[...new Set([...DB.cl.lld.map(e=>e.month),...DB.cl.particuliers.map(e=>e.month),...assist.map(e=>getMonth(e.date))])].filter(Boolean).sort().slice(-6);if(!months.length){sEvol.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune donnée</div>';}else{const maxV=Math.max(...months.map(mo=>{const aCA=assist.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);const lCA=(DB.cl.lld.find(e=>e.month===mo)||{ca:0}).ca;const pCA=(DB.cl.particuliers.find(e=>e.month===mo)||{ca:0}).ca;return aCA+lCA+pCA;}),1);sEvol.innerHTML=`<div class="chart-bar-wrap">${months.map(mo=>{const aCA=assist.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);const lCA=(DB.cl.lld.find(e=>e.month===mo)||{ca:0}).ca;const pCA=(DB.cl.particuliers.find(e=>e.month===mo)||{ca:0}).ca;const tot=aCA+lCA+pCA;return`<div class="chart-bar-col"><div class="chart-bar-val">${fmt(tot)}</div><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="chart-bar-inner" style="height:${Math.round(tot/maxV*100)}%;background:var(--cl);width:100%"></div></div><div class="chart-bar-label">${mo.substring(5)}</div></div>`;}).join('')}</div>`;}}
-  if(document.getElementById('cl-pipe-0'))renderPipeline('cl');
+  // HEATMAP
+  const heatEl=document.getElementById('cl-stats-heatmap');
+  if(heatEl){
+    const segs=['Assistance','LLD','Particuliers'];
+    const grid=segs.map(seg=>months12.map(mo=>{
+      if(seg==='Assistance')return assist.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);
+      if(seg==='LLD')return aggCLLldMonth(mo).ca;
+      return aggCLPartMonth(mo).ca;
+    }));
+    const allVals=grid.flat();const maxH=Math.max(...allVals,1);
+    if(allVals.every(v=>v===0))heatEl.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucune donnée</div>';
+    else{
+      let html='<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:4px 8px;color:var(--muted)">Segment</th>';
+      months12.forEach(mo=>{html+=`<th style="padding:4px 6px;color:var(--muted);font-weight:500">${fmtMoShort(mo)}</th>`;});
+      html+='</tr></thead><tbody>';
+      segs.forEach((seg,i)=>{html+=`<tr><td style="padding:4px 8px;font-weight:600;color:var(--cl)">${seg}</td>`;grid[i].forEach(v=>{const intensity=v/maxH;const bg=`rgba(0,200,150,${intensity.toFixed(2)})`;const col=intensity>0.5?'#fff':'var(--text)';html+=`<td style="padding:6px 4px;text-align:center;background:${bg};color:${col};border:1px solid var(--border);font-weight:${intensity>0.3?'600':'400'}" title="${fmt(v)} MAD">${v>0?fmt(Math.round(v/1000))+'k':'—'}</td>`;});html+='</tr>';});
+      html+='</tbody></table></div>';
+      heatEl.innerHTML=html;
+    }
+  }
+
+  // ALERTES & RECOS MANAGEMENT (Stats)
+  const alerts=[];
+  if(fObj>0&&fObjPct<70)alerts.push({type:'red',ico:'🎯',title:'Objectif en danger',msg:`Atteinte ${fObjPct}% à ${fmtMoLong(sMo)}. Manque <b>${fmt(fGap)} MAD</b> pour boucler le mois. Priorité immédiate : pousser les segments sous-performants.`});
+  if(fN1Total>0&&fEvoN1<=-10)alerts.push({type:'red',ico:'📉',title:'Recul vs N-1 significatif',msg:`<b>${fEvoN1}%</b> vs N-1 (${fmt(fN1Total)} MAD). Audit recommandé : qualité prestations, prix, concurrence.`});
+  if(fN1Total>0&&fEvoN1>=15)alerts.push({type:'green',ico:'🚀',title:'Croissance vs N-1',msg:`+${fEvoN1}% vs N-1. Capitalisez : reconduisez les leviers gagnants, anticipez la capacité.`});
+  // Mix déséquilibré
+  if(fTotal>0){
+    const partsCA=[fAssistCA,fLldCA,fPartCA];const maxPart=Math.max(...partsCA);
+    if(maxPart/fTotal>0.7)alerts.push({type:'yellow',ico:'⚖️',title:'Mix CA très concentré',msg:`Un seul segment représente plus de 70% du CA. Diversifiez pour réduire la fragilité de l'activité.`});
+  }
+  // Yield LLD
+  if(fLld.flotte>0){const yield_=Math.round(fLld.ca/fLld.flotte);if(yield_<3500)alerts.push({type:'yellow',ico:'💎',title:'Yield LLD faible',msg:`Loyer moyen <b>${fmt(yield_)} MAD/véh./mois</b>. Vérifier la grille tarifaire ou la mise à jour des contrats.`});}
+  // Panier Assistance
+  if(fContratsAssist>0&&fPanier<150)alerts.push({type:'yellow',ico:'🛒',title:'Panier Assistance faible',msg:`<b>${fmt(fPanier)} MAD/contrat</b> — sous le seuil sain. Renégocier les conditions avec les compagnies, ou améliorer la qualité de service pour upgrade tarifaire.`});
+  // Aucune alerte
+  if(!alerts.length)alerts.push({type:'green',ico:'✅',title:'Activité Cars Land sous contrôle',msg:'Aucun signal critique détecté. Maintenez le rythme et la rigueur de saisie quotidienne.'});
+  const alEl=document.getElementById('cl-stats-alerts');
+  if(alEl)alEl.innerHTML=alerts.map(a=>`<div class="alert alert-${a.type}" style="margin-bottom:8px"><strong>${a.ico} ${a.title}</strong><br><span style="font-size:12px">${a.msg}</span></div>`).join('');
 }
 
 // ════════════════════════════
@@ -2073,6 +3223,295 @@ function addReport(){
   renderReports();showToast('Rapport enregistré');
 }
 
+// ════════════════════════════
+// CASH-FLOW GROUPE — Vue DGA Trésorerie consolidée
+// ════════════════════════════
+let cfEntFilter='all';
+function setCfEntFilter(e){cfEntFilter=e;document.querySelectorAll('#cf-entity-tabs .btn').forEach(b=>b.classList.remove('btn-primary'));event.target.classList.add('btn-primary');renderCashflow();}
+
+// === Sélecteur multi-mois (1 à 3 mois, même non contigus) ===
+let cfSelectedMonths=[]; // ['2026-03','2026-05']
+function cfMonthName(ym){const[y,m]=ym.split('-');const mn=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'][Number(m)-1]||m;return mn+' '+y;}
+function cfInitMonthPicker(){
+  // Init year selector with available years from DB + current year
+  const sel=document.getElementById('cf-months-year');if(!sel)return;
+  const years=new Set([Number(curYear())]);
+  const collect=arr=>arr.forEach(e=>{if(e&&e.date)years.add(Number(e.date.substring(0,4)));});
+  collect(DB.caisse.as);collect(DB.caisse.fc);collect(DB.cl.assistance);collect(DB.at);collect(DB.contrats);collect(DB.fc);
+  const ys=[...years].filter(y=>y>=2020&&y<=2100).sort((a,b)=>b-a);
+  const cur=Number(sel.value)||Number(curYear());
+  sel.innerHTML=ys.map(y=>`<option value="${y}"${y===cur?' selected':''}>${y}</option>`).join('');
+  // Sync selection from GLOBAL_REF if active
+  if(GLOBAL_REF&&GLOBAL_REF.mode==='months'&&Array.isArray(GLOBAL_REF.months))cfSelectedMonths=GLOBAL_REF.months.slice();
+  cfRenderMonthChips();
+}
+function cfRenderMonthChips(){
+  const wrap=document.getElementById('cf-month-chips');if(!wrap)return;
+  const yEl=document.getElementById('cf-months-year');const y=yEl?yEl.value:curYear();
+  const months=Array.from({length:12},(_,i)=>y+'-'+String(i+1).padStart(2,'0'));
+  wrap.innerHTML=months.map(ym=>{
+    const sel=cfSelectedMonths.indexOf(ym)>=0;
+    const bg=sel?'#6366F1':'transparent';const col=sel?'#fff':'var(--text)';const bd=sel?'#6366F1':'var(--border)';
+    return`<button class="btn btn-sm" onclick="cfToggleMonth('${ym}')" style="background:${bg};color:${col};border-color:${bd};font-size:11px;padding:4px 10px">${sel?'✓ ':''}${cfMonthName(ym)}</button>`;
+  }).join('');
+  const info=document.getElementById('cf-months-info');
+  if(info){
+    if(!cfSelectedMonths.length)info.textContent='Aucun mois sélectionné — la période globale s\'applique.';
+    else info.innerHTML='<strong style="color:#6366F1">'+cfSelectedMonths.length+' mois sélectionné(s) :</strong> '+cfSelectedMonths.slice().sort().map(cfMonthName).join(' · ')+(cfSelectedMonths.length>=3?' <span style="color:var(--yellow)">· max 3 atteint</span>':'');
+  }
+}
+function cfToggleMonth(ym){
+  const i=cfSelectedMonths.indexOf(ym);
+  if(i>=0)cfSelectedMonths.splice(i,1);
+  else{
+    if(cfSelectedMonths.length>=3){showToast('⚠️ Maximum 3 mois');return;}
+    cfSelectedMonths.push(ym);
+  }
+  cfRenderMonthChips();
+}
+function cfClearMonthsFilter(){
+  cfSelectedMonths=[];cfRenderMonthChips();
+  if(GLOBAL_REF&&GLOBAL_REF.mode==='months'){GLOBAL_REF=null;refreshTopDate();renderCashflow();showToast('Sélection multi-mois effacée');}
+}
+function cfApplyMonthsFilter(){
+  if(!cfSelectedMonths.length){showToast('⚠️ Sélectionnez au moins 1 mois');return;}
+  const ms=cfSelectedMonths.slice().sort();
+  GLOBAL_REF={date:ms[0]+'-15',mode:'months',months:ms};
+  refreshTopDate();renderCashflow();
+  showToast('✓ '+ms.length+' mois appliqué(s)');
+}
+function renderCashflow(){
+  cfInitMonthPicker();
+  const r=getRange();
+  const nbDays=rangeNbDays();
+
+  // Bandeau filtre
+  const lbl=document.getElementById('cf-range-label');if(lbl)lbl.textContent=r.label;
+  const info=document.getElementById('cf-range-info');if(info){
+    if(r.mode==='months'&&r.months)info.textContent='Mois sélectionnés : '+r.months.map(cfMonthName).join(' · ');
+    else info.textContent='Du '+fmtDate(r.from)+' au '+fmtDate(r.to)+' · '+nbDays+' jour(s)';
+  }
+
+  // === 1. AGRÉGATION DES DONNÉES ===
+  // CA par entité (proxy encaissements opérationnels)
+  const clA=DB.cl.assistance.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.ca||0),0);
+  const clL=rangeMonths().reduce((a,mo)=>a+aggCLLldMonth(mo).ca,0);
+  const clP=rangeMonths().reduce((a,mo)=>a+aggCLPartMonth(mo).ca,0);
+  const caCL=clA+clL+clP;
+  const caAT=DB.at.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.ca||0),0);
+  const caAS=DB.contrats.filter(c=>inRange(c.date)).reduce((a,b)=>a+(b.prime||0),0);
+  const caFC=DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.rec||0),0);
+  const caGroupe=caCL+caAT+caAS+caFC;
+
+  // Caisses réelles (mouvements de trésorerie)
+  const caisseAS=DB.caisse.as.filter(e=>inRange(e.date));
+  const caisseFC=DB.caisse.fc.filter(e=>inRange(e.date));
+  const encAS=caisseAS.reduce((a,b)=>a+(b.enc||0),0);
+  const decAS=caisseAS.reduce((a,b)=>a+(b.dec||0),0);
+  const bankAS=caisseAS.reduce((a,b)=>a+(b.bank||0),0);
+  const encFC=caisseFC.reduce((a,b)=>a+(b.rec||0),0);
+  const decFC=caisseFC.reduce((a,b)=>a+(b.dep||0),0);
+  const bankFC=caisseFC.reduce((a,b)=>a+(b.remise||0),0);
+  const encTotal=encAS+encFC;
+  const decTotal=decAS+decFC;
+  const bankTotal=bankAS+bankFC;
+  const cashFlowNet=encTotal-decTotal-bankTotal;
+
+  // Soldes actuels caisse (le plus récent)
+  const soldeAS=DB.caisse.as.length?DB.caisse.as[0].calcule||0:0;
+  const soldeFC=DB.caisse.fc.length?DB.caisse.fc[0].calcule||0:0;
+  const soldeGroupe=soldeAS+soldeFC;
+
+  // Foodcost (sortie matières F Corner) — vrai décaissement opérationnel
+  const fcMatieres=DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.foodcost||0),0);
+  const fcDepOps=DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.dep||0),0);
+
+  // Créances (rapports avec créances saisis)
+  const creancesGroupe=DB.reports.filter(rp=>inRange(rp.dateISO||rp.date)).reduce((a,b)=>a+(b.creances||0),0);
+
+  // N-1 comparison
+  const clAN1=DB.cl.assistance.filter(e=>inRangeN1(e.date)).reduce((a,b)=>a+(b.ca||0),0);
+  const atN1=DB.at.filter(e=>inRangeN1(e.date)).reduce((a,b)=>a+(b.ca||0),0);
+  const asN1=DB.contrats.filter(c=>inRangeN1(c.date)).reduce((a,b)=>a+(b.prime||0),0);
+  const fcN1=DB.fc.filter(e=>inRangeN1(e.date)).reduce((a,b)=>a+(b.rec||0),0);
+  const caN1=clAN1+atN1+asN1+fcN1;
+  const evoCA=caN1>0?Math.round((caGroupe-caN1)/caN1*100):0;
+
+  // Cash runway (jours de trésorerie disponibles)
+  const burnRate=nbDays>0?(decTotal+bankTotal+fcDepOps+fcMatieres)/nbDays:0;
+  const runway=burnRate>0?Math.round(soldeGroupe/burnRate):999;
+
+  // Charge prudente (tout sauf banque)
+  const chargesRealesTotal=decTotal+fcDepOps+fcMatieres;
+  const margeOpEstime=caGroupe-chargesRealesTotal;
+  const margeOpPct=caGroupe>0?Math.round(margeOpEstime/caGroupe*100):0;
+
+  // === 2. KPIs ===
+  const kpi=document.getElementById('cf-kpi');
+  if(kpi)kpi.innerHTML=`
+    <div class="metric"><div class="metric-label">💰 CA Groupe</div><div class="metric-val" style="color:#10B981">${fmt(caGroupe)}</div><div class="metric-sub">MAD · ${nbDays}j</div></div>
+    <div class="metric"><div class="metric-label">📊 vs N-1</div><div class="metric-val" style="color:${caN1>0?(evoCA>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${caN1>0?(evoCA>=0?'+':'')+evoCA+'%':'—'}</div><div class="metric-sub">N-1: ${fmt(caN1)}</div></div>
+    <div class="metric"><div class="metric-label">📥 Encaissements</div><div class="metric-val" style="color:var(--green)">${fmt(encTotal)}</div><div class="metric-sub">MAD (caisses)</div></div>
+    <div class="metric"><div class="metric-label">📤 Décaissements</div><div class="metric-val" style="color:var(--red)">${fmt(decTotal)}</div><div class="metric-sub">MAD (caisses)</div></div>
+    <div class="metric"><div class="metric-label">🏦 Versements banque</div><div class="metric-val" style="color:var(--at)">${fmt(bankTotal)}</div><div class="metric-sub">MAD remis</div></div>
+    <div class="metric"><div class="metric-label">💵 Solde caisses</div><div class="metric-val" style="color:#10B981">${fmt(soldeGroupe)}</div><div class="metric-sub">AS: ${fmt(soldeAS)} · FC: ${fmt(soldeFC)}</div></div>
+    <div class="metric"><div class="metric-label">🔄 Cash-flow net</div><div class="metric-val" style="color:${cashFlowNet>=0?'var(--green)':'var(--red)'}">${cashFlowNet>=0?'+':''}${fmt(cashFlowNet)}</div><div class="metric-sub">enc - dec - banque</div></div>
+    <div class="metric"><div class="metric-label">⏱️ Cash runway</div><div class="metric-val" style="color:${runway>=60?'var(--green)':runway>=30?'var(--yellow)':'var(--red)'}">${runway>=999?'∞':runway+'j'}</div><div class="metric-sub">avant rupture cash</div></div>
+    <div class="metric"><div class="metric-label">💎 Marge op. estimée</div><div class="metric-val" style="color:${margeOpPct>=20?'var(--green)':margeOpPct>=10?'var(--yellow)':'var(--red)'}">${margeOpPct}%</div><div class="metric-sub">${fmt(margeOpEstime)} MAD</div></div>
+    <div class="metric"><div class="metric-label">⚠️ Créances clients</div><div class="metric-val" style="color:${creancesGroupe>caGroupe*0.3?'var(--red)':creancesGroupe>caGroupe*0.15?'var(--yellow)':'var(--green)'}">${fmt(creancesGroupe)}</div><div class="metric-sub">MAD à recouvrer</div></div>
+    <div class="metric"><div class="metric-label">📅 CA / jour moyen</div><div class="metric-val">${fmt(nbDays>0?Math.round(caGroupe/nbDays):0)}</div><div class="metric-sub">MAD/jour</div></div>
+    <div class="metric"><div class="metric-label">🍦 Coût matières FC</div><div class="metric-val" style="color:var(--fc)">${fmt(fcMatieres)}</div><div class="metric-sub">MAD (food cost)</div></div>`;
+
+  // === 3. SCORE DE SANTÉ TRÉSORERIE ===
+  const sScore=(()=>{
+    let s=0,max=0;
+    // Cash runway
+    max+=25;s+=runway>=90?25:runway>=60?20:runway>=30?12:runway>=15?5:0;
+    // Cash-flow net positif
+    max+=20;s+=cashFlowNet>=0?20:cashFlowNet>=-caGroupe*0.05?10:0;
+    // Marge opérationnelle
+    max+=20;s+=margeOpPct>=20?20:margeOpPct>=15?15:margeOpPct>=10?10:margeOpPct>=5?5:0;
+    // Évolution N-1
+    max+=15;s+=evoCA>=10?15:evoCA>=0?12:evoCA>=-5?7:0;
+    // Créances vs CA
+    max+=10;const ratio=caGroupe>0?creancesGroupe/caGroupe:0;s+=ratio<=0.1?10:ratio<=0.2?7:ratio<=0.3?3:0;
+    // Solde caisse > burn rate 30j
+    max+=10;s+=soldeGroupe>=burnRate*30?10:soldeGroupe>=burnRate*15?5:0;
+    return Math.round(s/max*100);
+  })();
+  const sCol=sScore>=75?'var(--green)':sScore>=50?'var(--yellow)':'var(--red)';
+  const sLbl=sScore>=75?'🟢 Excellente santé financière':sScore>=50?'🟡 Santé correcte — points de vigilance':'🔴 Santé fragile — actions urgentes requises';
+  const hcard=document.getElementById('cf-health');
+  if(hcard)hcard.innerHTML=`
+    <div style="display:flex;gap:14px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+      <div style="font-size:42px;font-weight:700;color:${sCol}">${sScore}</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:600;color:${sCol}">${sLbl}</div>
+        <div class="prog-bar" style="margin-top:6px"><div class="prog-fill" style="width:${sScore}%;background:${sCol}"></div></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Score sur 100 · 6 critères : runway, cash-flow, marge, croissance, créances, couverture caisse</div>
+      </div>
+    </div>`;
+
+  // === 4. DÉTAIL PAR ENTITÉ ===
+  const ents=[
+    {key:'cl',name:'🚗 Cars Land',col:'var(--cl)',ca:caCL,n1:clAN1,detail:`Assist: ${fmt(clA)} · LLD: ${fmt(clL)} · Part: ${fmt(clP)}`},
+    {key:'at',name:'🌍 Arabian Tours',col:'var(--at)',ca:caAT,n1:atN1,detail:`${DB.at.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.constats||0),0)} missions`},
+    {key:'as',name:'🛡️ 1.2.3 Assurance',col:'var(--as)',ca:caAS,n1:asN1,detail:`${DB.contrats.filter(c=>inRange(c.date)).length} contrats · Solde caisse: ${fmt(soldeAS)}`},
+    {key:'fc',name:'☕ F Corner',col:'var(--fc)',ca:caFC,n1:fcN1,detail:`${DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.clients||0),0)} couverts · Solde caisse: ${fmt(soldeFC)}`}
+  ];
+  const entsEl=document.getElementById('cf-entities');
+  if(entsEl)entsEl.innerHTML=ents.map(e=>{
+    const pctCA=caGroupe>0?Math.round(e.ca/caGroupe*100):0;
+    const ev=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):0;
+    return `<div class="metric" style="border-left:3px solid ${e.col}">
+      <div class="metric-label">${e.name}</div>
+      <div class="metric-val" style="color:${e.col}">${fmt(e.ca)}</div>
+      <div class="metric-sub">${pctCA}% du Groupe · ${e.n1>0?(ev>=0?'+':'')+ev+'% N-1':'N-1 N/A'}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">${e.detail}</div>
+    </div>`;
+  }).join('');
+
+  // === 5. PIE CHARTS ===
+  const totCA=caGroupe||1;
+  const pCa=document.getElementById('cf-pie-ca');
+  if(pCa)pCa.innerHTML=ents.map(e=>{const pct=Math.round(e.ca/totCA*100);return`<div class="prog-row"><span class="prog-label" style="color:${e.col};font-size:11px">${e.name}</span><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${e.col}"></div></div><span class="prog-val">${pct}% · ${fmt(e.ca)}</span></div>`;}).join('');
+
+  const pCash=document.getElementById('cf-pie-cash');
+  if(pCash){
+    const items=[
+      {l:'CA Groupe (entrées)',v:caGroupe,c:'var(--green)'},
+      {l:'Coût matières FC',v:fcMatieres,c:'#FFB347'},
+      {l:'Décaissements caisses',v:decTotal,c:'var(--red)'},
+      {l:'Versements banque',v:bankTotal,c:'var(--at)'},
+      {l:'Autres charges FC',v:fcDepOps,c:'#A78BFA'}
+    ];
+    const max=Math.max(...items.map(i=>i.v),1);
+    pCash.innerHTML=items.map(i=>`<div class="prog-row"><span class="prog-label" style="font-size:11px">${i.l}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(i.v/max*100)}%;background:${i.c}"></div></div><span class="prog-val">${fmt(i.v)}</span></div>`).join('');
+  }
+
+  // === 6. ÉVOLUTION MENSUELLE (encaissements vs décaissements) ===
+  const evol=document.getElementById('cf-evolution');
+  if(evol){
+    const months=rangeMonths();
+    const data=months.map(mo=>{
+      const enc=DB.caisse.as.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.enc||0),0)+
+                DB.caisse.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.rec||0),0);
+      const dec=DB.caisse.as.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.dec||0),0)+
+                DB.caisse.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.dep||0),0);
+      const bk=DB.caisse.as.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.bank||0),0)+
+               DB.caisse.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.remise||0),0);
+      return{mo,enc,dec,bk,net:enc-dec-bk};
+    });
+    const maxV=Math.max(...data.flatMap(d=>[d.enc,d.dec+d.bk]),1);
+    if(months.length===0||data.every(d=>d.enc===0&&d.dec===0))evol.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucune donnée de caisse sur la période</div>';
+    else evol.innerHTML=`<div style="display:flex;align-items:flex-end;gap:14px;height:180px;padding:10px 0;overflow-x:auto">${data.map(d=>{
+      const hEnc=Math.round(d.enc/maxV*100);
+      const hDec=Math.round((d.dec+d.bk)/maxV*100);
+      return`<div style="display:flex;flex-direction:column;align-items:center;min-width:60px">
+        <div style="font-size:10px;color:${d.net>=0?'var(--green)':'var(--red)'};font-weight:600">${d.net>=0?'+':''}${fmt(d.net)}</div>
+        <div style="display:flex;gap:3px;align-items:flex-end;height:140px">
+          <div style="width:18px;height:${hEnc}%;background:var(--green);border-radius:3px 3px 0 0" title="Enc: ${fmt(d.enc)}"></div>
+          <div style="width:18px;height:${hDec}%;background:var(--red);border-radius:3px 3px 0 0" title="Dec+Bk: ${fmt(d.dec+d.bk)}"></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">${d.mo.substring(5)}</div>
+      </div>`;}).join('')}</div>
+      <div style="display:flex;gap:12px;font-size:11px;color:var(--muted);justify-content:center;margin-top:6px"><span>🟢 Encaissements</span><span>🔴 Décaiss. + Banque</span></div>`;
+  }
+
+  // === 7. TOP MOUVEMENTS ===
+  const allCaisse=[
+    ...DB.caisse.as.filter(e=>inRange(e.date)).map(e=>({...e,ent:'AS',entName:'1.2.3 Assurance',entCol:'var(--as)'})),
+    ...DB.caisse.fc.filter(e=>inRange(e.date)).map(e=>({...e,ent:'FC',entName:'F Corner',entCol:'var(--fc)',enc:e.rec,dec:e.dep,bank:e.remise}))
+  ];
+  const topEnc=document.getElementById('cf-top-enc');
+  if(topEnc){
+    const top=[...allCaisse].sort((a,b)=>(b.enc||0)-(a.enc||0)).slice(0,8);
+    topEnc.innerHTML=top.length?top.map(e=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${fmtDate(e.date)} · <span style="color:${e.entCol};font-weight:500">${e.entName}</span></span><span style="color:var(--green);font-weight:600">+${fmt(e.enc||0)}</span></div>`).join(''):'<div style="color:var(--muted);font-size:13px">Aucun mouvement</div>';
+  }
+  const topDec=document.getElementById('cf-top-dec');
+  if(topDec){
+    const top=[...allCaisse].sort((a,b)=>((b.dec||0)+(b.bank||0))-((a.dec||0)+(a.bank||0))).slice(0,8);
+    topDec.innerHTML=top.length?top.map(e=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${fmtDate(e.date)} · <span style="color:${e.entCol};font-weight:500">${e.entName}</span></span><span style="color:var(--red);font-weight:600">-${fmt((e.dec||0)+(e.bank||0))}</span></div>`).join(''):'<div style="color:var(--muted);font-size:13px">Aucun mouvement</div>';
+  }
+
+  // === 8. ALERTES & RECOMMANDATIONS MANAGEMENT ===
+  const alerts=[];
+  if(runway<30)alerts.push({type:'red',ico:'🚨',title:'Cash runway critique',msg:`Vous n'avez que ${runway}j de trésorerie au rythme actuel. Action immédiate : accélérer le recouvrement créances (${fmt(creancesGroupe)} MAD), reporter dépenses non essentielles, négocier délai fournisseurs.`});
+  else if(runway<60)alerts.push({type:'yellow',ico:'⚠️',title:'Cash runway à surveiller',msg:`${runway}j de trésorerie disponible. Mettez en place un plan de relance créances et un suivi hebdomadaire des décaissements.`});
+
+  if(cashFlowNet<0)alerts.push({type:'yellow',ico:'📉',title:'Cash-flow net négatif',msg:`Sur la période, vous avez décaissé ${fmt(-cashFlowNet)} MAD de plus que vous avez encaissé. Si ce déficit persiste 3 mois, la trésorerie s'effrite. Vérifiez les versements banque (peut être normal si vous accumulez en compte).`});
+
+  if(creancesGroupe>caGroupe*0.3)alerts.push({type:'red',ico:'💸',title:'Créances clients excessives',msg:`Les créances (${fmt(creancesGroupe)} MAD) représentent ${Math.round(creancesGroupe/caGroupe*100)}% du CA — vous financez vos clients. Cible: <20%. Action : audit clients, relance systématique J+30/45/60, escalade pour les >90j.`});
+
+  if(margeOpPct<10&&caGroupe>0)alerts.push({type:'yellow',ico:'📊',title:'Marge opérationnelle faible',msg:`Marge à ${margeOpPct}% — sous le seuil de sécurité 15%. Revoyez la structure de coûts F Corner (food cost ?) et les frais variables.`});
+
+  // Concentration risk
+  const maxEntPct=Math.max(...ents.map(e=>caGroupe>0?e.ca/caGroupe:0))*100;
+  if(maxEntPct>50)alerts.push({type:'yellow',ico:'⚖️',title:'Concentration entité forte',msg:`Une seule entité fait ${Math.round(maxEntPct)}% du CA Groupe — risque de dépendance. Diversifiez les revenus pour réduire la fragilité.`});
+
+  // Solde caisse vs versement banque
+  if(soldeAS>50000)alerts.push({type:'yellow',ico:'🏦',title:'Solde caisse Assurance élevé',msg:`Solde 1.2.3 Assurance = ${fmt(soldeAS)} MAD en espèces. Cash en caisse = risque (vol, contrôle). Versez en banque régulièrement.`});
+
+  if(evoCA>=10)alerts.push({type:'green',ico:'🚀',title:'Croissance dynamique',msg:`+${evoCA}% vs N-1. Profitez de cette dynamique pour investir : capacités, équipe, ou réserve pour saisir des opportunités.`});
+
+  if(!alerts.length)alerts.push({type:'green',ico:'✅',title:'Tout est sous contrôle',msg:'Aucune alerte critique. Maintenez la rigueur de saisie quotidienne pour des analyses fines.'});
+
+  const alEl=document.getElementById('cf-alerts');
+  if(alEl)alEl.innerHTML=alerts.map(a=>`<div class="alert alert-${a.type}" style="margin-bottom:8px"><strong>${a.ico} ${a.title}</strong><br><span style="font-size:12px">${a.msg}</span></div>`).join('');
+
+  // === 9. TABLEAU DÉTAILLÉ ===
+  let mvts=allCaisse.slice();
+  if(cfEntFilter==='as')mvts=mvts.filter(e=>e.ent==='AS');
+  else if(cfEntFilter==='fc')mvts=mvts.filter(e=>e.ent==='FC');
+  mvts.sort((a,b)=>b.date.localeCompare(a.date));
+  const histEl=document.getElementById('cf-history');
+  if(histEl)histEl.innerHTML=mvts.slice(0,80).map(e=>{
+    const net=(e.enc||0)-(e.dec||0)-(e.bank||0);
+    const type=net>0?'<span class="badge badge-green">↑ Net positif</span>':net<0?'<span class="badge badge-red">↓ Net négatif</span>':'<span class="badge badge-blue">Équilibré</span>';
+    return`<tr><td>${fmtDate(e.date)}</td><td><span style="color:${e.entCol};font-weight:600;font-size:11px">${e.entName}</span></td><td style="color:var(--green)">+${fmt(e.enc||0)}</td><td style="color:var(--red)">-${fmt(e.dec||0)}</td><td style="color:var(--at)">-${fmt(e.bank||0)}</td><td style="font-weight:600">${fmt(e.calcule||0)}</td><td>${type}</td></tr>`;
+  }).join('')||'<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:16px">Aucun mouvement de caisse sur la période</td></tr>';
+}
+
 function renderReports(){
   const filterEnt=getVal('rpt-filter-ent');
   const filterMonth=getVal('rpt-filter-month');
@@ -2132,6 +3571,308 @@ function renderReports(){
 function deleteReport(id){if(!confirm('Supprimer ce rapport ?'))return;DB.reports=DB.reports.filter(r=>r.id!==id);save();renderReports();showToast('Rapport supprimé');}
 
 // ════════════════════════════
+// MODULE DGA — PILOTAGE DIRECTION GÉNÉRALE
+// ════════════════════════════
+let dgaCurrentTab='matin';
+
+// Détermine la date de référence pour le check matin :
+// lundi → vendredi précédent (3j) ; sinon → hier
+function dgaCheckDate(){
+  const dow=new Date().getDay();
+  const back=dow===1?3:1;
+  return new Date(Date.now()-back*86400000).toISOString().split('T')[0];
+}
+// Liste fraiche des entités à vérifier (recalculée à chaque appel pour suivre les rechargements Firebase)
+function dgaEntites(){
+  return[
+    {nom:'Cars Land',resp:'Meriem',code:'cl',data:DB.cl.assistance||[],col:'var(--cl)'},
+    {nom:'Arabian Tours',resp:'Meriem',code:'at',data:DB.at||[],col:'var(--at)'},
+    {nom:'1.2.3 Assurance',resp:'Kaoutar',code:'as',data:DB.contrats||[],col:'var(--as)'},
+    {nom:'F Corner',resp:'Karam',code:'fc',data:DB.fc||[],col:'var(--fc)'}
+  ];
+}
+function dgaFmtDateLong(s){if(!s)return'—';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-MA',{weekday:'long',day:'numeric',month:'long'});}
+function dgaFmtDateCourt(s){if(!s)return'—';const p=s.split('-');return p[2]+'/'+p[1];}
+function dgaFmtJourCourt(s){if(!s)return'';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-MA',{weekday:'short',day:'numeric'});}
+function dgaJoursDepuis(s){if(!s)return 0;const d=new Date(s+'T00:00:00');const t=new Date();t.setHours(0,0,0,0);return Math.round((t-d)/86400000);}
+
+// CA mensuel par code entité — utilise les helpers d'agrégation pour LLD/Particuliers
+function dgaCaMois(code,month){
+  if(code==='cl'){
+    const a=(DB.cl.assistance||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.ca||0),0);
+    return a+aggCLLldMonth(month).ca+aggCLPartMonth(month).ca;
+  }
+  if(code==='at')return(DB.at||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.ca||0),0);
+  if(code==='as')return(DB.contrats||[]).filter(c=>getMonth(c.date)===month).reduce((s,b)=>s+(b.prime||0),0);
+  if(code==='fc')return(DB.fc||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.rec||0),0);
+  return 0;
+}
+// CA quotidien par code entité (pour journaliers)
+function dgaCaJour(code,date){
+  if(code==='cl')return(DB.cl.assistance||[]).filter(e=>e.date===date).reduce((s,b)=>s+(b.ca||0),0);
+  if(code==='at')return(DB.at||[]).filter(e=>e.date===date).reduce((s,b)=>s+(b.ca||0),0);
+  if(code==='as')return(DB.contrats||[]).filter(c=>c.date===date).reduce((s,b)=>s+(b.prime||0),0);
+  if(code==='fc')return(DB.fc||[]).filter(e=>e.date===date).reduce((s,b)=>s+(b.rec||0),0);
+  return 0;
+}
+
+function switchDGATab(tab,el){
+  dgaCurrentTab=tab;
+  document.querySelectorAll('#p-dga .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  ['matin','semaine','mois'].forEach(t=>{const d=document.getElementById('dga-'+t);if(d)d.style.display=t===tab?'block':'none';});
+  renderDGA();
+}
+
+function renderDGA(){
+  const dEl=document.getElementById('dga-current-date');
+  if(dEl)dEl.textContent=new Date().toLocaleDateString('fr-MA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  checkDGAFreshness();
+  if(dgaCurrentTab==='matin')renderDGAMatin();
+  else if(dgaCurrentTab==='semaine')renderDGASemaine();
+  else if(dgaCurrentTab==='mois')renderDGAMois();
+}
+
+function checkDGAFreshness(){
+  const checkDate=dgaCheckDate();
+  const ents=dgaEntites();
+  const missing=ents.filter(e=>!e.data.some(x=>x.date===checkDate)).map(e=>e.nom);
+  const alertEl=document.getElementById('dga-data-alert');
+  const freshEl=document.getElementById('dga-data-freshness');
+  if(missing.length>0){
+    if(alertEl)alertEl.innerHTML=`<div class="alert alert-red">⚠️ <strong>Données manquantes</strong> pour le ${dgaFmtDateCourt(checkDate)} : ${missing.join(', ')}<br><span style="font-size:11px">Relancer les responsables pour la saisie immédiate</span></div>`;
+    if(freshEl){freshEl.textContent='⚠️ Données incomplètes';freshEl.style.color='var(--red)';}
+  }else{
+    if(alertEl)alertEl.innerHTML=`<div class="alert alert-green">✅ Toutes les données sont à jour au ${dgaFmtDateCourt(checkDate)} — Bonne discipline de saisie</div>`;
+    if(freshEl){freshEl.textContent='✅ Données à jour';freshEl.style.color='var(--green)';}
+  }
+}
+
+// ═══════ VUE MATIN ═══════
+function renderDGAMatin(){
+  const todayStr=today();
+  const checkDate=dgaCheckDate();
+  // N-1 même jour
+  const dN1=new Date(checkDate+'T00:00:00');dN1.setFullYear(dN1.getFullYear()-1);
+  const n1Date=dN1.toISOString().split('T')[0];
+
+  const caCL=dgaCaJour('cl',checkDate);
+  const caAT=dgaCaJour('at',checkDate);
+  const caAS=dgaCaJour('as',checkDate);
+  const caFC=dgaCaJour('fc',checkDate);
+  const caGroupe=caCL+caAT+caAS+caFC;
+
+  const elCA=document.getElementById('dga-ca-groupe-hier');if(elCA)elCA.textContent=fmt(caGroupe)+' MAD';
+  const elDate=document.getElementById('dga-date-hier');if(elDate)elDate.textContent=dgaFmtDateLong(checkDate);
+
+  const n1=dgaCaJour('cl',n1Date)+dgaCaJour('at',n1Date)+dgaCaJour('as',n1Date)+dgaCaJour('fc',n1Date);
+  const evo=n1>0?Math.round((caGroupe-n1)/n1*100):0;
+  const elEvo=document.getElementById('dga-evo-hier');
+  if(elEvo)elEvo.innerHTML=n1>0?`<span style="color:${evo>=0?'var(--green)':'var(--red)'};font-weight:600">${evo>=0?'+':''}${evo}%</span> vs même jour N-1 (${fmt(n1)} MAD)`:'<span style="color:var(--muted)">Pas de référence N-1</span>';
+
+  // KPIs par entité
+  const clA=(DB.cl.assistance||[]).filter(e=>e.date===checkDate);
+  const atA=(DB.at||[]).filter(e=>e.date===checkDate);
+  const asA=(DB.contrats||[]).filter(c=>c.date===checkDate);
+  const fcA=(DB.fc||[]).filter(e=>e.date===checkDate);
+  const kpis=[
+    {ent:'🚗 Cars Land',ca:caCL,actes:clA.reduce((a,b)=>a+(b.contrats||0),0),unite:'contrats',col:'var(--cl)'},
+    {ent:'📋 Arabian Tours',ca:caAT,actes:atA.reduce((a,b)=>a+(b.constats||0),0),unite:'missions',col:'var(--at)'},
+    {ent:'🛡️ 1.2.3 Ass.',ca:caAS,actes:asA.reduce((a,b)=>a+(b.nb||0),0),unite:'contrats',col:'var(--as)'},
+    {ent:'☕ F Corner',ca:caFC,actes:fcA.reduce((a,b)=>a+(b.tickets||b.clients||0),0),unite:'tickets',col:'var(--fc)'}
+  ];
+  const elKpi=document.getElementById('dga-matin-kpis');
+  if(elKpi)elKpi.innerHTML=kpis.map(k=>`<div class="metric"><div class="metric-label" style="color:${k.col}">${k.ent}</div><div class="metric-val" style="font-size:18px">${fmt(k.ca)} MAD</div><div class="metric-sub">${k.actes>0?fmt(k.actes)+' '+k.unite:'Aucune saisie'}</div></div>`).join('');
+
+  // Alertes
+  const alertes=genererAlertesDGA(checkDate);
+  const elA=document.getElementById('dga-matin-alertes');
+  if(elA)elA.innerHTML=alertes.length>0?alertes.map(a=>`<div class="alert alert-${a.type}" style="margin-bottom:6px"><strong>${a.icone} ${a.titre}</strong><br><span style="font-size:12px">${a.message}</span></div>`).join(''):'<div class="alert alert-green">✅ Aucune alerte critique détectée — Situation normale</div>';
+
+  // Actions
+  const actions=genererActionsDGA(checkDate);
+  const elAct=document.getElementById('dga-matin-actions');
+  if(elAct)elAct.innerHTML=actions.length>0?actions.map(a=>`<div class="task-row" style="border-left:3px solid ${a.prio==='haute'?'var(--red)':'var(--yellow)'}"><div style="flex:1"><div style="font-size:13px">${a.action}</div><div style="font-size:11px;color:var(--muted)">${a.detail}</div></div><span class="badge ${a.prio==='haute'?'badge-red':'badge-yellow'}">${a.prio==='haute'?'Urgent':'Important'}</span></div>`).join(''):'<div style="color:var(--green);padding:10px 0">✅ Pas d\'action urgente aujourd\'hui</div>';
+
+  // Tâches en retard
+  const retard=(DB.tasks||[]).filter(t=>!t.done&&t.date&&t.date<todayStr);
+  const elR=document.getElementById('dga-matin-retard');
+  if(elR)elR.innerHTML=retard.length>0?retard.map(t=>`<div class="alert alert-red" style="font-size:12px;margin-bottom:4px">⚠️ <strong>En retard</strong> — ${t.title} (${t.entity||'—'}) — Échéance : ${dgaFmtDateCourt(t.date)} (${dgaJoursDepuis(t.date)}j) <button class="btn btn-sm" style="margin-left:8px;padding:2px 8px;font-size:10px" onclick="openEditTask(${t.id})">Traiter</button></div>`).join(''):'<div style="color:var(--green);padding:8px 0;font-size:13px">✅ Aucune tâche en retard</div>';
+}
+
+function genererAlertesDGA(checkDate){
+  const alertes=[];const todayStr=today();
+  // 1) Saisies manquantes
+  dgaEntites().forEach(e=>{
+    if(!e.data.some(x=>x.date===checkDate)){
+      alertes.push({type:'red',icone:'🔴',titre:`${e.nom} (${e.resp}) — Données manquantes`,message:`Saisie absente pour le ${dgaFmtDateCourt(checkDate)}. Relancer immédiatement.`});
+    }
+  });
+  // 2) Écart caisse F Corner
+  const lastFC=(DB.caisse&&DB.caisse.fc&&DB.caisse.fc[0])||null;
+  if(lastFC&&lastFC.ecart&&Math.abs(lastFC.ecart)>300){
+    alertes.push({type:'yellow',icone:'💰',titre:`Écart caisse F Corner : ${fmt(lastFC.ecart)} MAD`,message:`Contrôle du ${dgaFmtDateCourt(lastFC.date)} — Vérifier avec Karam.`});
+  }
+  // 3) Objectif mensuel en danger (cl + at)
+  const cm=todayStr.substring(0,7);
+  const dim=daysInMonth(cm);const dom=dayOfMonth(todayStr);
+  [{nom:'Cars Land',code:'cl'},{nom:'Arabian Tours',code:'at'}].forEach(e=>{
+    const obj=getObjectif(e.code,cm);const ca=dgaCaMois(e.code,cm);
+    if(obj>0&&ca>0){
+      const prog=Math.round(ca/obj*100);const att=Math.round(dom/dim*100);
+      if(prog<att-15){
+        const reste=Math.max(0,dim-dom);const need=reste>0?Math.round((obj-ca)/reste):0;
+        alertes.push({type:'yellow',icone:'📉',titre:`${e.nom} — Objectif en retard (${prog}%)`,message:`Objectif : ${fmt(obj)} MAD. Réalisé : ${fmt(ca)} MAD. Rythme nécessaire : ${fmt(need)} MAD/j sur ${reste}j.`});
+      }
+    }
+  });
+  return alertes;
+}
+
+function genererActionsDGA(checkDate){
+  const actions=[];const todayStr=today();
+  // 1) Relances saisie
+  dgaEntites().forEach(e=>{
+    if(!e.data.some(x=>x.date===checkDate)){
+      actions.push({action:`📞 Relancer ${e.resp} — ${e.nom}`,detail:`Saisie manquante — ${dgaFmtDateCourt(checkDate)}`,prio:'haute'});
+    }
+  });
+  // 2) Tâches urgentes du jour
+  const urgent=(DB.tasks||[]).filter(t=>!t.done&&(t.date===todayStr||(t.date&&t.date<todayStr&&t.prio==='rouge')));
+  urgent.slice(0,3).forEach(t=>{
+    const ret=t.date&&t.date<todayStr;
+    actions.push({action:`${ret?'⚠️ RETARD — ':''}${t.title}`,detail:`${t.entity||'—'} · Priorité ${t.prio} · ${t.date?dgaFmtDateCourt(t.date):'Sans date'}`,prio:t.prio==='rouge'?'haute':'moyenne'});
+  });
+  // 3) Réunions du jour
+  (DB.agenda||[]).filter(e=>e.date===todayStr&&!e.done).forEach(r=>{
+    actions.push({action:`📅 ${r.time||''} — ${r.title}`,detail:`${r.lieu||''} ${r.participants?'· '+r.participants:''}`.trim(),prio:'moyenne'});
+  });
+  return actions;
+}
+
+// ═══════ VUE SEMAINE ═══════
+function renderDGASemaine(){
+  const todayStr=today();const cm=todayStr.substring(0,7);
+  const dim=daysInMonth(cm);const dom=dayOfMonth(todayStr);
+  const objList=[
+    {nom:'🚗 Cars Land',code:'cl',col:'var(--cl)'},
+    {nom:'📋 Arabian Tours',code:'at',col:'var(--at)'},
+    {nom:'🛡️ 1.2.3 Assurance',code:'as',col:'var(--as)'},
+    {nom:'☕ F Corner',code:'fc',col:'var(--fc)'}
+  ];
+  // Progression
+  const prEl=document.getElementById('dga-semaine-progress');
+  if(prEl){
+    prEl.innerHTML=objList.map(e=>{
+      const obj=getObjectif(e.code,cm);const ca=dgaCaMois(e.code,cm);
+      const pct=obj>0?Math.round(ca/obj*100):0;const att=Math.round(dom/dim*100);
+      const status=pct>=att?'✅':pct>=att-10?'⚡':'⚠️';
+      const col=pct>=att?'var(--green)':pct>=att-10?'var(--yellow)':'var(--red)';
+      return`<div class="card mb12" style="padding:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:600;color:${e.col}">${e.nom}</span><span style="color:${col}">${status} ${pct}%${obj>0?'':' (pas d\'objectif)'}</span></div><div class="prog-bar" style="height:8px;border-radius:4px;margin-bottom:6px"><div class="prog-fill" style="width:${Math.min(pct,100)}%;background:${e.col}"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);flex-wrap:wrap;gap:6px"><span>Réalisé : ${fmt(ca)} MAD</span><span>Objectif : ${fmt(obj)} MAD</span><span>Attendu : ${att}% au J${dom}/${dim}</span></div></div>`;
+    }).join('');
+  }
+  // CA 7 derniers jours
+  const jours=[];for(let i=6;i>=0;i--)jours.push(new Date(Date.now()-i*86400000).toISOString().split('T')[0]);
+  const caJours=jours.map(j=>({jour:j,ca:dgaCaJour('cl',j)+dgaCaJour('at',j)+dgaCaJour('as',j)+dgaCaJour('fc',j)}));
+  const maxCA=Math.max(...caJours.map(x=>x.ca),1);
+  const tEl=document.getElementById('dga-semaine-tendance');
+  if(tEl)tEl.innerHTML=`<div class="chart-bar-wrap">${caJours.map(j=>{const h=Math.round(j.ca/maxCA*100);const isToday=j.jour===todayStr;return`<div class="chart-bar-col"><div class="chart-bar-val">${j.ca>0?fmt(j.ca):''}</div><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="chart-bar-inner" style="height:${h}%;background:${isToday?'#FFD700':'rgba(255,255,255,.3)'};width:100%"></div></div><div class="chart-bar-label">${dgaFmtJourCourt(j.jour)}</div></div>`;}).join('')}</div>`;
+  // Top/Bottom
+  const ranking=objList.map(e=>{const obj=getObjectif(e.code,cm);const ca=dgaCaMois(e.code,cm);const pct=obj>0?Math.round(ca/obj*100):0;return{...e,obj,ca,pct};}).sort((a,b)=>b.pct-a.pct);
+  const topEl=document.getElementById('dga-semaine-top');
+  if(topEl)topEl.innerHTML=ranking.filter(r=>r.pct>=70&&r.obj>0).map(r=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><span style="color:${r.col}">${r.nom}</span><span style="color:var(--green);font-weight:600">${r.pct}% — ${fmt(r.ca)} / ${fmt(r.obj)}</span></div>`).join('')||'<div style="color:var(--muted);font-size:12px;padding:8px 0">Aucune entité en avance</div>';
+  const botEl=document.getElementById('dga-semaine-bottom');
+  if(botEl)botEl.innerHTML=ranking.filter(r=>r.pct<60&&r.obj>0).map(r=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><span style="color:${r.col}">${r.nom}</span><span style="color:var(--red);font-weight:600">${r.pct}% — ${fmt(r.ca)} / ${fmt(r.obj)}</span></div>`).join('')||'<div style="color:var(--green);font-size:12px;padding:8px 0">✅ Toutes les entités sont dans les clous</div>';
+  // Points réunion
+  const rEl=document.getElementById('dga-semaine-reunion');
+  if(rEl){
+    const points=[];
+    dgaEntites().forEach(e=>{const manq=jours.filter(j=>!e.data.some(x=>x.date===j));if(manq.length>0)points.push(`⚠️ ${e.nom} (${e.resp}) : ${manq.length} jour(s) sans saisie cette semaine`);});
+    const ret=(DB.tasks||[]).filter(t=>!t.done&&t.date&&t.date<todayStr).length;
+    if(ret>0)points.push(`⏰ ${ret} tâche(s) en retard à traiter`);
+    ranking.filter(r=>r.pct<50&&r.obj>0).forEach(r=>points.push(`📉 ${r.nom} : seulement ${r.pct}% de l'objectif`));
+    if(points.length===0)points.push('✅ Tout est sous contrôle cette semaine');
+    rEl.innerHTML=points.map(p=>`<div style="padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)">${p}</div>`).join('');
+  }
+}
+
+// ═══════ VUE MOIS — Rapport DG ═══════
+function renderDGAMois(){
+  const cm=curMonth();const cy=curYear();
+  const caCL=dgaCaMois('cl',cm);const caAT=dgaCaMois('at',cm);const caAS=dgaCaMois('as',cm);const caFC=dgaCaMois('fc',cm);
+  const caG=caCL+caAT+caAS+caFC;
+  const pYM=(Number(cy)-1)+'-'+cm.substring(5);
+  const n1CL=dgaCaMois('cl',pYM);const n1AT=dgaCaMois('at',pYM);const n1AS=dgaCaMois('as',pYM);const n1FC=dgaCaMois('fc',pYM);
+  const n1G=n1CL+n1AT+n1AS+n1FC;
+  const evo=n1G>0?Math.round((caG-n1G)/n1G*100):0;
+
+  // Synthèse
+  const sEl=document.getElementById('dga-mois-synthese');
+  if(sEl){
+    const objT=getObjectif('cl',cm)+getObjectif('at',cm)+getObjectif('as',cm)+getObjectif('fc',cm);
+    const pctO=objT>0?Math.round(caG/objT*100):0;
+    sEl.innerHTML=`<div style="font-size:14px;line-height:1.6"><p><strong>CA Groupe ${fmtMoLong(cm)} :</strong> <span style="color:#FFD700;font-size:18px">${fmt(caG)} MAD</span></p><p><strong>Évolution vs N-1 :</strong> <span style="color:${evo>=0?'var(--green)':'var(--red)'}">${evo>=0?'+':''}${evo}%</span> (N-1 : ${fmt(n1G)} MAD)</p>${objT>0?`<p><strong>Atteinte objectif Groupe :</strong> <span style="color:${pctO>=100?'var(--green)':pctO>=80?'var(--yellow)':'var(--red)'}">${pctO}%</span> (Objectif : ${fmt(objT)} MAD)</p>`:''}<p style="font-size:12px;color:var(--muted);margin-top:8px">Rapport généré automatiquement — ${new Date().toLocaleDateString('fr-MA',{day:'numeric',month:'long',year:'numeric'})}</p></div>`;
+  }
+  // KPIs
+  const kEl=document.getElementById('dga-mois-kpis');
+  if(kEl){
+    const ents=[
+      {nom:'🚗 Cars Land',ca:caCL,n1:n1CL,obj:getObjectif('cl',cm),col:'var(--cl)'},
+      {nom:'📋 Arabian Tours',ca:caAT,n1:n1AT,obj:getObjectif('at',cm),col:'var(--at)'},
+      {nom:'🛡️ 1.2.3 Assurance',ca:caAS,n1:n1AS,obj:getObjectif('as',cm),col:'var(--as)'},
+      {nom:'☕ F Corner',ca:caFC,n1:n1FC,obj:getObjectif('fc',cm),col:'var(--fc)'}
+    ];
+    kEl.innerHTML=ents.map(e=>{const ev=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):0;const po=e.obj>0?Math.round(e.ca/e.obj*100):0;return`<div class="metric" style="border-left:3px solid ${e.col}"><div class="metric-label">${e.nom}</div><div class="metric-val" style="color:${e.col};font-size:18px">${fmt(e.ca)} MAD</div><div class="metric-sub">${e.n1>0?`vs N-1 : <span style="color:${ev>=0?'var(--green)':'var(--red)'}">${ev>=0?'+':''}${ev}%</span> · `:''}${e.obj>0?`Obj : ${po}%`:'Pas d\'objectif'}</div></div>`;}).join('');
+  }
+  // Répartition
+  const rEl=document.getElementById('dga-mois-repartition');
+  if(rEl){
+    const tot=caG||1;
+    rEl.innerHTML=[{n:'Cars Land',v:caCL,c:'var(--cl)'},{n:'Arabian Tours',v:caAT,c:'var(--at)'},{n:'1.2.3 Assurance',v:caAS,c:'var(--as)'},{n:'F Corner',v:caFC,c:'var(--fc)'}].map(s=>{const p=Math.round(s.v/tot*100);return`<div class="prog-row"><span class="prog-label" style="color:${s.c}">${s.n}</span><div class="prog-bar"><div class="prog-fill" style="width:${p}%;background:${s.c}"></div></div><span class="prog-val">${p}% · ${fmt(s.v)}</span></div>`;}).join('');
+  }
+  // Évolution 6 mois
+  const eEl=document.getElementById('dga-mois-evolution');
+  if(eEl){
+    const months=[];for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);months.push(d.toISOString().substring(0,7));}
+    const caMs=months.map(mo=>({mois:mo,ca:dgaCaMois('cl',mo)+dgaCaMois('at',mo)+dgaCaMois('as',mo)+dgaCaMois('fc',mo)}));
+    const maxM=Math.max(...caMs.map(x=>x.ca),1);
+    eEl.innerHTML=`<div class="chart-bar-wrap">${caMs.map(m=>{const h=Math.round(m.ca/maxM*100);const isC=m.mois===cm;return`<div class="chart-bar-col"><div class="chart-bar-val">${m.ca>0?fmt(m.ca):''}</div><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="chart-bar-inner" style="height:${h}%;background:${isC?'#FFD700':'rgba(255,255,255,.2)'};width:100%"></div></div><div class="chart-bar-label">${m.mois.substring(5)}</div></div>`;}).join('')}</div>`;
+  }
+  // Faits marquants
+  const fEl=document.getElementById('dga-mois-faits');
+  if(fEl){
+    const faits=[];
+    const all=[].concat((DB.cl.assistance||[]).filter(e=>getMonth(e.date)===cm).map(e=>({d:e.date,v:e.ca||0})),
+      (DB.at||[]).filter(e=>getMonth(e.date)===cm).map(e=>({d:e.date,v:e.ca||0})),
+      (DB.contrats||[]).filter(c=>getMonth(c.date)===cm).map(c=>({d:c.date,v:c.prime||0})),
+      (DB.fc||[]).filter(e=>getMonth(e.date)===cm).map(e=>({d:e.date,v:e.rec||0})));
+    if(all.length>0){
+      const par={};all.forEach(x=>{par[x.d]=(par[x.d]||0)+x.v;});
+      const sorted=Object.entries(par).sort((a,b)=>b[1]-a[1]);
+      if(sorted.length>0&&sorted[0][1]>0)faits.push(`📈 <strong>Meilleur jour :</strong> ${dgaFmtDateLong(sorted[0][0])} — ${fmt(sorted[0][1])} MAD`);
+    }
+    if(evo>15)faits.push(`🚀 <strong>Forte croissance :</strong> +${evo}% vs N-1 — Excellente dynamique`);
+    else if(evo<-10)faits.push(`📉 <strong>Baisse significative :</strong> ${evo}% vs N-1 — Analyse nécessaire`);
+    faits.push(`📝 <strong>Saisies du mois :</strong> ${all.length} enregistrements toutes entités confondues`);
+    fEl.innerHTML=faits.map(f=>`<div style="padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)">${f}</div>`).join('')||'<div style="color:var(--muted)">Données insuffisantes pour analyse</div>';
+  }
+  // Recommandations
+  const recEl=document.getElementById('dga-mois-recommandations');
+  if(recEl){
+    const recos=[];
+    if(evo<0)recos.push('📊 <strong>Plan de redressement :</strong> Identifier les causes de la baisse et mettre en place des actions correctives ciblées par entité.');
+    if(caFC<n1FC&&n1FC>0)recos.push('☕ <strong>F Corner :</strong> Analyser la saisonnalité et prévoir des actions marketing (promotions, événements) pour stimuler la fréquentation.');
+    const objCL=getObjectif('cl',cm);
+    if(objCL>0&&caCL/objCL>1.1)recos.push('🚗 <strong>Cars Land :</strong> Objectif dépassé — Envisager l\'expansion de la flotte LLD ou l\'ouverture d\'un nouveau point de vente.');
+    const objAT=getObjectif('at',cm);
+    if(objAT>0&&caAT/objAT>1.1)recos.push('📋 <strong>Arabian Tours :</strong> Objectif dépassé — Capitaliser sur la dynamique pour signer de nouveaux contrats clients.');
+    recos.push('📋 <strong>Prochain mois :</strong> Fixer les objectifs mensuels dans l\'application pour un suivi précis.');
+    recos.push('👥 <strong>Réunion DG :</strong> Présenter ce rapport au Directeur Général avec les faits marquants et les propositions d\'actions.');
+    recEl.innerHTML=recos.map(r=>`<div style="padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)">${r}</div>`).join('');
+  }
+}
+
+// ════════════════════════════
 // AGENDA
 // ════════════════════════════
 function addAgendaEvent(){const title=getVal('ag-title').trim();if(!title){showToast('Titre requis');return;}DB.agenda.push({id:Date.now(),title,type:getVal('ag-type'),ent:getVal('ag-ent'),date:getVal('ag-date'),time:getVal('ag-time'),lieu:getVal('ag-lieu'),participants:getVal('ag-participants'),notes:getVal('ag-notes'),prio:getVal('ag-prio'),done:false});DB.agenda.sort((a,b)=>a.date.localeCompare(b.date));save();closeModal('m-agenda');['ag-title','ag-lieu','ag-participants','ag-notes'].forEach(id=>setVal(id,''));renderAgenda();showToast('Événement ajouté');}
@@ -2154,7 +3895,10 @@ function renderAgenda(filter='all'){
 // ════════════════════════════
 // INIT
 // ════════════════════════════
-loadFromFirebase();
+// Le chargement initial est déclenché par auth.onAuthStateChanged() ci-dessus.
+// Filet de sécurité : si onAuthStateChanged ne s'est pas déclenché après 2s
+// (pb réseau Firebase Auth), tente un chargement direct.
+setTimeout(()=>{if(!firebaseReady&&!lastSyncError){console.log('[INIT] onAuthStateChanged silent, fallback load');loadFromFirebase();}},2000);
 </script>
 </body>
 </html>
