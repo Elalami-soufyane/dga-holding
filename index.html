@@ -17,7 +17,7 @@ const auth=firebase.auth();
 
 // PERMISSIONS PAR EMAIL
 const USERS={
-  'alami.soufyane@gmail.com':{role:'admin',name:'Soufyane Alami',pages:['dashboard','taches','dga','carsland','arabian','assurance','fcorner','cashflow','finance','rapports','agenda']},
+  'alami.soufyane@gmail.com':{role:'admin',name:'Soufyane Alami',pages:['dashboard','taches','dga','carsland','arabian','assurance','fcorner','finance','agenda']},
   'meryem.mhamdi@benthamigroupe.ma':{role:'manager',name:'Meryem Mhamdi',pages:['carsland','arabian']}
 };
 
@@ -552,7 +552,6 @@ input[type=hidden]{display:none;}
 #p-assurance .ent-header::before{background:var(--as);}
 #p-fcorner .ent-header::before{background:var(--fc);}
 #p-finance .ent-header::before{background:var(--primary);}
-#p-cashflow .ent-header::before{background:var(--green);}
 #p-dga .ent-header::before{background:var(--gray-900);}
 
 /* Metrics border-top selon le contexte parent (page société) */
@@ -560,7 +559,6 @@ input[type=hidden]{display:none;}
 #p-arabian .metric{border-top-color:var(--at);}
 #p-assurance .metric{border-top-color:var(--as);}
 #p-fcorner .metric{border-top-color:var(--fc);}
-#p-cashflow .metric{border-top-color:var(--green);}
 #p-finance .metric{border-top-color:var(--primary);}
 #p-dga .metric{border-top-color:var(--gray-900);}
 .ent-icon{
@@ -1024,9 +1022,7 @@ input[type=hidden]{display:none;}
     <div class="sb-item" data-page="assurance" onclick="navTo('assurance',this)"><span class="sb-dot" style="background:var(--as)"></span>1.2.3 Assurance</div>
     <div class="sb-item" data-page="fcorner" onclick="navTo('fcorner',this)"><span class="sb-dot" style="background:var(--fc)"></span>F Corner</div>
     <div class="sb-section" data-section="pilotage">Pilotage</div>
-    <div class="sb-item" data-page="cashflow" onclick="navTo('cashflow',this)"><span class="sb-dot" style="background:#10B981"></span>💰 Cash-flow Groupe</div>
     <div class="sb-item" data-page="finance" onclick="navTo('finance',this)"><span class="sb-dot" style="background:#FFD700"></span>📊 Pilotage Financier</div>
-    <div class="sb-item" data-page="rapports" onclick="navTo('rapports',this)"><span class="sb-dot" style="background:#5B9BD5"></span>Rapports Hebdo</div>
     <div class="sb-item" data-page="agenda" onclick="navTo('agenda',this)"><span class="sb-dot" style="background:#F72585"></span>Agenda</div>
   </nav>
   <div class="sb-footer" id="sb-date"></div>
@@ -1569,6 +1565,15 @@ input[type=hidden]{display:none;}
     <div class="ent-icon" style="background:var(--as)">AS</div>
     <div><div class="ent-name">1.2.3 Assurance</div><div class="ent-sub">Agent Général Wafa Assurance — Resp: Kaoutar</div></div>
   </div>
+  <!-- Note pédagogique sur la nature comptable de l'agent général -->
+  <div class="alert alert-blue" style="margin-bottom:14px;font-size:12px;line-height:1.5">
+    <div>
+      <strong>📘 Modèle économique agent général :</strong><br>
+      • <b>Prime</b> = montant total du contrat (encaissé pour le compte de Wafa Assurance, ne reste pas dans votre société)<br>
+      • <b>Commission</b> = % de la prime versé à votre agence (<b>= votre vrai chiffre d'affaires comptable</b>)<br>
+      <span style="color:var(--muted);font-size:11px">Dans le CPC et le module Pilotage Financier, le CA utilisé est la <b>commission</b>, pas la prime.</span>
+    </div>
+  </div>
   <div class="tabs">
     <div class="tab active" onclick="showTab('as','contrats',this)">Contrats</div>
     <div class="tab" onclick="showTab('as','caisse',this)">Caisse</div>
@@ -1577,13 +1582,53 @@ input[type=hidden]{display:none;}
     <div class="tab" onclick="showTab('as','cpc',this)">📊 CPC</div>
   </div>
   <div id="as-tab-contrats">
+    <!-- ⚙️ PARAMÈTRES COMMISSIONS (éditable) -->
+    <details class="card mb12" style="background:var(--gold-soft);border-left:3px solid var(--gold)">
+      <summary style="cursor:pointer;font-weight:700;color:var(--gold-premium);padding:4px 0">⚙️ Paramètres commissions par branche (cliquer pour ouvrir)</summary>
+      <div style="margin-top:10px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Définissez le taux de commission perçu par votre agence pour chaque branche. Ces taux sont utilisés pour calculer automatiquement votre CA (commission) à partir des primes saisies.</div>
+        <div id="as-rates-editor"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center">
+          <input type="text" id="as-new-branche" placeholder="Nouvelle branche (ex: VIE, HABITATION, VOYAGE)" style="flex:1;min-width:220px">
+          <input type="number" id="as-new-taux" placeholder="Taux %" step="0.5" min="0" max="100" style="width:100px">
+          <button class="btn btn-sm" onclick="addASBranche()">➕ Ajouter</button>
+          <button class="btn btn-sm" onclick="resetASRates()" title="Restaurer les taux par défaut">🔄 Reset</button>
+          <button class="btn btn-primary btn-sm" onclick="saveASRates()">💾 Sauvegarder</button>
+        </div>
+      </div>
+    </details>
+
+    <!-- 📅 SAISIE HEBDOMADAIRE (lump sum) -->
+    <details class="card mb12" style="background:var(--blue-soft);border-left:3px solid var(--blue)">
+      <summary style="cursor:pointer;font-weight:700;color:var(--blue-dark);padding:4px 0">📅 Saisie hebdomadaire (total semaine — cliquer pour ouvrir)</summary>
+      <div style="margin-top:10px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Saisissez le total de prime <b>par branche pour la semaine</b>. La commission est calculée automatiquement avec le taux configuré ci-dessus. Idéal si vous ne voulez pas saisir contrat par contrat.</div>
+        <div class="form-row3">
+          <div><label class="flabel">Semaine</label><input type="week" id="as-week-period"></div>
+          <div><label class="flabel">Branche</label><select id="as-week-branche"></select></div>
+          <div><label class="flabel">Nb contrats (semaine)</label><input type="number" id="as-week-nb" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div><label class="flabel">Prime totale semaine (MAD)</label><input type="number" id="as-week-prime" placeholder="0" oninput="calcASWeekComm()"></div>
+          <div><label class="flabel" style="color:var(--green-dark)">Commission auto (MAD)</label><input type="number" id="as-week-comm" placeholder="0" readonly style="background:var(--green-soft);color:var(--green-dark);font-weight:700"></div>
+        </div>
+        <div class="form-row">
+          <div><label class="flabel">Prime semaine N-1 (MAD)</label><input type="number" id="as-week-n1" placeholder="0" title="Prime de la même semaine l'année précédente"></div>
+          <div><label class="flabel">Note</label><input type="text" id="as-week-note" placeholder="Optionnel"></div>
+        </div>
+        <input type="hidden" id="as-week-edit-id">
+        <button class="btn btn-primary btn-block" id="as-week-btn" onclick="saveASWeek()">📅 Enregistrer la semaine</button>
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;font-style:italic">⚠️ Si vous saisissez aussi contrat par contrat pour la même semaine, vous risquez le double comptage. Utilisez l'un OU l'autre.</div>
+      </div>
+    </details>
+
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-      <div class="section-title" style="margin:0;flex:1">Saisie Contrat</div>
+      <div class="section-title" style="margin:0;flex:1">Saisie Contrat (détaillé)</div>
       <button class="btn btn-sm" onclick="openImport('as')">📥 Importer CSV / Excel</button>
     </div>
     <div class="form-row"><div><label class="flabel">Date</label><input type="date" id="as-date"></div><div><label class="flabel">Porteur (assuré)</label><input type="text" id="as-porteur" placeholder="Nom du porteur"></div></div>
     <div class="form-row"><div><label class="flabel">Lieu du porteur</label><input type="text" id="as-lieu" placeholder="Ville / Région" list="as-lieux"><datalist id="as-lieux"><option value="Fès"><option value="Rabat"><option value="Meknès"><option value="Casablanca"><option value="Tanger"><option value="Marrakech"><option value="Agadir"><option value="Oujda"><option value="Tétouan"><option value="Salé"><option value="Kénitra"><option value="Larache"></datalist></div><div><label class="flabel">Type d'affaire</label><select id="as-type"><option value="nouvelle">Nouvelle affaire</option><option value="renouvellement">Renouvellement</option><option value="avenant">Avenant</option></select></div></div>
-    <div class="form-row"><div><label class="flabel">Branche / Production</label><select id="as-branche"><option value="AUTO">AUTO (Automobile)</option><option value="FLOTTE">FLOTTE</option><option value="ACCIDENTS CORPORELS">ACCIDENTS CORPORELS</option><option value="ACCIDENTS DE TRAVAIL">ACCIDENTS DE TRAVAIL (AT-MP)</option><option value="RISQUES DIVERS">RISQUES DIVERS (MRH/MRP/RC)</option></select></div><div><label class="flabel">Apporteur</label><select id="as-marque"><option>Agence</option><option>Orbis</option><option>Tata</option><option>Changan</option><option>Dongfeng</option><option>Courtier</option><option>Autre</option></select></div></div>
+    <div class="form-row"><div><label class="flabel">Branche / Production</label><select id="as-branche"></select></div><div><label class="flabel">Apporteur</label><select id="as-marque"><option>Agence</option><option>Orbis</option><option>Tata</option><option>Changan</option><option>Dongfeng</option><option>Courtier</option><option>Autre</option></select></div></div>
     <div class="form-row"><div><label class="flabel">Nb contrats</label><input type="number" id="as-nb" placeholder="1"></div><div><label class="flabel">Prime nette (MAD)</label><input type="number" id="as-prime" placeholder="0"></div></div>
     <div class="form-row"><div><label class="flabel">Prime N-1 (MAD)</label><input type="number" id="as-n1" placeholder="0" title="Prime du même contrat l'année précédente (renouvellement)"></div><div><label class="flabel">Commission estimée (MAD)</label><input type="number" id="as-comm" placeholder="0"></div></div>
     <input type="hidden" id="as-edit-id">
@@ -1597,6 +1642,7 @@ input[type=hidden]{display:none;}
     <div class="divider"></div>
     <div class="section-title">Historique</div>
     <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap" id="as-branche-tabs"></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center" id="as-month-tabs"></div>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th>Branche</th><th>Apporteur</th><th>Porteur</th><th>Lieu</th><th>Nb</th><th>Prime</th><th>N-1</th><th>Δ%</th><th>Actions</th></tr></thead><tbody id="as-history"></tbody></table></div>
   </div>
   <div id="as-tab-caisse" style="display:none">
@@ -1653,7 +1699,6 @@ input[type=hidden]{display:none;}
   </div>
   <div class="tabs">
     <div class="tab active" onclick="showTab('fc','saisie',this)">Saisie</div>
-    <div class="tab" onclick="showTab('fc','caisse',this)">Caisse</div>
     <div class="tab" onclick="showTab('fc','analyse',this)">Analyse</div>
     <div class="tab" onclick="showTab('fc','depenses',this)">💸 Dépenses</div>
     <div class="tab" onclick="showTab('fc','cpc',this)">📊 CPC</div>
@@ -1662,35 +1707,70 @@ input[type=hidden]{display:none;}
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
       <div class="section-title" style="margin:0;flex:1">Saisie quotidienne</div>
       <button class="btn btn-sm" onclick="openImport('fc')">📥 Importer CSV / Excel</button>
+      <button class="btn btn-sm" onclick="openImportFCExtended()" style="background:rgba(244,131,31,.15);border-color:rgba(244,131,31,.3);color:#F4831F">📊 Importer Excel complet</button>
     </div>
-    <div class="form-row"><div><label class="flabel">Date</label><input type="date" id="fc-date"></div><div><label class="flabel">CA TTC (MAD)</label><input type="number" id="fc-rec" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">Coût matières (MAD)</label><input type="number" id="fc-foodcost" placeholder="0" title="Achats matières premières du jour (gelato, café, sirop, etc.)"></div><div><label class="flabel">Autres dépenses (MAD)</label><input type="number" id="fc-dep" placeholder="0" title="Eau/électricité/transport/personnel journalier"></div></div>
-    <div class="form-row"><div><label class="flabel">Nb tickets / couverts</label><input type="number" id="fc-clients" placeholder="0"></div><div><label class="flabel">CA N-1 (même jour)</label><input type="number" id="fc-n1" placeholder="0" title="CA réalisé le même jour de l'année précédente"></div></div>
-    <div class="form-row"><div style="grid-column:1/-1"><label class="flabel">Note (météo, événement, promo…)</label><input type="text" id="fc-note" placeholder="Optionnel"></div></div>
+    <div class="form-row"><div><label class="flabel">Date</label><input type="date" id="fc-date"></div><div><label class="flabel">CA TTC total (MAD)</label><input type="number" id="fc-rec" placeholder="0" oninput="calcFCEsp()" title="Total des recettes du jour TTC"></div></div>
+
+    <!-- Décomposition des modes de paiement -->
+    <div class="card" style="background:var(--fc-soft);border-left:3px solid var(--fc);padding:12px;margin-bottom:12px">
+      <div style="font-size:11px;color:var(--fc-dark);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💳 Décomposition encaissements</div>
+      <div class="form-row3">
+        <div><label class="flabel">💳 TPE (carte)</label><input type="number" id="fc-tpe" placeholder="0" oninput="calcFCEsp()" title="Paiements par carte bancaire"></div>
+        <div><label class="flabel">🛵 GLOVO (livraisons)</label><input type="number" id="fc-glovo" placeholder="0" oninput="calcFCEsp()" title="Livraisons Glovo (encaissement différé)"></div>
+        <div><label class="flabel" style="color:var(--green-dark)">💵 ESP (auto)</label><input type="number" id="fc-esp" placeholder="0" readonly style="background:var(--green-soft);color:var(--green-dark);font-weight:700" title="Espèces caisse = CA − TPE − GLOVO (calculé automatiquement)"></div>
+      </div>
+    </div>
+
+    <!-- Charges & sorties du jour : saisie de secours (legacy). -->
+    <!-- La méthode recommandée est désormais : saisir le DÉTAIL dans l'onglet 💸 Dépenses -->
+    <div class="card" style="background:var(--gray-50);border-left:3px solid var(--gray-400);padding:12px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        <div style="font-size:11px;color:var(--gray-700);font-weight:700;text-transform:uppercase;letter-spacing:.05em">📦 Achats &amp; dépenses du jour <span style="text-transform:none;letter-spacing:0;font-weight:500;color:var(--muted);font-size:10px">(saisie de secours — préférez le détail dans 💸 Dépenses)</span></div>
+        <button type="button" class="btn btn-sm" onclick="showTab('fc','depenses',document.querySelector('#p-fcorner .tab[onclick*=\\'depenses\\']'))" title="Saisir le détail dans le module Dépenses">🔗 Saisir détail Dépenses</button>
+      </div>
+      <div class="form-row">
+        <div><label class="flabel">🍦 Achats lump sum (food cost + matériel)</label><input type="number" id="fc-foodcost" placeholder="0 — laissez vide si vous saisissez le détail" title="Lump sum si pas de saisie détaillée. Sinon, le total se calcule depuis le module Dépenses."></div>
+        <div><label class="flabel">📋 Achats en compte (lump sum)</label><input type="number" id="fc-achats-compte" placeholder="0 — laissez vide si détail" title="Lump sum si pas de saisie détaillée"></div>
+      </div>
+      <div class="form-row">
+        <div><label class="flabel">💸 Dépenses espèces (lump sum)</label><input type="number" id="fc-dep" placeholder="0 — laissez vide si détail" title="Lump sum si pas de saisie détaillée"></div>
+        <div><label class="flabel">Nb tickets / couverts</label><input type="number" id="fc-clients" placeholder="0"></div>
+      </div>
+    </div>
+
+    <div class="form-row"><div><label class="flabel">📊 CA N-1 (même jour an dernier)</label><input type="number" id="fc-n1" placeholder="0" title="CA réalisé le même jour de l'année précédente, pour comparaison"></div><div><label class="flabel">Note (météo, événement, promo…)</label><input type="text" id="fc-note" placeholder="Optionnel"></div></div>
     <input type="hidden" id="fc-edit-id">
     <input type="hidden" id="fc-obj" value="0">
     <button class="btn btn-primary btn-block" id="fc-btn" onclick="saveFCEntry()">Enregistrer</button>
     <div class="divider"></div>
-    <div class="section-title">Cumuls — Mois (vue restaurateur)</div>
+    <!-- Bloc 1 : Synthèse globale + Comparaison N-1 -->
+    <div class="section-title">📊 Synthèse globale &amp; Comparaison N-1</div>
     <div class="gridauto" id="fc-cumuls"></div>
+    <!-- Bloc 2 : Décomposition encaissements -->
+    <div class="section-title" style="margin-top:14px">💳 Décomposition des encaissements</div>
+    <div class="gridauto" id="fc-paiements"></div>
+    <!-- Bloc 3 : Achats / Marges / Résultat -->
+    <div class="section-title" style="margin-top:14px">📦 Achats, Marges &amp; Résultat</div>
+    <div class="gridauto" id="fc-marges"></div>
     <div class="divider"></div>
-    <div class="section-title">Historique</div>
-    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>CA TTC</th><th>Food cost</th><th>FC%</th><th>Marge brute</th><th>Tickets</th><th>Tkt moyen</th><th>N-1</th><th>Δ%</th><th>Actions</th></tr></thead><tbody id="fc-history"></tbody></table></div>
-  </div>
-  <div id="fc-tab-caisse" style="display:none">
-    <div class="form-row"><div><label class="flabel">Date</label><input type="date" id="fcc-date"></div><div><label class="flabel">Recettes espèces</label><input type="number" id="fcc-rec" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">Dépenses espèces</label><input type="number" id="fcc-dep" placeholder="0"></div><div><label class="flabel">Remise banque</label><input type="number" id="fcc-remise" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">Solde début</label><input type="number" id="fcc-debut" placeholder="0"></div><div><label class="flabel">Solde constaté</label><input type="number" id="fcc-constate" placeholder="0"></div></div>
-    <button class="btn btn-primary btn-block" onclick="addCaisseEntry('fc')">Enregistrer</button>
-    <div class="divider"></div>
-    <div class="grid3" id="fc-caisse-metrics"></div>
-    <div class="divider"></div>
-    <div class="card mb12" style="border-color:rgba(255,179,71,.3)"><div class="card-title" style="color:#FFB347">Contrôle caisse</div><div id="fc-caisse-ctrl"></div></div>
-    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Rec.</th><th>Dép.</th><th>Remise</th><th>Calculé</th><th>Constaté</th><th>Écart</th></tr></thead><tbody id="fc-caisse-hist"></tbody></table></div>
+    <div class="section-title">📋 Historique détaillé</div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center" id="fc-month-tabs"></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>CA TTC</th><th>💵 ESP</th><th>💳 TPE</th><th>🛵 GLOVO</th><th>🍽️ Achats</th><th>📋 Compte</th><th>💸 Dép. esp.</th><th>FC%</th><th>N-1</th><th>Δ%</th><th>Actions</th></tr></thead><tbody id="fc-history"></tbody></table></div>
   </div>
   <div id="fc-tab-analyse" style="display:none"><div id="fc-analyse"></div></div>
   <!-- Onglet Dépenses F Corner -->
   <div id="fc-tab-depenses" style="display:none">
+    <!-- Note pédagogique : Dépenses → Saisie quotidienne (agrégation auto) -->
+    <div class="alert alert-blue" style="margin-bottom:12px;font-size:12px;line-height:1.5">
+      <div>
+        <strong>🔗 Liaison automatique : saisissez ICI le détail, l'historique se met à jour tout seul</strong><br>
+        Saisissez chaque achat avec sa <b>sous-catégorie</b> (Légumes, Fruit, Café, Copag, Épicerie, Œufs, Poulet, Viande, MCDF…) et son <b>mode</b> :<br>
+        • Mode <b>💵 Caisse</b> + catégorie <b>Achats</b> → s'ajoute à la colonne « <b>Achats</b> » du jour dans l'historique<br>
+        • Mode <b>🏦 Banque</b> + catégorie <b>Achats</b> → s'ajoute à la colonne « <b>Compte</b> » (à régler fin de mois)<br>
+        • Mode <b>💵 Caisse</b> + catégorie <b>Charges externes</b> → s'ajoute à la colonne « <b>Dép. esp.</b> »<br>
+        <span style="color:var(--muted);font-size:11px">Le total du jour est <b>recalculé automatiquement</b> dans l'onglet <b>Saisie</b>. Plus besoin de re-saisir le foodcost en double — l'historique affiche un badge <b>📦 N</b> à côté de la date pour indiquer N dépenses détaillées ce jour-là.</span>
+      </div>
+    </div>
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
       <div class="section-title" style="margin:0">💸 Dépenses — F Corner</div>
       <button class="btn btn-primary" onclick="openDepenseModal('fc')">➕ Nouvelle dépense</button>
@@ -1771,123 +1851,6 @@ input[type=hidden]{display:none;}
 
 <!-- ZONE D'IMPRESSION (masquée à l'écran, visible uniquement à l'impression) -->
 <div id="print-zone" style="display:none"></div>
-
-<!-- ══════════════════════════════ CASH-FLOW GROUPE ══════════════════════════════ -->
-<div class="page" id="p-cashflow">
-  <div class="ent-header">
-    <div class="ent-icon" style="background:var(--green)">💰</div>
-    <div><div class="ent-name">Cash-flow Groupe</div><div class="ent-sub">Trésorerie consolidée des 4 entités · Vue DGA</div></div>
-  </div>
-
-  <!-- Bandeau filtre actif -->
-  <div class="card mb12" style="border-left:3px solid #10B981">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-      <div>
-        <div style="font-size:11px;color:var(--muted)">📅 Période analysée</div>
-        <div id="cf-range-label" style="font-size:14px;font-weight:600;color:#10B981">—</div>
-      </div>
-      <div style="font-size:11px;color:var(--muted)" id="cf-range-info">—</div>
-      <button class="btn btn-sm" onclick="toggleGlobalFilter()">🔍 Modifier période</button>
-    </div>
-  </div>
-
-  <!-- Sélecteur multi-mois (1, 2 ou 3 mois spécifiques, même non contigus) -->
-  <div class="card mb12" style="border-left:3px solid #6366F1">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px">
-      <div>
-        <div style="font-size:13px;font-weight:600;color:#6366F1">🎯 Sélection multi-mois</div>
-        <div style="font-size:11px;color:var(--muted)">Cochez 1 à 3 mois (même non consécutifs) pour analyser uniquement ces périodes</div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-        <select id="cf-months-year" onchange="cfRenderMonthChips()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;color:var(--text)"></select>
-        <button class="btn btn-sm" onclick="cfClearMonthsFilter()" title="Effacer la sélection">↺ Effacer</button>
-        <button class="btn btn-sm btn-primary" onclick="cfApplyMonthsFilter()">✓ Appliquer</button>
-      </div>
-    </div>
-    <div id="cf-month-chips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-    <div id="cf-months-info" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
-  </div>
-
-  <!-- KPIs principaux -->
-  <div class="section-title">🎯 Synthèse trésorerie consolidée</div>
-  <div class="gridauto mb12" id="cf-kpi"></div>
-
-  <!-- Score santé -->
-  <div class="card mb12" id="cf-health-card">
-    <div class="card-title">🩺 Score de santé trésorerie Groupe</div>
-    <div id="cf-health"></div>
-  </div>
-
-  <!-- Détail par entité -->
-  <div class="section-title">🏢 Détail par entité</div>
-  <div class="gridauto mb12" id="cf-entities"></div>
-
-  <!-- Charts -->
-  <div class="grid2 mb12">
-    <div class="card"><div class="card-title">📊 Répartition CA par entité</div><div id="cf-pie-ca"></div></div>
-    <div class="card"><div class="card-title">💸 Décomposition trésorerie</div><div id="cf-pie-cash"></div></div>
-  </div>
-
-  <!-- Évolution mensuelle -->
-  <div class="card mb12">
-    <div class="card-title">📈 Évolution mensuelle (encaissements vs décaissements)</div>
-    <div id="cf-evolution"></div>
-  </div>
-
-  <!-- Mouvements détaillés -->
-  <div class="grid2 mb12">
-    <div class="card"><div class="card-title">📥 Top encaissements (caisse)</div><div id="cf-top-enc"></div></div>
-    <div class="card"><div class="card-title">📤 Top décaissements (caisse)</div><div id="cf-top-dec"></div></div>
-  </div>
-
-  <!-- Alertes management -->
-  <div class="card mb12">
-    <div class="card-title">⚠️ Alertes & Recommandations management</div>
-    <div id="cf-alerts"></div>
-  </div>
-
-  <!-- Tableau détaillé -->
-  <div class="section-title">📋 Détail des mouvements de caisse — toutes entités</div>
-  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap" id="cf-entity-tabs">
-    <button class="btn btn-sm btn-primary" onclick="setCfEntFilter('all')">Toutes</button>
-    <button class="btn btn-sm" onclick="setCfEntFilter('as')">🛡️ 1.2.3 Assurance</button>
-    <button class="btn btn-sm" onclick="setCfEntFilter('fc')">☕ F Corner</button>
-  </div>
-  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Entité</th><th>Encaissement</th><th>Décaissement</th><th>Banque</th><th>Solde calculé</th><th>Type</th></tr></thead><tbody id="cf-history"></tbody></table></div>
-</div>
-
-<!-- ══════════════════════════════ RAPPORTS ══════════════════════════════ -->
-<div class="page" id="p-rapports">
-  <!-- FILTRES -->
-  <div class="card mb12">
-    <div class="card-title">Filtres rapports</div>
-    <div class="form-row3">
-      <div><label class="flabel">Entité</label>
-        <select id="rpt-filter-ent" onchange="renderReports()">
-          <option value="all">Toutes les sociétés</option>
-          <option value="Cars Land">Cars Land</option>
-          <option value="Arabian Tours">Arabian Tours</option>
-          <option value="1.2.3 Assurance">1.2.3 Assurance</option>
-          <option value="F Corner">F Corner</option>
-        </select>
-      </div>
-      <div><label class="flabel">Mois</label><input type="month" id="rpt-filter-month" onchange="renderReports()"></div>
-      <div><label class="flabel">Recherche</label><input type="text" id="rpt-filter-search" placeholder="Responsable, alerte..." oninput="renderReports()"></div>
-    </div>
-  </div>
-
-  <!-- SYNTHESE RAPPORTS -->
-  <div class="card mb12">
-    <div class="card-title">Synthèse — Rapports filtrés</div>
-    <div class="gridauto" id="rpt-synthese"></div>
-  </div>
-
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-    <div style="font-size:13px;color:var(--muted)" id="rpt-count"></div>
-    <button class="btn btn-primary btn-sm" onclick="openModal('m-report')">+ Nouveau rapport</button>
-  </div>
-  <div id="report-list"></div>
-</div>
 
 <!-- ══════════════════════════════ AGENDA ══════════════════════════════ -->
 <div class="page" id="p-agenda">
@@ -2160,23 +2123,120 @@ input[type=hidden]{display:none;}
   </div>
 </div>
 
-<div class="modal-overlay" id="m-report">
-  <div class="modal-box">
-    <div class="modal-hdr"><h3>Rapport hebdomadaire</h3><button class="modal-close" onclick="closeModal('m-report')">×</button></div>
-    <div class="form-row"><div><label class="flabel">Entité</label><select id="mr-ent"><option>Cars Land</option><option>Arabian Tours</option><option>1.2.3 Assurance</option><option>F Corner</option></select></div><div><label class="flabel">Responsable</label><input type="text" id="mr-resp" placeholder="Meriem / Kaoutar / Karam"></div></div>
-    <div class="form-row"><div><label class="flabel">Semaine N°</label><input type="number" id="mr-week" placeholder="ex: 17"></div><div><label class="flabel">Mois</label><input type="month" id="mr-month-ref"></div></div>
-    <div class="form-row"><div><label class="flabel">CA semaine (MAD)</label><input type="number" id="mr-ca-week" placeholder="0"></div><div><label class="flabel">CA mois en cours (MAD)</label><input type="number" id="mr-ca-month" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">Objectif mensuel (MAD)</label><input type="number" id="mr-obj" placeholder="0"></div><div><label class="flabel">Nb contrats / missions</label><input type="number" id="mr-nb" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">Encaissements semaine (MAD)</label><input type="number" id="mr-enc" placeholder="0"></div><div><label class="flabel">Créances en cours (MAD)</label><input type="number" id="mr-creances" placeholder="0"></div></div>
-    <div class="form-row"><div><label class="flabel">CA N-1 même période (MAD)</label><input type="number" id="mr-n1" placeholder="0"></div><div><label class="flabel">Évolution N/N-1</label><select id="mr-trend"><option value="hausse">📈 En hausse</option><option value="stable">➡️ Stable</option><option value="baisse">📉 En baisse</option></select></div></div>
-    <div class="form-full"><label class="flabel">Alerte / Problème</label><input type="text" id="mr-alert" placeholder="RAS si tout va bien"></div>
-    <div class="form-full"><label class="flabel">Action prévue cette semaine</label><input type="text" id="mr-action" placeholder="Action principale"></div>
-    <div class="form-full"><label class="flabel">Commentaire / Analyse</label><textarea id="mr-comment" rows="2" placeholder="Analyse de la situation..."></textarea></div>
-    <button class="btn btn-primary btn-block" onclick="addReport()">Enregistrer le rapport</button>
-  </div>
-</div>
-
 <script>
+// ════════════════════════════════════════════════════════════════════
+// CORE — Utilities, Logger, Cache, Repository (Senior Architecture v1.0)
+// Patterns ajoutés pour : sécurité (XSS), performance (memoization),
+// maintenabilité (DRY), traçabilité (logger structuré)
+// Tout est ADDITIF : aucune fonction existante n'est cassée.
+// ════════════════════════════════════════════════════════════════════
+const App=(function(){
+
+  // ─── Logger structuré : remplace console.log éparpillés ─────────
+  // App.log.info('module','event',{data})
+  const _LOG_LEVELS={debug:0,info:1,warn:2,error:3};
+  const _LOG_THRESHOLD=1; // info et au-dessus en prod
+  function _log(level,mod,evt,data){
+    if(_LOG_LEVELS[level]<_LOG_THRESHOLD)return;
+    const tag='['+(mod||'app').toUpperCase()+']';
+    const args=[tag,evt];if(data!==undefined)args.push(data);
+    if(level==='error')console.error.apply(console,args);
+    else if(level==='warn')console.warn.apply(console,args);
+    else console.log.apply(console,args);
+  }
+  const log={
+    debug:(m,e,d)=>_log('debug',m,e,d),
+    info:(m,e,d)=>_log('info',m,e,d),
+    warn:(m,e,d)=>_log('warn',m,e,d),
+    error:(m,e,d)=>_log('error',m,e,d)
+  };
+
+  // ─── XSS ESCAPE : sécurise les inputs utilisateur avant innerHTML ──
+  // Usage : `<td>${App.esc(d.note)}</td>` au lieu de `<td>${d.note}</td>`
+  const _ESC_MAP={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+  function esc(s){
+    if(s===null||s===undefined)return'';
+    return String(s).replace(/[&<>"']/g,c=>_ESC_MAP[c]);
+  }
+
+  // ─── MEMOIZATION CACHE : évite de recalculer les agrégations ─────
+  // Cache invalidé automatiquement à chaque saveItem/removeItem.
+  // Usage : App.cache.memo('cpc:cl:2026-04',()=>finCalculCPC('cl','2026-04'))
+  const _cache=new Map();
+  let _cacheGen=0; // génération : incrémentée à chaque invalidation
+  function memo(key,computeFn){
+    const slot=_cache.get(key);
+    if(slot&&slot.gen===_cacheGen)return slot.value;
+    const v=computeFn();
+    _cache.set(key,{gen:_cacheGen,value:v});
+    return v;
+  }
+  function invalidateCache(reason){
+    _cacheGen++;
+    if(_cache.size>500)_cache.clear(); // évite la croissance infinie
+    log.debug('cache','invalidate',{reason,gen:_cacheGen});
+  }
+
+  // ─── REPOSITORY PATTERN : helpers DRY pour les opérations CRUD ───
+  // Élimine la duplication des 13 fonctions delete et 18 saveItem.
+  // Usage :
+  //   App.repo.deleteById(DB.depenses, id, 'depenses') → splice + Firebase + cache invalidate
+  //   App.repo.upsert(DB.depenses, item, 'depenses')   → push/replace + Firebase + cache invalidate
+  function _arrayRemoveById(arr,id){
+    if(!Array.isArray(arr))return false;
+    const i=arr.findIndex(x=>x&&x.id===id);
+    if(i<0)return false;
+    arr.splice(i,1);
+    return true;
+  }
+  function _arrayUpsert(arr,item,idField){
+    idField=idField||'id';
+    if(!Array.isArray(arr))return;
+    if(!item[idField])item[idField]=Date.now();
+    const i=arr.findIndex(x=>x&&x[idField]===item[idField]);
+    if(i>=0)arr[i]=item;else arr.push(item);
+  }
+  // Suppression robuste : splice local + remove Firebase + fallback subtree si id dupliqué
+  function deleteById(arr,id,firebasePath){
+    const removed=_arrayRemoveById(arr,id);
+    if(!removed){log.warn('repo','delete-not-found',{firebasePath,id});return Promise.resolve(false);}
+    invalidateCache('delete:'+firebasePath);
+    if(typeof removeItem==='function'&&firebasePath){
+      return removeItem(firebasePath,id).then(()=>{
+        // Garde-fou : si l'id existe encore (doublons d'id historiques), force sync complet
+        if(arr.some(x=>x&&x.id===id)&&typeof saveSubtree==='function'){
+          return saveSubtree(firebasePath,arr);
+        }
+        return true;
+      });
+    }
+    return Promise.resolve(true);
+  }
+  // Upsert (insert si absent, replace si présent) + persist Firebase granulaire
+  function upsert(arr,item,firebasePath){
+    _arrayUpsert(arr,item);
+    invalidateCache('upsert:'+firebasePath);
+    if(typeof saveItem==='function'&&firebasePath)return saveItem(firebasePath,item);
+    return Promise.resolve(true);
+  }
+  const repo={deleteById,upsert};
+
+  // ─── VALIDATION HELPERS ─────────────────────────────────────────
+  function isValidDate(s){return typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!isNaN(new Date(s+'T00:00:00').getTime());}
+  function isValidMonth(s){return typeof s==='string'&&/^\d{4}-\d{2}$/.test(s);}
+  function isPositiveNumber(n){const x=Number(n);return!isNaN(x)&&x>=0;}
+  const validate={isValidDate,isValidMonth,isPositiveNumber};
+
+  // ─── SCHEMA VERSIONING ──────────────────────────────────────────
+  // Permet les migrations futures sans corrompre les bases existantes
+  const SCHEMA_VERSION=2; // v1=legacy, v2=Quick Win A (granular), source FC ajouté
+
+  return{log,esc,memo,invalidateCache,repo,validate,SCHEMA_VERSION};
+})();
+
+// Alias globaux courts pour usage dans les templates HTML existants
+const esc=App.esc; // utilisable directement : ${esc(d.note)}
+
 // ════════════════════════════
 // DATA
 // ════════════════════════════
@@ -2233,10 +2293,11 @@ function _localBackup(){try{localStorage.setItem('hb_v7',JSON.stringify(DB));}ca
 function saveItem(path,item){
   if(currentUser&&!currentUserConfig){showToast('🔒 Compte non autorisé');return Promise.reject('unauthorized');}
   if(!item.id)item.id=Date.now();
+  App.invalidateCache('saveItem:'+path); // ⚡ invalide les agrégations memoizées
   if(firebaseReady){
     return db.ref('hb_dga/'+path+'/'+item.id).set(item)
       .then(()=>{_localBackup();showToast('☁️ Sauvegardé');})
-      .catch(e=>{lastSyncError=e;showToast('❌ '+e.message);console.error('[saveItem]',path,e);});
+      .catch(e=>{lastSyncError=e;showToast('❌ '+e.message);App.log.error('saveItem',path,e);});
   }else{
     _localBackup();showToast('💾 Local (offline)');return Promise.resolve();
   }
@@ -2245,10 +2306,11 @@ function saveItem(path,item){
 // Suppression granulaire d'un item par id
 function removeItem(path,id){
   if(currentUser&&!currentUserConfig){showToast('🔒 Compte non autorisé');return Promise.reject('unauthorized');}
+  App.invalidateCache('removeItem:'+path); // ⚡ invalide cache
   if(firebaseReady){
     return db.ref('hb_dga/'+path+'/'+id).remove()
       .then(()=>{_localBackup();showToast('🗑️ Supprimé');})
-      .catch(e=>{lastSyncError=e;showToast('❌ '+e.message);console.error('[removeItem]',path,id,e);});
+      .catch(e=>{lastSyncError=e;showToast('❌ '+e.message);App.log.error('removeItem',path,{id,err:e.message});});
   }else{
     _localBackup();return Promise.resolve();
   }
@@ -2257,10 +2319,11 @@ function removeItem(path,id){
 // Sauvegarde d'un sous-arbre entier (pour les objets non listables : objectifs, parametresFinance, etc.)
 function saveSubtree(path,value){
   if(currentUser&&!currentUserConfig){showToast('🔒 Compte non autorisé');return Promise.reject('unauthorized');}
+  App.invalidateCache('saveSubtree:'+path); // ⚡ invalide cache
   if(firebaseReady){
     return db.ref('hb_dga/'+path).set(value)
       .then(()=>{_localBackup();showToast('☁️ Sauvegardé');})
-      .catch(e=>{lastSyncError=e;showToast('❌ '+e.message);console.error('[saveSubtree]',path,e);});
+      .catch(e=>{lastSyncError=e;showToast('❌ '+e.message);App.log.error('saveSubtree',path,e);});
   }else{
     _localBackup();return Promise.resolve();
   }
@@ -2273,28 +2336,54 @@ function _toArray(val){
   return[];
 }
 
+// Healing : assure des IDs uniques (corrige les anciennes données corrompues).
+// Si deux entrées partagent un id, la 2ᵉ reçoit un nouvel id unique.
+let _idHealCounter=0;
+function _ensureUniqueIds(arr){
+  if(!Array.isArray(arr)||arr.length<2)return arr;
+  const seen=new Set();
+  let healed=0;
+  arr.forEach(e=>{
+    if(!e||typeof e!=='object')return;
+    if(e.id===undefined||e.id===null||e.id===''||seen.has(e.id)){
+      e.id=Date.now()+(++_idHealCounter);
+      healed++;
+    }
+    seen.add(e.id);
+  });
+  if(healed>0)console.log('[ID HEAL]',healed,'entrée(s) ré-indexée(s)');
+  return arr;
+}
+
 function applyDB(d){
   if(!d)return;
+  // Helper : tri DESC par date (ou month) puis id (stable pour multi-saisies)
+  const sortDate=arr=>arr.sort((a,b)=>{
+    const da=a.date||a.month||'',db=b.date||b.month||'';
+    return db.localeCompare(da)||(Number(b.id)||0)-(Number(a.id)||0);
+  });
+  // Pipeline : _toArray puis healing IDs dupliqués puis tri
+  const norm=val=>_ensureUniqueIds(_toArray(val));
   // Conversion : Firebase peut stocker les listes en objet indexé par id (après push granulaire)
-  // ou en tableau (anciennes saves full). _toArray normalise.
-  DB.tasks=_toArray(d.tasks);
+  // ou en tableau (anciennes saves full). norm normalise + répare les IDs dupliqués.
+  DB.tasks=sortDate(norm(d.tasks));
   DB.cl=d.cl||{assistance:[],lld:[],particuliers:[],lldClients:[]};
-  DB.cl.assistance=_toArray(DB.cl.assistance);
-  DB.cl.lld=_toArray(DB.cl.lld);
-  DB.cl.particuliers=_toArray(DB.cl.particuliers);
-  DB.cl.lldClients=_toArray(DB.cl.lldClients);
-  DB.at=_toArray(d.at);
+  DB.cl.assistance=sortDate(norm(DB.cl.assistance));
+  DB.cl.lld=sortDate(norm(DB.cl.lld));
+  DB.cl.particuliers=sortDate(norm(DB.cl.particuliers));
+  DB.cl.lldClients=norm(DB.cl.lldClients);
+  DB.at=sortDate(norm(d.at));
   DB.pipe=d.pipe||{cl:[],at:[]};
-  DB.pipe.cl=_toArray(DB.pipe.cl);
-  DB.pipe.at=_toArray(DB.pipe.at);
-  DB.contrats=_toArray(d.contrats);
+  DB.pipe.cl=norm(DB.pipe.cl);
+  DB.pipe.at=norm(DB.pipe.at);
+  DB.contrats=sortDate(norm(d.contrats));
   DB.caisse=d.caisse||{as:[],fc:[]};
-  DB.caisse.as=_toArray(DB.caisse.as);
-  DB.caisse.fc=_toArray(DB.caisse.fc);
-  DB.fc=_toArray(d.fc);
-  DB.reports=_toArray(d.reports);
-  DB.agenda=_toArray(d.agenda);
-  DB.depenses=_toArray(d.depenses);
+  DB.caisse.as=sortDate(norm(DB.caisse.as));
+  DB.caisse.fc=sortDate(norm(DB.caisse.fc));
+  DB.fc=sortDate(norm(d.fc));
+  DB.reports=sortDate(norm(d.reports));
+  DB.agenda=sortDate(norm(d.agenda));
+  DB.depenses=sortDate(norm(d.depenses));
   // Objets non-listables : pas de conversion
   DB.objectifs=d.objectifs||{cl:{},at:{},fc:{}};
   DB.objectifs.cl=DB.objectifs.cl||{};DB.objectifs.at=DB.objectifs.at||{};DB.objectifs.fc=DB.objectifs.fc||{};
@@ -2312,6 +2401,31 @@ function applyDB(d){
     if(p.hasTVA===undefined)p.hasTVA=(s!=='as');
     if(p.tauxTVADefaut===undefined)p.tauxTVADefaut=p.hasTVA?20:0;
   });
+  // 1.2.3 Assurance : initialiser branches & commissions si absents
+  const asP=DB.parametresFinance.as;
+  if(!Array.isArray(asP.branches)||!asP.branches.length)asP.branches=AS_BRANCHES_DEFAULT.slice();
+  if(!asP.commissionRates||typeof asP.commissionRates!=='object')asP.commissionRates=Object.assign({},AS_COMM_RATES_DEFAULT);
+  // Recharge les variables runtime
+  if(typeof refreshASConfig==='function')refreshASConfig();
+  // ═══ SCHEMA VERSIONING ═══════════════════════════════════════════
+  // Permet les migrations futures sans corruption silencieuse
+  const oldVer=Number(d._schemaVersion)||1;
+  const curVer=App.SCHEMA_VERSION;
+  if(oldVer<curVer){
+    App.log.info('schema','migration',{from:oldVer,to:curVer});
+    // Migration v1 → v2 : ajout du champ source pour les dépenses auto-FC
+    if(oldVer<2){
+      (DB.depenses||[]).forEach(dep=>{
+        if(dep&&!dep.source&&dep.fcSourceId)dep.source='fc-quotidien';
+      });
+    }
+    DB._schemaVersion=curVer;
+    if(typeof saveSubtree==='function')saveSubtree('_schemaVersion',curVer);
+  }else{
+    DB._schemaVersion=curVer;
+  }
+  // Invalidation cache après chargement complet
+  App.invalidateCache('applyDB');
 }
 function loadFromFirebase(){
   setSyncStatus('⏳');lastSyncError=null;
@@ -2342,7 +2456,7 @@ function setSyncStatus(t){const el=document.getElementById('sync-status');if(el)
 // AUTHENTIFICATION
 // ════════════════════════════
 // Pages auxquelles tout utilisateur authentifié non listé peut accéder par défaut
-const DEFAULT_ALLOWED_PAGES=['dashboard','taches','dga','carsland','arabian','assurance','fcorner','cashflow','finance','rapports','agenda'];
+const DEFAULT_ALLOWED_PAGES=['dashboard','taches','dga','carsland','arabian','assurance','fcorner','finance','agenda'];
 function getAllowedPages(){
   // Pas de user connecté : on laisse l'UI navigable (la base reste protégée par les rules Firebase)
   if(!currentUser)return DEFAULT_ALLOWED_PAGES.slice();
@@ -2672,9 +2786,9 @@ function navTo(id,el){
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
   const pageEl=document.getElementById('p-'+id);if(pageEl)pageEl.classList.add('active');
   if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',taches:'Tâches',dga:'🎯 Pilotage DGA',carsland:'Cars Land',arabian:'Arabian Tours',assurance:'1.2.3 Assurance',fcorner:'F Corner',cashflow:'💰 Cash-flow Groupe',finance:'📊 Pilotage Financier',rapports:'Rapports Hebdo',agenda:'Agenda'};
+  const titles={dashboard:'Dashboard',taches:'Tâches',dga:'🎯 Pilotage DGA',carsland:'Cars Land',arabian:'Arabian Tours',assurance:'1.2.3 Assurance',fcorner:'F Corner',finance:'📊 Pilotage Financier',agenda:'Agenda'};
   document.getElementById('page-title').textContent=titles[id]||id;
-  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),dga:renderDGA,carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,cashflow:renderCashflow,finance:renderFinance,rapports:renderReports,agenda:renderAgenda};
+  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),dga:renderDGA,carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,finance:renderFinance,agenda:renderAgenda};
   if(renders[id])renders[id]();
 }
 function navToMob(id){
@@ -2702,17 +2816,11 @@ function toggleSidebar(){document.getElementById('sidebar').classList.toggle('op
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o){o.classList.remove('open');document.body.style.overflow='';}});});
 
 // INIT DATES
-['at-date','fc-date','cl-a-date','cas-date','fcc-date','as-date','pipe-date','lld-client-debut','ag-date','mt-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today();});
-['cl-lld-month','cl-part-month','mr-month-ref','obj-cl-month','obj-at-month','cl-stats-month','at-stats-month','dep-filtre-month-cl','dep-filtre-month-at','dep-filtre-month-as','dep-filtre-month-fc','cpc-month-cl','cpc-month-at','cpc-month-as','cpc-month-fc','fin-month'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=curMonth();});
+['at-date','fc-date','cl-a-date','cas-date','as-date','pipe-date','lld-client-debut','ag-date','mt-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today();});
+['cl-lld-month','cl-part-month','obj-cl-month','obj-at-month','cl-stats-month','at-stats-month','dep-filtre-month-cl','dep-filtre-month-at','dep-filtre-month-as','dep-filtre-month-fc','cpc-month-cl','cpc-month-at','cpc-month-as','cpc-month-fc','fin-month'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=curMonth();});
 clStats.month=curMonth();atStats.month=curMonth();
 document.getElementById('sb-date').textContent=new Date().toLocaleDateString('fr-MA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · S'+curWeek();
 document.getElementById('top-date').textContent=new Date().toLocaleDateString('fr-MA',{day:'numeric',month:'long',year:'numeric'})+' · Sem. '+curWeek()+' ('+fmtWeekRange()+')';
-const weekNumEl=document.getElementById('mr-week');if(weekNumEl)weekNumEl.value=curWeek();
-const rptMonthEl=document.getElementById('rpt-filter-month');if(rptMonthEl)rptMonthEl.value=curMonth();
-
-// Auto-calcul de la semaine dans le rapport hebdo quand on change la date
-const mrMonthRef=document.getElementById('mr-month-ref');
-if(mrMonthRef){mrMonthRef.addEventListener('change',()=>{const v=mrMonthRef.value;if(v){const firstDay=v+'-15';setVal('mr-week',getWeek(firstDay));}});}
 
 // Réagir au changement du mois d'objectif (Cars Land & Arabian Tours)
 const objClMonth=document.getElementById('obj-cl-month');if(objClMonth)objClMonth.addEventListener('change',()=>renderCarsLand());
@@ -2776,7 +2884,7 @@ function refreshTopDate(){
 function rerenderActivePage(){
   const page=document.querySelector('.page.active');if(!page)return;
   const id=page.id.replace('p-','');
-  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),dga:renderDGA,carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,cashflow:renderCashflow,finance:renderFinance,rapports:renderReports,agenda:renderAgenda};
+  const renders={dashboard:renderDash,taches:()=>renderTasks('all'),dga:renderDGA,carsland:renderCarsLand,arabian:renderArabian,assurance:renderAssurance,fcorner:renderFC,finance:renderFinance,agenda:renderAgenda};
   if(renders[id])renders[id]();
 }
 
@@ -2970,19 +3078,20 @@ function renderDash(){
   const clMonth=monthCla.reduce((a,b)=>a+b.ca,0)+lldCur.ca+partCur.ca;
   const atMonth=monthAt.reduce((a,b)=>a+b.ca,0);
   const fcMonth=DB.fc.filter(e=>getMonth(e.date)===m).reduce((a,b)=>a+b.rec,0);
-  const asMonth=DB.contrats.filter(c=>getMonth(c.date)===m).reduce((a,b)=>a+b.prime,0);
+  // 1.2.3 Assurance : on prend les COMMISSIONS (vrai CA agent), pas les primes (volume géré pour Wafa)
+  const asMonth=asCommissionMonth(m);
   const totalMonth=clMonth+atMonth+fcMonth+asMonth;
 
   const clWeek=weekCla.reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(m).ca/4;
   const atWeek=weekAt.reduce((a,b)=>a+b.ca,0);
   const fcWeek=DB.fc.filter(e=>getWeek(e.date)===w&&getYear(e.date)===y).reduce((a,b)=>a+b.rec,0);
-  const asWeek=DB.contrats.filter(c=>getWeek(c.date)===w&&getYear(c.date)===y).reduce((a,b)=>a+b.prime,0);
+  const asWeek=asCommissionFiltered(c=>getWeek(c.date)===w&&getYear(c.date)===y);
   const totalWeek=clWeek+atWeek+fcWeek+asWeek;
 
   const clYear=yearCla.reduce((a,b)=>a+b.ca,0)+(DB.cl.lld||[]).reduce((a,b)=>a+b.ca,0)+(DB.cl.particuliers||[]).reduce((a,b)=>a+b.ca,0);
   const atYear=yearAt.reduce((a,b)=>a+b.ca,0);
   const fcYear=DB.fc.filter(e=>getYear(e.date)===y).reduce((a,b)=>a+b.rec,0);
-  const asYear=DB.contrats.filter(c=>getYear(c.date)===y).reduce((a,b)=>a+b.prime,0);
+  const asYear=asCommissionFiltered(c=>getYear(c.date)===y);
   const totalYear=clYear+atYear+fcYear+asYear;
 
   const totalPipeNR=DB.pipe.cl.filter(p=>p.statut===2).reduce((a,b)=>a+b.montant,0)+DB.pipe.at.filter(p=>p.statut===2).reduce((a,b)=>a+b.montant,0);
@@ -3089,14 +3198,14 @@ function renderDash(){
     const clM=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(mo).ca+aggCLPartMonth(mo).ca;
     const atM=DB.at.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);
     const fcM=DB.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.rec,0);
-    const asM=DB.contrats.filter(c=>getMonth(c.date)===mo).reduce((a,b)=>a+b.prime,0);
+    const asM=asCommissionMonth(mo);  // commission = vrai CA AS
     return clM+atM+fcM+asM;
   }),1);
   document.getElementById('dash-evolution').innerHTML=`<div class="chart-bar-wrap">${months6.map(mo=>{
     const clM=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0)+aggCLLldMonth(mo).ca+aggCLPartMonth(mo).ca;
     const atM=DB.at.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);
     const fcM=DB.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.rec,0);
-    const asM=DB.contrats.filter(c=>getMonth(c.date)===mo).reduce((a,b)=>a+b.prime,0);
+    const asM=asCommissionMonth(mo);  // commission = vrai CA AS
     const tot=clM+atM+fcM+asM;const h=Math.round(tot/maxM*100);
     const isCurrentMonth=mo===m;
     return`<div class="chart-bar-col"><div class="chart-bar-val">${tot>0?fmt(tot):''}</div><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="chart-bar-inner" style="height:${h}%;background:${isCurrentMonth?'var(--gold)':'var(--gray-300)'};width:100%"></div></div><div class="chart-bar-label">${mo.substring(5)}</div></div>`;
@@ -3111,7 +3220,7 @@ function renderDash(){
   // ALERTES OPERATIONNELLES
   const urgents=DB.tasks.filter(t=>!t.done&&t.prio==='rouge').slice(0,6);
   const overdue=DB.tasks.filter(t=>!t.done&&t.date&&t.date<today());
-  let urgHtml=urgents.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px"><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0"></div><span style="flex:1">${t.title}</span><span class="badge badge-red" style="font-size:10px;flex-shrink:0">${t.entity}</span></div>`).join('');
+  let urgHtml=urgents.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px"><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0"></div><span style="flex:1">${esc(t.title)}</span><span class="badge badge-red" style="font-size:10px;flex-shrink:0">${t.entity}</span></div>`).join('');
   if(overdue.length>0)urgHtml+=`<div class="alert alert-yellow" style="margin-top:8px;font-size:12px">⚠️ ${overdue.length} tâche(s) dépassée(s)</div>`;
   document.getElementById('dash-urgent').innerHTML=urgHtml||'<div style="color:var(--green);font-size:13px;padding:8px 0">✅ Aucune action urgente</div>';
 
@@ -3167,7 +3276,7 @@ function renderDash(){
   document.getElementById('dash-tasks').innerHTML=topTasks.length?topTasks.map(t=>`
     <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">
       <span>${prioIcons[t.prio]}</span>
-      <span style="flex:1">${t.title}</span>
+      <span style="flex:1">${esc(t.title)}</span>
       <span style="font-size:10px;color:${taskColors[t.entity]||'#888'}">${t.entity}</span>
     </div>`).join(''):'<div style="color:var(--green);font-size:13px;padding:8px 0">✅ Aucune tâche urgente</div>';
 }
@@ -3187,30 +3296,35 @@ function fmtMoShort(mo){if(!mo)return '—';const[y,m]=mo.split('-');return(MOIS
 function prevMonthOf(mo){if(!mo)return '';const[y,m]=mo.split('-').map(Number);const d=new Date(y,m-2,1);return d.toISOString().substring(0,7);}
 function n1MonthOf(mo){if(!mo)return '';const[y,m]=mo.split('-');return(Number(y)-1)+'-'+m;}
 // === Agrégateurs LLD/Particuliers : un mois peut contenir plusieurs saisies (par client / par ville) ===
+// Agrégations CL — memoizées pour éviter les recalculs répétés
 function aggCLLldMonth(mo){
-  const arr=(DB.cl.lld||[]).filter(e=>e.month===mo);
-  if(!arr.length)return{ca:0,n1:0,flotte:0,nb:0,newC:0,resil:0,clients:0,entries:[]};
-  return{
-    ca:arr.reduce((a,b)=>a+(b.ca||0),0),
-    n1:arr.reduce((a,b)=>a+(b.n1||0),0),
-    flotte:arr.reduce((a,b)=>a+(b.flotte||b.nb||0),0),
-    nb:arr.reduce((a,b)=>a+(b.nb||b.flotte||0),0),
-    newC:arr.reduce((a,b)=>a+(b.newC||0),0),
-    resil:arr.reduce((a,b)=>a+(b.resil||0),0),
-    clients:new Set(arr.filter(e=>e.client).map(e=>e.client)).size,
-    entries:arr
-  };
+  return App.memo('aggCLLld:'+mo,()=>{
+    const arr=(DB.cl.lld||[]).filter(e=>e.month===mo);
+    if(!arr.length)return{ca:0,n1:0,flotte:0,nb:0,newC:0,resil:0,clients:0,entries:[]};
+    return{
+      ca:arr.reduce((a,b)=>a+(b.ca||0),0),
+      n1:arr.reduce((a,b)=>a+(b.n1||0),0),
+      flotte:arr.reduce((a,b)=>a+(b.flotte||b.nb||0),0),
+      nb:arr.reduce((a,b)=>a+(b.nb||b.flotte||0),0),
+      newC:arr.reduce((a,b)=>a+(b.newC||0),0),
+      resil:arr.reduce((a,b)=>a+(b.resil||0),0),
+      clients:new Set(arr.filter(e=>e.client).map(e=>e.client)).size,
+      entries:arr
+    };
+  });
 }
 function aggCLPartMonth(mo){
-  const arr=(DB.cl.particuliers||[]).filter(e=>e.month===mo);
-  if(!arr.length)return{ca:0,n1:0,nb:0,villes:0,entries:[]};
-  return{
-    ca:arr.reduce((a,b)=>a+(b.ca||0),0),
-    n1:arr.reduce((a,b)=>a+(b.n1||0),0),
-    nb:arr.reduce((a,b)=>a+(b.nb||0),0),
-    villes:new Set(arr.filter(e=>e.ville).map(e=>e.ville)).size,
-    entries:arr
-  };
+  return App.memo('aggCLPart:'+mo,()=>{
+    const arr=(DB.cl.particuliers||[]).filter(e=>e.month===mo);
+    if(!arr.length)return{ca:0,n1:0,nb:0,villes:0,entries:[]};
+    return{
+      ca:arr.reduce((a,b)=>a+(b.ca||0),0),
+      n1:arr.reduce((a,b)=>a+(b.n1||0),0),
+      nb:arr.reduce((a,b)=>a+(b.nb||0),0),
+      villes:new Set(arr.filter(e=>e.ville).map(e=>e.ville)).size,
+      entries:arr
+    };
+  });
 }
 
 function saveCLAssistance(){
@@ -3231,21 +3345,25 @@ function editCLAssist(id){
   document.getElementById('cl-a-btn').textContent='✏️ Modifier';
   document.getElementById('cl-tab-assistance').scrollIntoView({behavior:'smooth'});showToast('Saisie chargée pour modification');
 }
-function deleteCLAssist(id){if(!confirm('Supprimer ?'))return;DB.cl.assistance=DB.cl.assistance.filter(e=>e.id!==id);removeItem('cl/assistance',id);renderCarsLand();}
+function deleteCLAssist(id){if(!confirm('Supprimer ?'))return;const i=DB.cl.assistance.findIndex(e=>e.id===id);if(i<0)return;DB.cl.assistance.splice(i,1);removeItem('cl/assistance',id).then(()=>{if(DB.cl.assistance.some(e=>e.id===id))saveSubtree('cl/assistance',DB.cl.assistance);});renderCarsLand();}
 function setCLMonthFilter(mo){clMonthFilter=mo;renderCLAssistMonthTabs();renderCLAssistHistory();}
 function renderCLAssistMonthTabs(){
   const cont=document.getElementById('cl-a-month-tabs');if(!cont)return;
-  const months=[...new Set([...DB.cl.assistance.map(e=>getMonth(e.date)).filter(Boolean),curMonth()])].sort().reverse().slice(0,12);
+  const months=[...new Set([...DB.cl.assistance.map(e=>getMonth(e.date)).filter(Boolean),curMonth()])].sort().reverse().slice(0,24);
   const all=`<button class="btn btn-sm ${clMonthFilter==='all'?'btn-primary':''}" onclick="setCLMonthFilter('all')">Tous</button>`;
   const btns=months.map(mo=>{const active=clMonthFilter===mo;const ca=DB.cl.assistance.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.ca||0),0);return`<button class="btn btn-sm ${active?'btn-primary':''}" onclick="setCLMonthFilter('${mo}')" title="${mo} · CA ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
-  cont.innerHTML=all+btns;
+  // Sélecteur libre : permet de choisir n'importe quel mois (même sans données)
+  const picker=`<input type="month" value="${clMonthFilter!=='all'?clMonthFilter:''}" onchange="setCLMonthFilter(this.value||'all')" title="Choisir n'importe quel mois" style="height:32px;padding:0 8px;font-size:12px;width:140px">`;
+  cont.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${all}${btns}<span style="color:var(--muted);font-size:11px;margin:0 4px">|</span>${picker}</div>`;
 }
 function renderCLAssistHistory(){
   renderCLAssistMonthTabs();
-  let entries=DB.cl.assistance;
+  let entries=DB.cl.assistance.slice();
   if(clMonthFilter!=='all')entries=entries.filter(e=>getMonth(e.date)===clMonthFilter);
   if(clVilleHistFilter!=='all')entries=entries.filter(e=>e.ville===clVilleHistFilter);
   if(clHistFilter!=='all')entries=entries.filter(e=>e.client===clHistFilter);
+  // Tri DESC par date puis par id (stable, gère les multiples saisies du même jour)
+  entries.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(Number(b.id)||0)-(Number(a.id)||0));
   // Synthèse — barre management
   const sumEl=document.getElementById('cl-a-month-summary');
   if(sumEl){
@@ -3269,16 +3387,19 @@ function renderCLAssistHistory(){
         ${fObj>0?`<div><b>vs Objectif :</b> <span style="color:${objPct>=100?'var(--green)':objPct>=70?'var(--yellow)':'var(--red)'};font-weight:700">${objPct}%</span> (obj. ${fmt(fObj)})</div>`:''}
       </div></div>`:'';
   }
-  document.getElementById('cl-a-history').innerHTML=entries.slice(0,60).map(e=>{
+  // Mois sélectionné → toutes les lignes ; "Tous mois" → 500 max (perf)
+  const list=clMonthFilter!=='all'?entries:entries.slice(0,500);
+  const limited=clMonthFilter==='all'&&entries.length>500;
+  document.getElementById('cl-a-history').innerHTML=list.map(e=>{
     const n1=e.n1||0;const ev=n1>0?Math.round((e.ca-n1)/n1*100):0;
     const evCol=ev>=0?'var(--green)':'var(--red)';const evTxt=n1>0?(ev>=0?'+':'')+ev+'%':'—';
     return `<tr><td>${fmtDate(e.date)}</td><td><span class="vpill ${CL_VCL[e.ville]||''}">${e.ville}</span></td>
     <td>${e.client}</td><td>${fmt(e.contrats)}</td><td>${fmt(e.ca)} MAD</td>
     <td style="color:var(--muted)">${n1?fmt(n1)+' MAD':'—'}</td>
     <td style="color:${n1>0?evCol:'var(--muted)'};font-weight:600">${evTxt}</td>
-    <td style="color:var(--muted);font-size:11px">${e.note||'—'}</td>
+    <td style="color:var(--muted);font-size:11px">${esc(e.note)||'—'}</td>
     <td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLAssist(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLAssist(${e.id})">×</button></div></td></tr>`;
-  }).join('')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie</td></tr>';
+  }).join('')+(limited?`<tr><td colspan="9" style="color:var(--yellow);text-align:center;padding:10px;font-size:11px">⚠️ ${entries.length} lignes au total — affichage limité à 500. Sélectionnez un mois pour tout voir.</td></tr>`:'')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie pour cette période</td></tr>';
 }
 
 function saveCLLLD(){
@@ -3301,7 +3422,7 @@ function saveCLLLD(){
   if(!firebaseReady)showToast('Saisie LLD enregistrée — '+client+' / '+fmtMoLong(mo));
 }
 function editCLLLD(id){const e=DB.cl.lld.find(x=>x.id===id);if(!e)return;setVal('cl-lld-month',e.month);setVal('cl-lld-client',e.client||'');setVal('cl-lld-nb',e.nb||e.flotte||0);setVal('cl-lld-ca',e.ca);setVal('cl-lld-n1',e.n1||0);setVal('cl-lld-note',e.note||'');setVal('cl-lld-edit-id',e.id);document.getElementById('cl-lld-btn').textContent='✏️ Modifier';document.getElementById('cl-tab-lld').scrollIntoView({behavior:'smooth'});showToast('Saisie LLD chargée');}
-function deleteCLLLD(id){if(!confirm('Supprimer cette saisie LLD ?'))return;DB.cl.lld=DB.cl.lld.filter(e=>e.id!==id);removeItem('cl/lld',id);renderCarsLand();}
+function deleteCLLLD(id){if(!confirm('Supprimer cette saisie LLD ?'))return;const i=DB.cl.lld.findIndex(e=>e.id===id);if(i<0)return;DB.cl.lld.splice(i,1);removeItem('cl/lld',id).then(()=>{if(DB.cl.lld.some(e=>e.id===id))saveSubtree('cl/lld',DB.cl.lld);});renderCarsLand();}
 function setCLLLDMonthFilter(mo){clLldMonthFilter=mo;renderCLLLDHistory();}
 function setCLLLDClientFilter(c){clLldClientFilter=c;renderCLLLDHistory();}
 // Auto-remplit CA N-1 et nb depuis l'historique du même client/mois
@@ -3328,7 +3449,7 @@ function saveLLDClient(){
   saveItem('cl/lldClients',entry);closeModal('m-lld-client');renderCarsLand();
 }
 function editLLDClient(id){const e=DB.cl.lldClients.find(x=>x.id===id);if(!e)return;setVal('lld-client-nom',e.nom);setVal('lld-client-nb',e.nb);setVal('lld-client-ville',e.ville);setVal('lld-client-ca',e.ca);setVal('lld-client-debut',e.debut);setVal('lld-client-duree',e.duree);setVal('lld-client-statut',e.statut);setVal('lld-client-edit-id',e.id);openModal('m-lld-client');}
-function deleteLLDClient(id){if(!confirm('Supprimer ?'))return;DB.cl.lldClients=DB.cl.lldClients.filter(e=>e.id!==id);removeItem('cl/lldClients',id);renderCarsLand();}
+function deleteLLDClient(id){if(!confirm('Supprimer ?'))return;const i=DB.cl.lldClients.findIndex(e=>e.id===id);if(i<0)return;DB.cl.lldClients.splice(i,1);removeItem('cl/lldClients',id).then(()=>{if(DB.cl.lldClients.some(e=>e.id===id))saveSubtree('cl/lldClients',DB.cl.lldClients);});renderCarsLand();}
 
 function saveCLPart(){
   const mo=getVal('cl-part-month');if(!mo){showToast('Mois requis');return;}
@@ -3350,7 +3471,7 @@ function saveCLPart(){
   if(!firebaseReady)showToast('Particuliers enregistré — '+ville+' / '+fmtMoLong(mo));
 }
 function editCLPart(id){const e=DB.cl.particuliers.find(x=>x.id===id);if(!e)return;setVal('cl-part-month',e.month);const v=e.ville||'Fès';if(['Fès','Rabat','Meknès'].indexOf(v)>=0){setVal('cl-part-ville',v);setVal('cl-part-ville-custom','');}else{setVal('cl-part-ville','Autre');setVal('cl-part-ville-custom',v);}setVal('cl-part-nb',e.nb);setVal('cl-part-ca',e.ca);setVal('cl-part-n1',e.n1||0);setVal('cl-part-note',e.note||'');setVal('cl-part-edit-id',e.id);document.getElementById('cl-part-btn').textContent='✏️ Modifier';document.getElementById('cl-tab-particuliers').scrollIntoView({behavior:'smooth'});showToast('Saisie chargée');}
-function deleteCLPart(id){if(!confirm('Supprimer cette saisie Particuliers ?'))return;DB.cl.particuliers=DB.cl.particuliers.filter(e=>e.id!==id);removeItem('cl/particuliers',id);renderCarsLand();}
+function deleteCLPart(id){if(!confirm('Supprimer cette saisie Particuliers ?'))return;const i=DB.cl.particuliers.findIndex(e=>e.id===id);if(i<0)return;DB.cl.particuliers.splice(i,1);removeItem('cl/particuliers',id).then(()=>{if(DB.cl.particuliers.some(e=>e.id===id))saveSubtree('cl/particuliers',DB.cl.particuliers);});renderCarsLand();}
 function setCLPartMonthFilter(mo){clPartMonthFilter=mo;renderCLPartHistory();}
 function setCLPartVilleFilter(v){clPartVilleFilter=v;renderCLPartHistory();}
 function onCLPartChange(){
@@ -3523,9 +3644,11 @@ function renderCLLLDTab(){
   // FILTRES historique
   const monthTabs=document.getElementById('cl-lld-month-tabs');
   if(monthTabs){
-    const months=[...new Set(DB.cl.lld.map(e=>e.month).filter(Boolean))].sort().reverse().slice(0,12);
+    const months=[...new Set(DB.cl.lld.map(e=>e.month).filter(Boolean))].sort().reverse().slice(0,24);
     const all=`<button class="btn btn-sm ${clLldMonthFilter==='all'?'btn-primary':''}" onclick="setCLLLDMonthFilter('all')">Tous</button>`;
-    monthTabs.innerHTML=all+months.map(mo=>{const ca=aggCLLldMonth(mo).ca;return`<button class="btn btn-sm ${clLldMonthFilter===mo?'btn-primary':''}" onclick="setCLLLDMonthFilter('${mo}')" title="${mo} · ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+    const btns=months.map(mo=>{const ca=aggCLLldMonth(mo).ca;return`<button class="btn btn-sm ${clLldMonthFilter===mo?'btn-primary':''}" onclick="setCLLLDMonthFilter('${mo}')" title="${mo} · ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+    const picker=`<input type="month" value="${clLldMonthFilter!=='all'?clLldMonthFilter:''}" onchange="setCLLLDMonthFilter(this.value||'all')" title="Choisir n'importe quel mois" style="height:32px;padding:0 8px;font-size:12px;width:140px">`;
+    monthTabs.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${all}${btns}<span style="color:var(--muted);font-size:11px;margin:0 4px">|</span>${picker}</div>`;
   }
   const cliTabs=document.getElementById('cl-lld-client-tabs');
   if(cliTabs){
@@ -3540,6 +3663,8 @@ function renderCLLLDHistory(){
   let entries=DB.cl.lld.slice();
   if(clLldMonthFilter!=='all')entries=entries.filter(e=>e.month===clLldMonthFilter);
   if(clLldClientFilter!=='all')entries=entries.filter(e=>e.client===clLldClientFilter);
+  // Tri DESC par mois puis client (granulaire Firebase = ordre non garanti)
+  entries.sort((a,b)=>(b.month||'').localeCompare(a.month||'')||(a.client||'').localeCompare(b.client||''));
   const sumEl=document.getElementById('cl-lld-history-summary');
   if(sumEl){
     const fCa=entries.reduce((a,b)=>a+(b.ca||0),0);
@@ -3559,13 +3684,16 @@ function renderCLLLDHistory(){
   }
   const lldH=document.getElementById('cl-lld-history');
   if(lldH){
-    lldH.innerHTML=entries.slice(0,80).map(e=>{
+    // Mois sélectionné → tout afficher ; sinon limite 500 perf
+    const list=clLldMonthFilter!=='all'?entries:entries.slice(0,500);
+    const limited=clLldMonthFilter==='all'&&entries.length>500;
+    lldH.innerHTML=list.map(e=>{
       const evN1=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):null;
       const prevMo=prevMonthOf(e.month);
       const prevE=DB.cl.lld.find(x=>x.month===prevMo&&x.client===e.client);
       const evM1=prevE&&prevE.ca>0?Math.round((e.ca-prevE.ca)/prevE.ca*100):null;
-      return`<tr><td>${fmtMoShort(e.month)}</td><td>${e.client||'—'}</td><td>${fmt(e.flotte||e.nb||0)}</td><td>${fmt(e.ca)}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${evN1==null?'var(--muted)':evN1>=0?'var(--green)':'var(--red)'};font-weight:600">${evN1==null?'—':(evN1>=0?'+':'')+evN1+'%'}</td><td style="color:${evM1==null?'var(--muted)':evM1>=0?'var(--green)':'var(--red)'};font-weight:600">${evM1==null?'—':(evM1>=0?'+':'')+evM1+'%'}</td><td style="color:var(--muted);font-size:11px">${e.note||'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLLLD(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLLLD(${e.id})">×</button></div></td></tr>`;
-    }).join('')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie LLD pour ce filtre</td></tr>';
+      return`<tr><td>${fmtMoShort(e.month)}</td><td>${e.client||'—'}</td><td>${fmt(e.flotte||e.nb||0)}</td><td>${fmt(e.ca)}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${evN1==null?'var(--muted)':evN1>=0?'var(--green)':'var(--red)'};font-weight:600">${evN1==null?'—':(evN1>=0?'+':'')+evN1+'%'}</td><td style="color:${evM1==null?'var(--muted)':evM1>=0?'var(--green)':'var(--red)'};font-weight:600">${evM1==null?'—':(evM1>=0?'+':'')+evM1+'%'}</td><td style="color:var(--muted);font-size:11px">${esc(e.note)||'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLLLD(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLLLD(${e.id})">×</button></div></td></tr>`;
+    }).join('')+(limited?`<tr><td colspan="9" style="color:var(--yellow);text-align:center;padding:10px;font-size:11px">⚠️ ${entries.length} lignes — affichage limité à 500. Filtrez par mois pour tout voir.</td></tr>`:'')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie LLD pour cette période</td></tr>';
   }
 }
 
@@ -3651,9 +3779,11 @@ function renderCLPartTab(){
   // FILTRES
   const monthTabs=document.getElementById('cl-part-month-tabs');
   if(monthTabs){
-    const months=[...new Set(DB.cl.particuliers.map(e=>e.month).filter(Boolean))].sort().reverse().slice(0,12);
+    const months=[...new Set(DB.cl.particuliers.map(e=>e.month).filter(Boolean))].sort().reverse().slice(0,24);
     const all=`<button class="btn btn-sm ${clPartMonthFilter==='all'?'btn-primary':''}" onclick="setCLPartMonthFilter('all')">Tous</button>`;
-    monthTabs.innerHTML=all+months.map(mo=>{const ca=aggCLPartMonth(mo).ca;return`<button class="btn btn-sm ${clPartMonthFilter===mo?'btn-primary':''}" onclick="setCLPartMonthFilter('${mo}')" title="${mo} · ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+    const btns=months.map(mo=>{const ca=aggCLPartMonth(mo).ca;return`<button class="btn btn-sm ${clPartMonthFilter===mo?'btn-primary':''}" onclick="setCLPartMonthFilter('${mo}')" title="${mo} · ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+    const picker=`<input type="month" value="${clPartMonthFilter!=='all'?clPartMonthFilter:''}" onchange="setCLPartMonthFilter(this.value||'all')" title="Choisir n'importe quel mois" style="height:32px;padding:0 8px;font-size:12px;width:140px">`;
+    monthTabs.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${all}${btns}<span style="color:var(--muted);font-size:11px;margin:0 4px">|</span>${picker}</div>`;
   }
   const villeTabs=document.getElementById('cl-part-ville-tabs');
   if(villeTabs){
@@ -3668,6 +3798,8 @@ function renderCLPartHistory(){
   let entries=DB.cl.particuliers.slice();
   if(clPartMonthFilter!=='all')entries=entries.filter(e=>e.month===clPartMonthFilter);
   if(clPartVilleFilter!=='all')entries=entries.filter(e=>(e.ville||'')===clPartVilleFilter);
+  // Tri DESC par mois puis ville
+  entries.sort((a,b)=>(b.month||'').localeCompare(a.month||'')||(a.ville||'').localeCompare(b.ville||''));
   const sumEl=document.getElementById('cl-part-history-summary');
   if(sumEl){
     const fCa=entries.reduce((a,b)=>a+(b.ca||0),0);
@@ -3687,11 +3819,13 @@ function renderCLPartHistory(){
   }
   const partH=document.getElementById('cl-part-history');
   if(partH){
-    partH.innerHTML=entries.slice(0,80).map(e=>{
+    const list=clPartMonthFilter!=='all'?entries:entries.slice(0,500);
+    const limited=clPartMonthFilter==='all'&&entries.length>500;
+    partH.innerHTML=list.map(e=>{
       const evN1=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):null;
       const panier=e.nb>0?Math.round(e.ca/e.nb):0;
-      return`<tr><td>${fmtMoShort(e.month)}</td><td><span class="vpill ${CL_VCL[e.ville]||''}">${e.ville||'—'}</span></td><td>${fmt(e.nb)}</td><td>${fmt(e.ca)}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${evN1==null?'var(--muted)':evN1>=0?'var(--green)':'var(--red)'};font-weight:600">${evN1==null?'—':(evN1>=0?'+':'')+evN1+'%'}</td><td>${fmt(panier)}</td><td style="color:var(--muted);font-size:11px">${e.note||'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLPart(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLPart(${e.id})">×</button></div></td></tr>`;
-    }).join('')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie pour ce filtre</td></tr>';
+      return`<tr><td>${fmtMoShort(e.month)}</td><td><span class="vpill ${CL_VCL[e.ville]||''}">${e.ville||'—'}</span></td><td>${fmt(e.nb)}</td><td>${fmt(e.ca)}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${evN1==null?'var(--muted)':evN1>=0?'var(--green)':'var(--red)'};font-weight:600">${evN1==null?'—':(evN1>=0?'+':'')+evN1+'%'}</td><td>${fmt(panier)}</td><td style="color:var(--muted);font-size:11px">${esc(e.note)||'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editCLPart(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCLPart(${e.id})">×</button></div></td></tr>`;
+    }).join('')+(limited?`<tr><td colspan="9" style="color:var(--yellow);text-align:center;padding:10px;font-size:11px">⚠️ ${entries.length} lignes — affichage limité à 500. Filtrez par mois pour tout voir.</td></tr>`:'')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie pour cette période</td></tr>';
   }
 }
 
@@ -3915,23 +4049,26 @@ function editATEntry(id){
   document.getElementById('at-btn').textContent='✏️ Modifier';
   document.getElementById('at-tab-saisie').scrollIntoView({behavior:'smooth'});showToast('Saisie chargée');
 }
-function deleteATEntry(id){if(!confirm('Supprimer ?'))return;DB.at=DB.at.filter(e=>e.id!==id);removeItem('at',id);renderArabian();}
+function deleteATEntry(id){if(!confirm('Supprimer ?'))return;const i=DB.at.findIndex(e=>e.id===id);if(i<0)return;DB.at.splice(i,1);removeItem('at',id).then(()=>{if(DB.at.some(e=>e.id===id))saveSubtree('at',DB.at);});renderArabian();}
 function setATMonthFilter(mo){atMonthFilter=mo;renderATMonthTabs();renderATHistory();}
 function renderATMonthTabs(){
   const cont=document.getElementById('at-month-tabs');if(!cont)return;
-  // Mois disponibles dans les saisies + mois courant
-  const months=[...new Set([...DB.at.map(e=>getMonth(e.date)).filter(Boolean),curMonth()])].sort().reverse().slice(0,12);
+  // Mois disponibles dans les saisies + mois courant (24 derniers mois)
+  const months=[...new Set([...DB.at.map(e=>getMonth(e.date)).filter(Boolean),curMonth()])].sort().reverse().slice(0,24);
   const MOIS_FR=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
   const fmtMo=mo=>{const[y,mm]=mo.split('-');return MOIS_FR[Number(mm)-1]+' '+y.substring(2);};
   const all=`<button class="btn btn-sm ${atMonthFilter==='all'?'btn-primary':''}" onclick="setATMonthFilter('all')">Tous</button>`;
   const btns=months.map(mo=>{const active=atMonthFilter===mo;const ca=DB.at.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.ca,0);return `<button class="btn btn-sm ${active?'btn-primary':''}" onclick="setATMonthFilter('${mo}')" title="${mo} · CA ${fmt(ca)} MAD">📅 ${fmtMo(mo)}</button>`;}).join('');
-  cont.innerHTML=all+btns;
+  const picker=`<input type="month" value="${atMonthFilter!=='all'?atMonthFilter:''}" onchange="setATMonthFilter(this.value||'all')" title="Choisir n'importe quel mois" style="height:32px;padding:0 8px;font-size:12px;width:140px">`;
+  cont.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${all}${btns}<span style="color:var(--muted);font-size:11px;margin:0 4px">|</span>${picker}</div>`;
 }
 function renderATHistory(){
   renderATMonthTabs();
-  let entries=DB.at;
+  let entries=DB.at.slice();
   if(atMonthFilter!=='all')entries=entries.filter(e=>getMonth(e.date)===atMonthFilter);
   if(atHistFilter!=='all')entries=entries.filter(e=>e.ville===atHistFilter);
+  // Tri DESC par date puis id (gère les multiples saisies du jour)
+  entries.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(Number(b.id)||0)-(Number(a.id)||0));
   // Synthèse du filtre — vue management
   const sumEl=document.getElementById('at-month-summary');
   if(sumEl){
@@ -3953,15 +4090,18 @@ function renderATHistory(){
         ${fObj>0?`<div><b>vs Objectif :</b> <span style="color:${objPct>=100?'var(--green)':objPct>=70?'var(--yellow)':'var(--red)'};font-weight:700">${objPct}%</span> (obj. ${fmt(fObj)})</div>`:''}
       </div></div>`:'';
   }
-  document.getElementById('at-history').innerHTML=entries.slice(0,60).map(e=>{
+  // Mois sélectionné → tout afficher ; sinon limite 500 perf
+  const list=atMonthFilter!=='all'?entries:entries.slice(0,500);
+  const limited=atMonthFilter==='all'&&entries.length>500;
+  document.getElementById('at-history').innerHTML=list.map(e=>{
     const n1=e.n1||0;const ev=n1>0?Math.round((e.ca-n1)/n1*100):0;
     return `<tr><td>${fmtDate(e.date)}</td><td><span class="vpill ${AT_VCL[e.ville]||''}">${e.ville}</span></td>
     <td>${e.client}</td><td>${fmt(e.constats)}</td><td>${fmt(e.ca)} MAD</td>
     <td style="color:var(--muted)">${n1?fmt(n1)+' MAD':'—'}</td>
     <td style="color:${n1>0?(ev>=0?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:600">${n1>0?(ev>=0?'+':'')+ev+'%':'—'}</td>
-    <td style="color:var(--muted);font-size:11px">${e.note||'—'}</td>
+    <td style="color:var(--muted);font-size:11px">${esc(e.note)||'—'}</td>
     <td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editATEntry(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteATEntry(${e.id})">×</button></div></td></tr>`;
-  }).join('')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune mission</td></tr>';
+  }).join('')+(limited?`<tr><td colspan="9" style="color:var(--yellow);text-align:center;padding:10px;font-size:11px">⚠️ ${entries.length} missions — affichage limité à 500. Filtrez par mois pour tout voir.</td></tr>`:'')||'<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:16px">Aucune mission pour cette période</td></tr>';
 }
 function renderArabian(){
   const m=curMonth(),y=curYear(),w=curWeek();
@@ -4071,28 +4211,497 @@ function renderArabian(){
 function openPipeModal(ent){setVal('pipe-ent',ent);setVal('pipe-date',today());openModal('m-pipe');}
 function addPipe(){const ent=getVal('pipe-ent');const client=getVal('pipe-client').trim();if(!client){showToast('Nom requis');return;}const item={id:Date.now(),client,segment:getVal('pipe-segment'),montant:getNum('pipe-montant'),statut:Number(getVal('pipe-statut')),date:getVal('pipe-date'),note:getVal('pipe-note')};DB.pipe[ent].push(item);saveItem('pipe/'+ent,item);closeModal('m-pipe');ent==='cl'?renderCarsLand():renderArabian();}
 function movePipe(ent,id,dir){const item=DB.pipe[ent].find(p=>p.id===id);if(item&&item.statut+dir>=0&&item.statut+dir<=2){item.statut+=dir;saveItem('pipe/'+ent,item);ent==='cl'?renderCarsLand():renderArabian();}}
-function delPipe(ent,id){if(!confirm('Supprimer ?'))return;DB.pipe[ent]=DB.pipe[ent].filter(p=>p.id!==id);removeItem('pipe/'+ent,id);ent==='cl'?renderCarsLand():renderArabian();}
+function delPipe(ent,id){if(!confirm('Supprimer ?'))return;const i=DB.pipe[ent].findIndex(p=>p.id===id);if(i<0)return;DB.pipe[ent].splice(i,1);removeItem('pipe/'+ent,id).then(()=>{if(DB.pipe[ent].some(p=>p.id===id))saveSubtree('pipe/'+ent,DB.pipe[ent]);});ent==='cl'?renderCarsLand():renderArabian();}
 const segColors={'Assistance':'#5B9BD5','LLD':'var(--cl)','Particulier':'#FFB347','Constat':'var(--at)'};
 function renderPipeline(ent){[0,1,2].forEach(s=>{const items=DB.pipe[ent].filter(p=>p.statut===s);const colors=['#FFB347','#5B9BD5','#FF6B78'];const tot=items.reduce((a,b)=>a+b.montant,0);const el=document.getElementById(ent+'-pipe-'+s);if(el)el.innerHTML=items.length?items.map(p=>`<div class="pipe-item"><div style="width:5px;height:5px;border-radius:50%;background:${colors[s]};flex-shrink:0"></div><div style="flex:1"><div style="font-weight:500">${p.client}</div><div style="font-size:11px;color:var(--muted)">${p.segment?`<span style="color:${segColors[p.segment]}">${p.segment}</span> · `:''}${fmt(p.montant)} MAD</div></div><div style="display:flex;gap:3px">${s>0?`<button class="btn btn-sm" onclick="movePipe('${ent}',${p.id},-1)">←</button>`:''}${s<2?`<button class="btn btn-sm" onclick="movePipe('${ent}',${p.id},1)">→</button>`:''}<button class="btn btn-sm btn-danger" onclick="delPipe('${ent}',${p.id})">×</button></div></div>`).join(''):'<div style="font-size:12px;color:var(--muted);padding:8px 0">Aucune mission</div>';const totEl=document.getElementById(ent+'-pipe-tot-'+s);if(totEl)totEl.textContent=fmt(tot);});}
 
 // ════════════════════════════
 // F CORNER
 // ════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+// LIAISON INTELLIGENTE FC : Saisie quotidienne ↔ Module Dépenses
+// Une saisie F Corner génère/met à jour automatiquement 1-3 dépenses :
+//   foodcost     → catégorie 'achats',   mode 'caisse', TVA 20%
+//   dep          → catégorie 'externes', mode 'caisse', TVA 20%
+//   achatsCompte → catégorie 'achats',   mode 'banque', TVA 20%
+// Les dépenses sont taggées source:'fc-quotidien' + fcSourceId pour la liaison.
+// Édition/suppression de la saisie quotidienne synchronise les dépenses.
+// ════════════════════════════════════════════════════════════════════
+function _fcCalcHTTVA(ttc,taux){
+  const ht=taux>0?ttc/(1+taux/100):ttc;
+  return{ttc:Math.round(ttc*100)/100,ht:Math.round(ht*100)/100,tva:Math.round((ttc-ht)*100)/100};
+}
+
+function _fcSyncDepenses(fcEntry){
+  if(!fcEntry||!fcEntry.id)return;
+  if(!Array.isArray(DB.depenses))DB.depenses=[];
+  const cfg=(DB.parametresFinance&&DB.parametresFinance.fc)||{tauxTVADefaut:20};
+  const taux=Number(cfg.tauxTVADefaut)||20;
+  const fcId=Number(fcEntry.id);
+
+  // 1) Supprimer les dépenses précédemment liées à cette saisie quotidienne
+  const oldLinked=DB.depenses.filter(d=>d&&d.fcSourceId===fcId);
+  oldLinked.forEach(d=>{
+    const idx=DB.depenses.findIndex(x=>x.id===d.id);
+    if(idx>=0)DB.depenses.splice(idx,1);
+    if(firebaseReady)db.ref('hb_dga/depenses/'+d.id).remove().catch(()=>{});
+  });
+
+  // 2) Construire les nouvelles dépenses liées
+  const baseDate=fcEntry.date;
+  const baseDep={
+    societe:'fc',
+    date:baseDate,
+    fournisseur:'Saisie quotidienne F Corner',
+    description:'Auto-généré · '+(fcEntry.note||baseDate),
+    pieceRef:'',
+    note:'Lié à la saisie quotidienne du '+baseDate+' (modification via onglet Saisie)',
+    saisiPar:(currentUser&&currentUser.email)||'auto',
+    updated:new Date().toISOString(),
+    source:'fc-quotidien',
+    fcSourceId:fcId,
+    tauxTVA:taux
+  };
+
+  const linked=[];
+  // foodcost → achats / caisse
+  const foodcost=Number(fcEntry.foodcost)||0;
+  if(foodcost>0){
+    const v=_fcCalcHTTVA(foodcost,taux);
+    linked.push(Object.assign({},baseDep,v,{
+      id:fcId*1000+1,
+      categorie:'achats',
+      sousCategorie:'Marchandises / Food cost (saisie quotidienne)',
+      mode:'caisse'
+    }));
+  }
+  // dep → externes / caisse (charges courantes payées espèces)
+  const dep=Number(fcEntry.dep)||0;
+  if(dep>0){
+    const v=_fcCalcHTTVA(dep,taux);
+    linked.push(Object.assign({},baseDep,v,{
+      id:fcId*1000+2,
+      categorie:'externes',
+      sousCategorie:'Dépenses espèces courantes (saisie quotidienne)',
+      mode:'caisse'
+    }));
+  }
+  // achatsCompte → achats / banque (à régler fin de mois)
+  const achatsCompte=Number(fcEntry.achatsCompte||fcEntry.autresCharges)||0;
+  if(achatsCompte>0){
+    const v=_fcCalcHTTVA(achatsCompte,taux);
+    linked.push(Object.assign({},baseDep,v,{
+      id:fcId*1000+3,
+      categorie:'achats',
+      sousCategorie:'Marchandises à crédit fournisseur (compte)',
+      mode:'banque'
+    }));
+  }
+
+  // 3) Pousser les nouvelles dépenses (DB local + Firebase granulaire)
+  linked.forEach(d=>{
+    DB.depenses.push(d);
+    if(firebaseReady)db.ref('hb_dga/depenses/'+d.id).set(d).catch(e=>console.error('[fcSync]',e));
+  });
+  // Tri global par date DESC (cohérent avec l'app)
+  DB.depenses.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(Number(b.id)||0)-(Number(a.id)||0));
+}
+
+function _fcRemoveDepenses(fcId){
+  if(!Array.isArray(DB.depenses))return;
+  const oldLinked=DB.depenses.filter(d=>d&&d.fcSourceId===Number(fcId));
+  oldLinked.forEach(d=>{
+    const idx=DB.depenses.findIndex(x=>x.id===d.id);
+    if(idx>=0)DB.depenses.splice(idx,1);
+    if(firebaseReady)db.ref('hb_dga/depenses/'+d.id).remove().catch(()=>{});
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
+// AGRÉGATEURS REVERSE : Dépenses → F Corner
+// Les achats détaillés saisis dans le module Dépenses (Légumes, Café, Viande...)
+// sont automatiquement totalisés dans la saisie quotidienne F Corner.
+// On exclut source='fc-quotidien' pour éviter le double comptage avec d'anciennes
+// dépenses auto-générées (legacy) si elles existent.
+// ════════════════════════════════════════════════════════════════════
+function _fcDepFilter(filterFn){
+  if(!Array.isArray(DB.depenses))return[];
+  return DB.depenses.filter(d=>d&&d.societe==='fc'&&d.source!=='fc-quotidien'&&filterFn(d));
+}
+// Achats payés en CAISSE (food cost cash quotidien : MCDF, Légumes, Fruit, Café, etc.)
+function fcAchatsCashByDate(date){
+  return _fcDepFilter(d=>d.categorie==='achats'&&d.mode==='caisse'&&d.date===date)
+    .reduce((s,d)=>s+(Number(d.ttc)||0),0);
+}
+function fcAchatsCashByMonth(month){
+  return _fcDepFilter(d=>d.categorie==='achats'&&d.mode==='caisse'&&getMonth(d.date)===month)
+    .reduce((s,d)=>s+(Number(d.ttc)||0),0);
+}
+// Achats en COMPTE (à régler fin de mois — fournisseurs en banque)
+function fcAchatsCompteByDate(date){
+  return _fcDepFilter(d=>d.categorie==='achats'&&d.mode==='banque'&&d.date===date)
+    .reduce((s,d)=>s+(Number(d.ttc)||0),0);
+}
+function fcAchatsCompteByMonth(month){
+  return _fcDepFilter(d=>d.categorie==='achats'&&d.mode==='banque'&&getMonth(d.date)===month)
+    .reduce((s,d)=>s+(Number(d.ttc)||0),0);
+}
+// Dépenses espèces du jour (charges externes payées cash : transport, courses ponctuelles)
+function fcDepEspByDate(date){
+  return _fcDepFilter(d=>d.categorie==='externes'&&d.mode==='caisse'&&d.date===date)
+    .reduce((s,d)=>s+(Number(d.ttc)||0),0);
+}
+function fcDepEspByMonth(month){
+  return _fcDepFilter(d=>d.categorie==='externes'&&d.mode==='caisse'&&getMonth(d.date)===month)
+    .reduce((s,d)=>s+(Number(d.ttc)||0),0);
+}
+// Helpers "effectifs" : si dépenses détaillées existent, on les utilise ; sinon on garde
+// le champ legacy de la saisie quotidienne (rétrocompatibilité avec données anciennes).
+function fcAchatsEffectifJour(entry){
+  if(!entry||!entry.date)return 0;
+  const detail=fcAchatsCashByDate(entry.date);
+  if(detail>0)return detail;
+  return Number(entry.foodcost)||0;
+}
+function fcAchatsCompteEffectifJour(entry){
+  if(!entry||!entry.date)return 0;
+  const detail=fcAchatsCompteByDate(entry.date);
+  if(detail>0)return detail;
+  return Number(entry.achatsCompte||entry.autresCharges)||0;
+}
+function fcDepEspEffectifJour(entry){
+  if(!entry||!entry.date)return 0;
+  const detail=fcDepEspByDate(entry.date);
+  if(detail>0)return detail;
+  return Number(entry.dep)||0;
+}
+// Compte combien de dépenses détaillées existent pour un jour (pour afficher un badge)
+function fcDepCountJour(date){
+  return _fcDepFilter(d=>d.date===date).length;
+}
+
+// Auto-calcul des espèces : ESP = CA total − TPE − GLOVO
+function calcFCEsp(){
+  const rec=getNum('fc-rec');const tpe=getNum('fc-tpe');const glovo=getNum('fc-glovo');
+  const esp=Math.max(0,rec-tpe-glovo);
+  setVal('fc-esp',esp);
+  // Garde-fou : si TPE+GLOVO > CA, alerter visuellement
+  const espEl=document.getElementById('fc-esp');
+  if(espEl){
+    if(tpe+glovo>rec&&rec>0){espEl.style.background='var(--red-soft)';espEl.style.color='var(--red-dark)';espEl.title='⚠️ TPE + GLOVO dépassent le CA total !';}
+    else{espEl.style.background='var(--green-soft)';espEl.style.color='var(--green-dark)';espEl.title='Espèces caisse = CA − TPE − GLOVO';}
+  }
+}
+
 function saveFCEntry(){
   const d=getVal('fc-date');if(!d){showToast('Date requise');return;}
   const editId=getVal('fc-edit-id');
-  const entry={id:editId?Number(editId):Date.now(),date:d,rec:getNum('fc-rec'),dep:getNum('fc-dep'),foodcost:getNum('fc-foodcost'),clients:getNum('fc-clients'),n1:getNum('fc-n1'),obj:getNum('fc-obj'),note:getVal('fc-note')};
+  const rec=getNum('fc-rec');const tpe=getNum('fc-tpe');const glovo=getNum('fc-glovo');
+  const esp=Math.max(0,rec-tpe-glovo);
+  // Garde-fou
+  if(tpe+glovo>rec&&rec>0){
+    if(!confirm('⚠️ TPE ('+fmt(tpe)+') + GLOVO ('+fmt(glovo)+') dépassent le CA total ('+fmt(rec)+'). Voulez-vous quand même enregistrer ?'))return;
+  }
+  const entry={
+    id:editId?Number(editId):Date.now(),
+    date:d,
+    rec,                                   // CA TTC total
+    tpe,                                   // CB
+    glovo,                                 // Glovo (encaissement différé)
+    esp,                                   // Espèces (auto-calculé)
+    foodcost:getNum('fc-foodcost'),        // Achats food cost + matériel
+    achatsCompte:getNum('fc-achats-compte'), // Achats à crédit fournisseur
+    dep:getNum('fc-dep'),                  // Dépenses payées espèces (charges courantes)
+    clients:getNum('fc-clients'),
+    n1:getNum('fc-n1'),
+    obj:getNum('fc-obj'),
+    note:getVal('fc-note')
+  };
   if(editId){const i=DB.fc.findIndex(e=>e.id===Number(editId));if(i>=0)DB.fc[i]=entry;}else DB.fc.push(entry);
   DB.fc.sort((a,b)=>b.date.localeCompare(a.date));
-  setVal('fc-edit-id','');setVal('fc-rec','');setVal('fc-dep','');setVal('fc-foodcost','');setVal('fc-clients','');setVal('fc-n1','');setVal('fc-note','');
+  // Reset form
+  ['fc-edit-id','fc-rec','fc-tpe','fc-glovo','fc-esp','fc-dep','fc-foodcost','fc-achats-compte','fc-clients','fc-n1','fc-note'].forEach(id=>setVal(id,''));
   document.getElementById('fc-btn').textContent='Enregistrer';
-  saveItem('fc',entry);renderFC();
+  // Reset visual ESP
+  const espEl=document.getElementById('fc-esp');if(espEl){espEl.style.background='var(--green-soft)';espEl.style.color='var(--green-dark)';}
+  saveItem('fc',entry);
+  // Architecture : la saisie quotidienne stocke le CA et les modes de paiement uniquement.
+  // Les ACHATS détaillés (food cost, marchandises) sont saisis dans le module Dépenses avec
+  // sous-catégories (MCDF, Légumes, Fruit, Café, Copag, Épicerie, Œufs, Poulet, Viande, etc.).
+  // Les totaux par jour sont AGRÉGÉS automatiquement via fcAchatsCashByDate / fcAchatsCompteByDate.
+  renderFC();
 }
-function editFCEntry(id){const e=DB.fc.find(x=>x.id===id);if(!e)return;setVal('fc-date',e.date);setVal('fc-rec',e.rec);setVal('fc-dep',e.dep);setVal('fc-foodcost',e.foodcost||0);setVal('fc-clients',e.clients);setVal('fc-n1',e.n1);setVal('fc-note',e.note||'');setVal('fc-edit-id',e.id);document.getElementById('fc-btn').textContent='✏️ Modifier';document.getElementById('fc-tab-saisie').scrollIntoView({behavior:'smooth'});showToast('Saisie chargée');}
-function deleteFCEntry(id){if(!confirm('Supprimer ?'))return;DB.fc=DB.fc.filter(e=>e.id!==id);removeItem('fc',id);renderFC();}
+
+function editFCEntry(id){
+  const e=DB.fc.find(x=>x.id===id);if(!e)return;
+  setVal('fc-date',e.date);
+  setVal('fc-rec',e.rec||0);
+  setVal('fc-tpe',e.tpe||0);
+  setVal('fc-glovo',e.glovo||0);
+  setVal('fc-foodcost',e.foodcost||0);
+  setVal('fc-achats-compte',e.achatsCompte||0);
+  setVal('fc-dep',e.dep||0);
+  setVal('fc-clients',e.clients||0);
+  setVal('fc-n1',e.n1||0);
+  setVal('fc-note',e.note||'');
+  setVal('fc-edit-id',e.id);
+  calcFCEsp();
+  document.getElementById('fc-btn').textContent='✏️ Modifier';
+  document.getElementById('fc-tab-saisie').scrollIntoView({behavior:'smooth'});
+  showToast('Saisie chargée');
+}
+
+// ════════════════════════════
+// IMPORT EXCEL F CORNER COMPLET
+// ════════════════════════════
+
+function openImportFCExtended() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv,.txt,.tsv';
+  input.onchange = handleFCExcelImport;
+  input.click();
+}
+
+function handleFCExcelImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const content = e.target.result;
+    const parsed = parseFCData(content);
+    
+    if (parsed.entries.length === 0) {
+      showToast('❌ Aucune donnée détectée. Vérifiez le format.');
+      return;
+    }
+    
+    const preview = parsed.entries.slice(0, 5).map(function(e) {
+      return e.date + ' | CA: ' + fmt(e.rec) + ' MAD | Espèces: ' + fmt(e.especes||0) + ' MAD | Food: ' + fmt(e.foodcost||0) + ' MAD';
+    }).join('\n');
+    
+    if (confirm(parsed.entries.length + ' lignes détectées.\n\nAperçu :\n' + preview + '\n\nContinuer ?')) {
+      applyFCImport(parsed);
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseFCData(content) {
+  var lines = content.split(/\r?\n/);
+  var entries = [];
+  var currentDate = '';
+  var currentCA = 0;
+  var currentTPE = 0;
+  var currentGLOVO = 0;
+  var currentDep = 0;
+  var currentAchats = 0;
+  var currentFoodcost = 0;
+  
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (line.length === 0) continue;
+    
+    var cols = line.split(';');
+    var etiquette = (cols[0] || '').trim();
+    var valeur = (cols[1] || '').trim();
+    
+    // Détecter la date (format JJ/MM/AAAA)
+    if (etiquette === 'Date') {
+      var dateParts = valeur.split('/');
+      if (dateParts.length === 3) {
+        currentDate = dateParts[2] + '-' + dateParts[1].padStart(2, '0') + '-' + dateParts[0].padStart(2, '0');
+      } else {
+        currentDate = valeur;
+      }
+      continue;
+    }
+    
+    // Total CA
+    if (etiquette === 'Total CA' || etiquette === 'Total CA ') {
+      currentCA = parseFloat(valeur.replace(',', '.')) || 0;
+      continue;
+    }
+    
+    // TPE
+    if (etiquette === 'TPE' || etiquette === 'TPE ') {
+      currentTPE = parseFloat(valeur.replace(',', '.')) || 0;
+      continue;
+    }
+    
+    // GLOVO
+    if (etiquette === 'GLOVO' || etiquette === 'GLOVO ') {
+      currentGLOVO = parseFloat(valeur.replace(',', '.')) || 0;
+      continue;
+    }
+    
+    // Dépenses Espèces
+    if (etiquette === 'Dépenses Espèces' || etiquette === 'Dépenses Espèces ') {
+      currentDep = parseFloat(valeur.replace(',', '.')) || 0;
+      continue;
+    }
+    
+    // Achats en Compte
+    if (etiquette === 'Achats en Compte' || etiquette === 'Achats en Compte ') {
+      var achatsCompte = parseFloat(valeur.replace(',', '.')) || 0;
+      currentAchats += achatsCompte;
+      continue;
+    }
+    
+    // Lignes d'achats espèces
+    if (etiquette.length > 0 && valeur.length > 0 && etiquette !== 'Raz  Num' && etiquette !== 'Reste à Verser') {
+      var montant = parseFloat(valeur.replace(',', '.').replace(/\s/g, ''));
+      if (!isNaN(montant) && montant > 0) {
+        currentAchats += montant;
+        
+        // Détecter si c'est un achat alimentaire (food cost)
+        var etiquetteUpper = etiquette.toUpperCase();
+        if (etiquetteUpper.indexOf('LEGUMME') >= 0 || 
+            etiquetteUpper.indexOf('FRUIT') >= 0 ||
+            etiquetteUpper.indexOf('VIANDE') >= 0 ||
+            etiquetteUpper.indexOf('POULET') >= 0 ||
+            etiquetteUpper.indexOf('ŒUF') >= 0 ||
+            etiquetteUpper.indexOf('PICERIE') >= 0 ||
+            etiquetteUpper.indexOf('CAFE') >= 0 ||
+            etiquetteUpper.indexOf('COPAG') >= 0 ||
+            etiquetteUpper.indexOf('GAZ') >= 0 ||
+            etiquetteUpper.indexOf('PAIN') >= 0 ||
+            etiquetteUpper.indexOf('LAIT') >= 0 ||
+            etiquetteUpper.indexOf('BEURRE') >= 0 ||
+            etiquetteUpper.indexOf('FROMAGE') >= 0 ||
+            etiquetteUpper.indexOf('POISSON') >= 0 ||
+            etiquetteUpper.indexOf('CREVETTE') >= 0 ||
+            etiquetteUpper.indexOf('JUS') >= 0 ||
+            etiquetteUpper.indexOf('GLACE') >= 0 ||
+            etiquetteUpper.indexOf('CHOCOLAT') >= 0 ||
+            etiquetteUpper.indexOf('SUCRE') >= 0 ||
+            etiquetteUpper.indexOf('FARINE') >= 0 ||
+            etiquetteUpper.indexOf('HUILE') >= 0 ||
+            etiquetteUpper.indexOf('LEGUME') >= 0 ||
+            etiquetteUpper.indexOf('PATISSERIE') >= 0 ||
+            etiquetteUpper.indexOf('BOISSON') >= 0 ||
+            etiquetteUpper.indexOf('SODA') >= 0 ||
+            etiquetteUpper.indexOf('COCA') >= 0 ||
+            etiquetteUpper.indexOf('EAU') >= 0) {
+          currentFoodcost += montant;
+        }
+      }
+      continue;
+    }
+  }
+  
+  // Ajouter l'entrée trouvée
+  if (currentDate && currentCA > 0) {
+    // ════════════════════════════
+    // CALCUL DES ESPÈCES ET AUTRES CHARGES (MODIFICATION)
+    // ════════════════════════════
+    
+    // Espèces = CA - TPE - Glovo
+    var especes = currentCA - currentTPE - currentGLOVO;
+    if (especes < 0) especes = 0;
+    
+    // Autres charges = Total Achats - Food Cost
+    var autresCharges = currentAchats - currentFoodcost;
+    if (autresCharges < 0) autresCharges = 0;
+    
+    // Construire la note détaillée
+    var noteParts = [];
+    if (especes > 0) noteParts.push('💵Espèces:' + fmt(especes));
+    if (currentTPE > 0) noteParts.push('💳TPE:' + fmt(currentTPE));
+    if (currentGLOVO > 0) noteParts.push('🛵Glovo:' + fmt(currentGLOVO));
+    if (currentFoodcost > 0) noteParts.push('🍽️FoodCost:' + fmt(currentFoodcost));
+    if (autresCharges > 0) noteParts.push('🔧Autres:' + fmt(autresCharges));
+    
+    entries.push({
+      date: currentDate,
+      rec: currentCA,
+      dep: currentDep,
+      clients: 0,
+      foodcost: currentFoodcost,
+      note: noteParts.join(' | '),
+      n1: 0,
+      especes: especes,
+      tpe: currentTPE,
+      glovo: currentGLOVO,
+      autresCharges: autresCharges
+    });
+  }
+  
+  return { entries: entries };
+}
+
+function applyFCImport(parsed) {
+  var added = 0;
+  var updated = 0;
+  
+  parsed.entries.forEach(function(entry) {
+    if (!entry.date || entry.rec <= 0) return;
+    
+    var existingIdx = -1;
+    for (var i = 0; i < DB.fc.length; i++) {
+      if (DB.fc[i].date === entry.date) {
+        existingIdx = i;
+        break;
+      }
+    }
+    
+    // ════════════════════════════
+    // SAUVEGARDE AVEC LES NOUVEAUX CHAMPS (MODIFICATION)
+    // ════════════════════════════
+    var newEntry = {
+      id: existingIdx >= 0 ? DB.fc[existingIdx].id : Date.now() + Math.floor(Math.random() * 1000),
+      date: entry.date,
+      rec: entry.rec,
+      dep: entry.dep || 0,                              // Dépenses payées espèces
+      foodcost: entry.foodcost || 0,                    // Achats food cost + matériel
+      clients: entry.clients || 0,
+      n1: entry.n1 || 0,
+      note: entry.note || '',
+      obj: 0,
+      // Nouveau schéma cash management F&B
+      esp: entry.especes || 0,                          // alias canonique
+      especes: entry.especes || 0,                      // rétrocompat
+      tpe: entry.tpe || 0,
+      glovo: entry.glovo || 0,
+      achatsCompte: entry.autresCharges || 0,           // alias canonique
+      autresCharges: entry.autresCharges || 0           // rétrocompat
+    };
+    
+    if (existingIdx >= 0) {
+      var old = DB.fc[existingIdx];
+      newEntry.n1 = newEntry.n1 || old.n1 || 0;
+      newEntry.note = newEntry.note || old.note || '';
+      newEntry.obj = old.obj || 0;
+      if (newEntry.foodcost <= 0) newEntry.foodcost = old.foodcost || 0;
+      DB.fc[existingIdx] = newEntry;
+      updated++;
+    } else {
+      DB.fc.push(newEntry);
+      added++;
+    }
+  });
+  
+  DB.fc.sort(function(a, b) { return b.date.localeCompare(a.date); });
+
+  // Sauvegarde granulaire (Quick Win A) : on push le sous-arbre fc complet
+  saveSubtree('fc', DB.fc);
+
+  // 🔗 Liaison intelligente : génère les dépenses liées pour CHAQUE entrée importée
+  DB.fc.forEach(function(entry){
+    // Plus de sync FC → dépenses : la nouvelle architecture est inverse (dépenses → FC)
+    // if(entry && entry.id) _fcSyncDepenses(entry);
+  });
+
+  renderFC();
+  renderDash();
+
+  showToast('✅ Import : ' + added + ' ajoutée(s), ' + updated + ' mise(s) à jour · Dépenses synchronisées');
+}
+
+function deleteFCEntry(id){if(!confirm('Supprimer cette saisie quotidienne ?'))return;const i=DB.fc.findIndex(e=>e.id===id);if(i<0)return;DB.fc.splice(i,1);removeItem('fc',id).then(()=>{if(DB.fc.some(e=>e.id===id))saveSubtree('fc',DB.fc);});renderFC();}
 function renderFCorner(){renderFC();}
 function addCaisseEntry(ent){
-  // Note : on utilise la date comme id pour assurer l'unicité par jour (upsert)
   if(ent==='as'){
     const d=getVal('cas-date');if(!d)return;
     const entry={id:d,date:d,enc:getNum('cas-enc'),dec:getNum('cas-dec'),bank:getNum('cas-bank'),debut:getNum('cas-solde-debut')};
@@ -4101,98 +4710,169 @@ function addCaisseEntry(ent){
     if(ex>=0)DB.caisse.as[ex]=entry;else DB.caisse.as.push(entry);
     DB.caisse.as.sort((a,b)=>b.date.localeCompare(a.date));
     saveItem('caisse/as',entry);
-  } else {
-    const d=getVal('fcc-date');if(!d)return;
-    const entry={id:d,date:d,rec:getNum('fcc-rec'),dep:getNum('fcc-dep'),remise:getNum('fcc-remise'),debut:getNum('fcc-debut'),constate:getNum('fcc-constate')};
-    entry.calcule=entry.debut+entry.rec-entry.dep-entry.remise;
-    entry.ecart=entry.constate-entry.calcule;
-    const ex=DB.caisse.fc.findIndex(e=>e.date===d);
-    if(ex>=0)DB.caisse.fc[ex]=entry;else DB.caisse.fc.push(entry);
-    DB.caisse.fc.sort((a,b)=>b.date.localeCompare(a.date));
-    saveItem('caisse/fc',entry);
   }
+  // Note : la caisse F Corner a été supprimée — la saisie quotidienne (DB.fc) gère
+  // désormais directement esp/dep/glovo. Voir _fcSyncDepenses pour la liaison auto-dépenses.
   renderAssurance();renderFC();
 }
+window.fcMonthFilter=window.fcMonthFilter||'all';
+window.asMonthFilter=window.asMonthFilter||'all';
+function setFCMonthFilter(mo){window.fcMonthFilter=mo;renderFC();}
+function setASMonthFilter(mo){window.asMonthFilter=mo;renderAssurance();}
+function renderFCMonthTabs(){
+  const cont=document.getElementById('fc-month-tabs');if(!cont)return;
+  const months=[...new Set([...DB.fc.map(e=>getMonth(e.date)).filter(Boolean),curMonth()])].sort().reverse().slice(0,24);
+  const all=`<button class="btn btn-sm ${window.fcMonthFilter==='all'?'btn-primary':''}" onclick="setFCMonthFilter('all')">Tous</button>`;
+  const btns=months.map(mo=>{const active=window.fcMonthFilter===mo;const ca=DB.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.rec||0),0);return`<button class="btn btn-sm ${active?'btn-primary':''}" onclick="setFCMonthFilter('${mo}')" title="${mo} · ${fmt(ca)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+  const picker=`<input type="month" value="${window.fcMonthFilter!=='all'?window.fcMonthFilter:''}" onchange="setFCMonthFilter(this.value||'all')" title="Choisir n'importe quel mois" style="height:32px;padding:0 8px;font-size:12px;width:140px">`;
+  cont.innerHTML=`${all}${btns}<span style="color:var(--muted);font-size:11px;margin:0 4px">|</span>${picker}`;
+}
+function renderASMonthTabs(){
+  const cont=document.getElementById('as-month-tabs');if(!cont)return;
+  const months=[...new Set([...DB.contrats.map(c=>getMonth(c.date)).filter(Boolean),curMonth()])].sort().reverse().slice(0,24);
+  const all=`<button class="btn btn-sm ${window.asMonthFilter==='all'?'btn-primary':''}" onclick="setASMonthFilter('all')">Tous</button>`;
+  const btns=months.map(mo=>{const active=window.asMonthFilter===mo;const p=DB.contrats.filter(c=>getMonth(c.date)===mo).reduce((a,b)=>a+(b.prime||0),0);return`<button class="btn btn-sm ${active?'btn-primary':''}" onclick="setASMonthFilter('${mo}')" title="${mo} · prime ${fmt(p)} MAD">📅 ${fmtMoShort(mo)}</button>`;}).join('');
+  const picker=`<input type="month" value="${window.asMonthFilter!=='all'?window.asMonthFilter:''}" onchange="setASMonthFilter(this.value||'all')" title="Choisir n'importe quel mois" style="height:32px;padding:0 8px;font-size:12px;width:140px">`;
+  cont.innerHTML=`${all}${btns}<span style="color:var(--muted);font-size:11px;margin:0 4px">|</span>${picker}`;
+}
+
 function renderFC(){
-  const m=curMonth(),y=curYear(),w=curWeek();
+  renderFCMonthTabs();
+  // Helper rétrocompatibilité : esp peut être stocké comme b.esp ou b.especes (anciens imports)
+  const _esp=b=>Number(b.esp||b.especes||0);
+  // Mois affiché : utilise le filtre si défini, sinon mois courant
+  const fcMo=window.fcMonthFilter||'all';
+  const m=fcMo!=='all'?fcMo:curMonth(),y=curYear(),w=curWeek();
   const entries=DB.fc;
   const weekE=entries.filter(e=>getWeek(e.date)===w&&getYear(e.date)===y);
   const monthE=entries.filter(e=>getMonth(e.date)===m);
   const yearE=entries.filter(e=>getYear(e.date)===y);
 
-  // KPIs RESTAURATEUR — méthodologie franchise café/glacier
-  const recMonth=monthE.reduce((a,b)=>a+b.rec,0);
-  const depMonth=monthE.reduce((a,b)=>a+b.dep,0);
-  const fcMonth=monthE.reduce((a,b)=>a+(b.foodcost||0),0);
+  // === Agrégats CA & encaissements (mois courant) ===
+  const recMonth=monthE.reduce((a,b)=>a+(b.rec||0),0);
+  const tpeMonth=monthE.reduce((a,b)=>a+(b.tpe||0),0);
+  const glovoMonth=monthE.reduce((a,b)=>a+(b.glovo||0),0);
+  const espMonth=monthE.reduce((a,b)=>a+_esp(b),0);
+  // === Achats & charges ===
+  // Achats : priorité aux dépenses détaillées (module Dépenses) ; fallback sur les champs legacy
+  const fcMonthDetail=fcAchatsCashByMonth(m);
+  const fcMonthLegacy=monthE.reduce((a,b)=>{
+    // On ne prend le legacy que si pas de détail pour cette date
+    return fcAchatsCashByDate(b.date)>0?a:a+(Number(b.foodcost)||0);
+  },0);
+  const fcMonth=fcMonthDetail+fcMonthLegacy;
+  const achatsCompteDetail=fcAchatsCompteByMonth(m);
+  const achatsCompteLegacy=monthE.reduce((a,b)=>{
+    return fcAchatsCompteByDate(b.date)>0?a:a+(Number(b.achatsCompte||b.autresCharges)||0);
+  },0);
+  const achatsCompteMonth=achatsCompteDetail+achatsCompteLegacy;
+  const depEspecesDetail=fcDepEspByMonth(m);
+  const depEspecesLegacy=monthE.reduce((a,b)=>{
+    return fcDepEspByDate(b.date)>0?a:a+(Number(b.dep)||0);
+  },0);
+  const depEspecesMonth=depEspecesDetail+depEspecesLegacy;
+  // === Tickets, semaine, année ===
   const ticketsMonth=monthE.reduce((a,b)=>a+(b.clients||0),0);
-  const recWeek=weekE.reduce((a,b)=>a+b.rec,0);
+  const recWeek=weekE.reduce((a,b)=>a+(b.rec||0),0);
   const fcWeek=weekE.reduce((a,b)=>a+(b.foodcost||0),0);
-  const recYear=yearE.reduce((a,b)=>a+b.rec,0);
-  const n1=yearE.reduce((a,b)=>a+(b.n1||0),0);
+    const recYear=yearE.reduce((a,b)=>a+b.rec,0);
+  const n1Year=yearE.reduce((a,b)=>a+(b.n1||0),0);
   const n1Mois=monthE.reduce((a,b)=>a+(b.n1||0),0);
 
-  // Ticket moyen (panier moyen restauration)
+  // === KPIs calculés ===
   const ticketMoy=ticketsMonth>0?Math.round(recMonth/ticketsMonth):0;
-  // Food cost ratio — référence métier 28-32% pour glacier/café
   const fcRatio=recMonth>0?Math.round(fcMonth/recMonth*100):0;
-  // Marge brute = CA - food cost
   const margeBrute=recMonth-fcMonth;
   const margePct=recMonth>0?Math.round(margeBrute/recMonth*100):0;
-  // Résultat opérationnel
-  const resultMois=recMonth-fcMonth-depMonth;
+  // Résultat de gestion = CA − tous achats − dépenses espèces
+  const totalAchats=fcMonth+achatsCompteMonth;
+  const resultGestion=recMonth-totalAchats-depEspecesMonth;
+  const resultPct=recMonth>0?Math.round(resultGestion/recMonth*100):0;
+  // Trésorerie immédiate = ESP encaissées − dépenses espèces (cash réel disponible)
+  const tresorerieEsp=espMonth-depEspecesMonth;
+  // Mix encaissements
+  const pctEsp=recMonth>0?Math.round(espMonth/recMonth*100):0;
+  const pctTpe=recMonth>0?Math.round(tpeMonth/recMonth*100):0;
+  const pctGlovo=recMonth>0?Math.round(glovoMonth/recMonth*100):0;
+  // Comparaison N-1
+  const evoMois=n1Mois>0?Math.round((recMonth-n1Mois)/n1Mois*100):0;
+  const evoY=n1Year>0?Math.round((recYear-n1Year)/n1Year*100):0;
   // Jour pleins/creux
   const joursOuvres=monthE.length;
   const caJour=joursOuvres>0?Math.round(recMonth/joursOuvres):0;
   const meilleurJ=monthE.length?monthE.reduce((a,b)=>b.rec>a.rec?b:a):null;
-  const piresJ=monthE.length?monthE.reduce((a,b)=>b.rec<a.rec&&b.rec>0?b:a):null;
-  // Évolution N-1 mois
-  const evoMois=n1Mois>0?Math.round((recMonth-n1Mois)/n1Mois*100):0;
-  const evoY=n1>0?Math.round((recYear-n1)/n1*100):0;
+  const piresJ=monthE.length?monthE.reduce((a,b)=>(b.rec<a.rec&&b.rec>0)?b:a):null;
   // Objectif
   const objMois=getObjectif('fc',m);
   const objPct=objMois>0?Math.round(recMonth/objMois*100):0;
   const dm=daysInMonth(m),dp=Math.min(dayOfMonth(refDate()),dm);
   const projMois=dp>0?Math.round(recMonth*dm/dp):recMonth;
 
+  // === BLOC 1 : Synthèse globale + Comparaison N-1 ===
   const cu=document.getElementById('fc-cumuls');
   if(cu)cu.innerHTML=`
-    <div class="metric"><div class="metric-label">CA TTC Mois</div><div class="metric-val" style="color:var(--fc)">${fmt(recMonth)}</div><div class="metric-sub">MAD · ${joursOuvres}j ouvrés</div></div>
+    <div class="metric" style="border-left:3px solid var(--fc)"><div class="metric-label">💰 CA TTC Mois</div><div class="metric-val" style="color:var(--fc)">${fmt(recMonth)}</div><div class="metric-sub">MAD · ${joursOuvres}j ouvrés · ${fmt(caJour)}/j</div></div>
     <div class="metric"><div class="metric-label">🎯 vs Objectif</div><div class="metric-val" style="color:${objPct>=100?'var(--green)':objPct>=70?'var(--yellow)':'var(--red)'}">${objMois>0?objPct+'%':'—'}</div><div class="metric-sub">${objMois>0?fmt(objMois)+' MAD':'Non défini'}</div></div>
-    <div class="metric"><div class="metric-label">📊 vs N-1</div><div class="metric-val" style="color:${n1Mois>0?(evoMois>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${n1Mois>0?(evoMois>=0?'+':'')+evoMois+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(n1Mois)} MAD</div></div>
-    <div class="metric"><div class="metric-label">🛒 Ticket moyen</div><div class="metric-val" style="color:var(--fc)">${fmt(ticketMoy)}</div><div class="metric-sub">MAD · ${fmt(ticketsMonth)} couverts</div></div>
-    <div class="metric"><div class="metric-label">🍦 Food cost</div><div class="metric-val" style="color:${fcRatio<=32?'var(--green)':fcRatio<=38?'var(--yellow)':'var(--red)'}">${fcRatio}%</div><div class="metric-sub">${fmt(fcMonth)} MAD · cible 28-32%</div></div>
-    <div class="metric"><div class="metric-label">💰 Marge brute</div><div class="metric-val" style="color:var(--green)">${fmt(margeBrute)}</div><div class="metric-sub">${margePct}% du CA</div></div>
-    <div class="metric"><div class="metric-label">📈 Résultat op.</div><div class="metric-val" style="color:${resultMois>=0?'var(--green)':'var(--red)'}">${fmt(resultMois)}</div><div class="metric-sub">après dépenses</div></div>
-    <div class="metric"><div class="metric-label">📅 CA / jour</div><div class="metric-val">${fmt(caJour)}</div><div class="metric-sub">moyenne mois</div></div>
+    <div class="metric"><div class="metric-label">📊 vs N-1 mois</div><div class="metric-val" style="color:${n1Mois>0?(evoMois>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${n1Mois>0?(evoMois>=0?'+':'')+evoMois+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(n1Mois)} MAD</div></div>
+    <div class="metric"><div class="metric-label">📅 vs N-1 année</div><div class="metric-val" style="color:${n1Year>0?(evoY>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${n1Year>0?(evoY>=0?'+':'')+evoY+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(n1Year)} MAD</div></div>
     <div class="metric"><div class="metric-label">📆 Projection mois</div><div class="metric-val" style="color:var(--blue)">${fmt(projMois)}</div><div class="metric-sub">au rythme · ${dp}/${dm}j</div></div>
+    <div class="metric"><div class="metric-label">🛒 Ticket moyen</div><div class="metric-val">${fmt(ticketMoy)}</div><div class="metric-sub">MAD · ${fmt(ticketsMonth)} couverts</div></div>`;
+
+  // === BLOC 2 : Décomposition encaissements (TPE / GLOVO / ESP) ===
+  const cuPay=document.getElementById('fc-paiements');
+  if(cuPay)cuPay.innerHTML=`
+    <div class="metric" style="border-left:3px solid var(--green)"><div class="metric-label">💵 Espèces (caisse)</div><div class="metric-val" style="color:var(--green-dark)">${fmt(espMonth)}</div><div class="metric-sub">${pctEsp}% du CA</div></div>
+    <div class="metric" style="border-left:3px solid var(--blue)"><div class="metric-label">💳 TPE (carte)</div><div class="metric-val" style="color:var(--blue-dark)">${fmt(tpeMonth)}</div><div class="metric-sub">${pctTpe}% du CA</div></div>
+    <div class="metric" style="border-left:3px solid var(--as)"><div class="metric-label">🛵 GLOVO (livraisons)</div><div class="metric-val" style="color:var(--as-dark)">${fmt(glovoMonth)}</div><div class="metric-sub">${pctGlovo}% · encaissement différé</div></div>
+    <div class="metric" style="border-left:3px solid var(--yellow)"><div class="metric-label">💸 Dépenses espèces</div><div class="metric-val" style="color:var(--yellow-dark)">${fmt(depEspecesMonth)}</div><div class="metric-sub">payées du jour</div></div>
+    <div class="metric" style="border-left:3px solid ${tresorerieEsp>=0?'var(--green)':'var(--red)'}"><div class="metric-label">🏦 Trésorerie espèces nette</div><div class="metric-val" style="color:${tresorerieEsp>=0?'var(--green)':'var(--red)'}">${tresorerieEsp>=0?'+':''}${fmt(tresorerieEsp)}</div><div class="metric-sub">ESP − dépenses espèces</div></div>`;
+
+  // === BLOC 3 : Achats / Marges / Résultat ===
+  const cuMarge=document.getElementById('fc-marges');
+  if(cuMarge)cuMarge.innerHTML=`
+    <div class="metric"><div class="metric-label">🍽️ Food cost (achats)</div><div class="metric-val" style="color:${fcRatio<=32?'var(--green)':fcRatio<=38?'var(--yellow)':'var(--red)'}">${fcRatio}%</div><div class="metric-sub">${fmt(fcMonth)} MAD · cible 28-32%</div></div>
+    <div class="metric"><div class="metric-label">📋 Achats en compte</div><div class="metric-val" style="color:var(--gray-700)">${fmt(achatsCompteMonth)}</div><div class="metric-sub">MAD · à régler fin de mois</div></div>
+    <div class="metric"><div class="metric-label">💰 Marge brute</div><div class="metric-val" style="color:var(--green)">${fmt(margeBrute)}</div><div class="metric-sub">${margePct}% du CA</div></div>
+    <div class="metric"><div class="metric-label">📈 Résultat de gestion</div><div class="metric-val" style="color:${resultGestion>=0?'var(--green)':'var(--red)'}">${fmt(resultGestion)}</div><div class="metric-sub">${resultPct}% du CA · CA − achats − dép. esp.</div></div>
     <div class="metric"><div class="metric-label">🏆 Meilleur jour</div><div class="metric-val" style="font-size:14px">${meilleurJ?fmtDate(meilleurJ.date):'—'}</div><div class="metric-sub">${meilleurJ?fmt(meilleurJ.rec)+' MAD':''}</div></div>
-    <div class="metric"><div class="metric-label">📉 Jour creux</div><div class="metric-val" style="font-size:14px">${piresJ?fmtDate(piresJ.date):'—'}</div><div class="metric-sub">${piresJ?fmt(piresJ.rec)+' MAD':''}</div></div>
-    <div class="metric"><div class="metric-label">CA Semaine</div><div class="metric-val">${fmt(recWeek)}</div><div class="metric-sub">FC : ${recWeek>0?Math.round(fcWeek/recWeek*100):0}%</div></div>`;
+    <div class="metric"><div class="metric-label">📉 Jour creux</div><div class="metric-val" style="font-size:14px">${piresJ?fmtDate(piresJ.date):'—'}</div><div class="metric-sub">${piresJ?fmt(piresJ.rec)+' MAD':''}</div></div>`;
 
   const histEl=document.getElementById('fc-history');
-  if(histEl)histEl.innerHTML=entries.slice(0,40).map(e=>{
-    const fc=e.foodcost||0;const fcP=e.rec>0?Math.round(fc/e.rec*100):0;
-    const mb=e.rec-fc;const tkt=e.clients>0?Math.round(e.rec/e.clients):0;
-    const ev=e.n1>0?Math.round((e.rec-e.n1)/e.n1*100):0;
-    return`<tr><td>${fmtDate(e.date)}</td><td>${fmt(e.rec)} MAD</td><td>${fmt(fc)} MAD</td><td style="color:${fcP<=32?'var(--green)':fcP<=38?'var(--yellow)':'var(--red)'}">${fc>0?fcP+'%':'—'}</td><td style="color:var(--green)">${fmt(mb)}</td><td>${fmt(e.clients||0)}</td><td>${fmt(tkt)}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${e.n1>0?(ev>=0?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:600">${e.n1>0?(ev>=0?'+':'')+ev+'%':'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editFCEntry(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteFCEntry(${e.id})">×</button></div></td></tr>`;
-  }).join('')||'<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie</td></tr>';
+  if(histEl){
+    const fcMo=window.fcMonthFilter||'all';
+    const fcEntries=fcMo==='all'?entries.slice():entries.filter(e=>getMonth(e.date)===fcMo);
+    fcEntries.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(Number(b.id)||0)-(Number(a.id)||0));
+    const list=fcMo!=='all'?fcEntries:fcEntries.slice(0,500);
+    const limited=fcMo==='all'&&fcEntries.length>500;
+    histEl.innerHTML=list.map(e=>{
+      // Encaissements (depuis la saisie quotidienne)
+      const esp=Number(e.esp||e.especes||0);
+      const tpe=Number(e.tpe||0);
+      const glovo=Number(e.glovo||0);
+      // Achats : agrégés depuis le module Dépenses (priorité), sinon legacy foodcost
+      const ach=fcAchatsEffectifJour(e);
+      const compte=fcAchatsCompteEffectifJour(e);
+      const dep=fcDepEspEffectifJour(e);
+      // Indicateurs si détail présent (provient des dépenses détaillées)
+      const nbDep=fcDepCountJour(e.date);
+      const detailBadge=nbDep>0?`<span class="badge badge-blue" style="font-size:9px;padding:1px 5px;margin-left:4px" title="${nbDep} dépense(s) détaillée(s) saisie(s) dans le module Dépenses pour ce jour">📦 ${nbDep}</span>`:'';
+      const fcP=e.rec>0?Math.round(ach/e.rec*100):0;
+      const ev=e.n1>0?Math.round(((e.rec||0)-e.n1)/e.n1*100):0;
+      return`<tr><td>${fmtDate(e.date)}${detailBadge}</td><td style="font-weight:600">${fmt(e.rec)}</td><td style="color:var(--green-dark)">${esp>0?fmt(esp):'—'}</td><td style="color:var(--blue-dark)">${tpe>0?fmt(tpe):'—'}</td><td style="color:var(--as-dark)">${glovo>0?fmt(glovo):'—'}</td><td>${ach>0?fmt(ach):'—'}</td><td style="color:var(--gray-700)">${compte>0?fmt(compte):'—'}</td><td style="color:var(--yellow-dark)">${dep>0?fmt(dep):'—'}</td><td style="color:${fcP<=32?'var(--green)':fcP<=38?'var(--yellow)':'var(--red)'}">${ach>0?fcP+'%':'—'}</td><td style="color:var(--muted)">${e.n1?fmt(e.n1):'—'}</td><td style="color:${e.n1>0?(ev>=0?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:600">${e.n1>0?(ev>=0?'+':'')+ev+'%':'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editFCEntry(${e.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteFCEntry(${e.id})">×</button></div></td></tr>`;
+    }).join('')+(limited?`<tr><td colspan="12" style="color:var(--yellow);text-align:center;padding:10px;font-size:11px">⚠️ ${fcEntries.length} lignes — affichage limité à 500. Filtrez par mois pour tout voir.</td></tr>`:'')||'<tr><td colspan="12" style="color:var(--muted);text-align:center;padding:16px">Aucune saisie pour cette période</td></tr>';
+  }
 
-  const caisse=DB.caisse.fc;const mC=caisse.filter(e=>getMonth(e.date)===m);
-  const cM=document.getElementById('fc-caisse-metrics');if(cM)cM.innerHTML=`<div class="metric"><div class="metric-label">Recettes esp.</div><div class="metric-val" style="color:var(--green)">${fmt(mC.reduce((a,b)=>a+b.rec,0))}</div></div><div class="metric"><div class="metric-label">Remises banque</div><div class="metric-val" style="color:var(--at)">${fmt(mC.reduce((a,b)=>a+b.remise,0))}</div></div><div class="metric"><div class="metric-label">Encours caisse</div><div class="metric-val" style="color:var(--fc)">${fmt(mC.reduce((a,b)=>a+b.rec-b.dep-b.remise,0))}</div></div>`;
-  const ctrlEl=document.getElementById('fc-caisse-ctrl');if(ctrlEl)ctrlEl.innerHTML=caisse.slice(0,5).map(e=>`<div class="caisse-row"><span style="color:var(--muted)">${fmtDate(e.date)}</span><span>Calculé: <strong>${fmt(e.calcule)}</strong></span><span>Constaté: <strong>${fmt(e.constate)}</strong></span><span class="${e.ecart===0?'badge-green':e.ecart>0?'badge-yellow':'badge-red'} badge">Écart: ${e.ecart>=0?'+':''}${fmt(e.ecart)}</span></div>`).join('')||'<div style="color:var(--muted);font-size:13px">Aucune saisie</div>';
-  const hEl=document.getElementById('fc-caisse-hist');if(hEl)hEl.innerHTML=caisse.slice(0,20).map(e=>`<tr><td>${fmtDate(e.date)}</td><td>${fmt(e.rec)}</td><td>${fmt(e.dep)}</td><td>${fmt(e.remise)}</td><td>${fmt(e.calcule)}</td><td>${fmt(e.constate)}</td><td style="color:${e.ecart===0?'var(--green)':e.ecart>0?'var(--yellow)':'var(--red)'}">${e.ecart>=0?'+':''}${fmt(e.ecart)}</td></tr>`).join('');
+  // Caisse F Corner supprimée — la saisie quotidienne (DB.fc) gère désormais
+  // espèces (esp) et dépenses espèces (dep). Voir bloc "💳 Décomposition encaissements".
 
-  // Analyse — vue expert restauration
   const an=document.getElementById('fc-analyse');
   if(an){
     const fcYear=yearE.reduce((a,b)=>a+(b.foodcost||0),0);
     const fcRatioY=recYear>0?Math.round(fcYear/recYear*100):0;
     const ticketsY=yearE.reduce((a,b)=>a+(b.clients||0),0);
     const tktMoyY=ticketsY>0?Math.round(recYear/ticketsY):0;
-    // Saisonnalité par mois
     const moisData=[...new Set(yearE.map(e=>getMonth(e.date)))].sort();
     const maxMoisCA=Math.max(...moisData.map(mo=>yearE.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+b.rec,0)),1);
-    // Diagnostic
     let diagnostic='';
     if(fcRatio>38)diagnostic='⚠️ Food cost trop élevé (>38%) — Action : audit fournisseurs (négociation glaces/café), réduction du gaspillage, contrôle des portions, réajustement des prix.';
     else if(fcRatio>32)diagnostic='⚡ Food cost à surveiller (32-38%) — Optimisation : revoir le mix produits (push items à forte marge), inventaire hebdo, fiches techniques.';
@@ -4202,7 +4882,7 @@ function renderFC(){
       <div class="section-title">📊 Synthèse restaurant — Année ${y}</div>
       <div class="gridauto mb12">
         <div class="metric"><div class="metric-label">CA Année</div><div class="metric-val" style="color:var(--fc)">${fmt(recYear)}</div><div class="metric-sub">MAD</div></div>
-        <div class="metric"><div class="metric-label">Évol. N/N-1</div><div class="metric-val" style="color:${n1>0?(evoY>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${n1>0?(evoY>=0?'+':'')+evoY+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(n1)} MAD</div></div>
+        <div class="metric"><div class="metric-label">Évol. N/N-1</div><div class="metric-val" style="color:${n1Year>0?(evoY>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${n1Year>0?(evoY>=0?'+':'')+evoY+'%':'—'}</div><div class="metric-sub">N-1 : ${fmt(n1Year)} MAD</div></div>
         <div class="metric"><div class="metric-label">🍦 Food cost annuel</div><div class="metric-val" style="color:${fcRatioY<=32?'var(--green)':fcRatioY<=38?'var(--yellow)':'var(--red)'}">${fcRatioY}%</div><div class="metric-sub">${fmt(fcYear)} MAD</div></div>
         <div class="metric"><div class="metric-label">🛒 Ticket moyen</div><div class="metric-val">${fmt(tktMoyY)}</div><div class="metric-sub">${fmt(ticketsY)} couverts</div></div>
       </div>
@@ -4212,15 +4892,231 @@ function renderFC(){
   }
 }
 
+
+
+
+
+
 // ════════════════════════════
 // ASSURANCE
 // ════════════════════════════
 // 1.2.3 ASSURANCE — Branches conformes ACAPS / Wafa Assurance
-const AS_BRANCHES=['AUTO','FLOTTE','ACCIDENTS CORPORELS','ACCIDENTS DE TRAVAIL','RISQUES DIVERS'];
-const AS_BR_COLORS={'AUTO':'#7B2FBE','FLOTTE':'#2D7DD2','ACCIDENTS CORPORELS':'#F4831F','ACCIDENTS DE TRAVAIL':'#E63946','RISQUES DIVERS':'#00C896'};
-// Taux de commission moyens marché Maroc (indicatifs ACAPS)
-const AS_COMM_RATES={'AUTO':0.10,'FLOTTE':0.08,'ACCIDENTS CORPORELS':0.15,'ACCIDENTS DE TRAVAIL':0.12,'RISQUES DIVERS':0.18};
+// Branches & taux par défaut (modifiables par l'utilisateur)
+const AS_BRANCHES_DEFAULT=['AUTO','FLOTTE','AT','MALADIE','ACCIDENTS CORPORELS','RISQUES DIVERS'];
+const AS_BR_COLORS={'AUTO':'#7B2FBE','FLOTTE':'#2D7DD2','AT':'#E63946','MALADIE':'#10B981','ACCIDENTS CORPORELS':'#F4831F','ACCIDENTS DE TRAVAIL':'#E63946','RISQUES DIVERS':'#00C896','VIE':'#5B5BD6','HABITATION':'#0EA5E9','VOYAGE':'#F59E0B'};
+const AS_COMM_RATES_DEFAULT={'AUTO':0.10,'FLOTTE':0.08,'AT':0.12,'MALADIE':0.10,'ACCIDENTS CORPORELS':0.15,'ACCIDENTS DE TRAVAIL':0.12,'RISQUES DIVERS':0.18};
+
+// Variables runtime (mutables) — initialisées avec les défauts, rechargées via refreshASConfig
+let AS_BRANCHES=AS_BRANCHES_DEFAULT.slice();
+let AS_COMM_RATES=Object.assign({},AS_COMM_RATES_DEFAULT);
+
+// Recharge les branches & taux depuis DB.parametresFinance.as si l'utilisateur les a personnalisés
+function refreshASConfig(){
+  const cfg=DB.parametresFinance&&DB.parametresFinance.as;
+  AS_BRANCHES=(cfg&&Array.isArray(cfg.branches)&&cfg.branches.length)?cfg.branches.slice():AS_BRANCHES_DEFAULT.slice();
+  AS_COMM_RATES=(cfg&&cfg.commissionRates&&typeof cfg.commissionRates==='object')?Object.assign({},cfg.commissionRates):Object.assign({},AS_COMM_RATES_DEFAULT);
+  // Couleur fallback pour branches custom non définies
+  AS_BRANCHES.forEach(b=>{if(!AS_BR_COLORS[b])AS_BR_COLORS[b]='#7B2FBE';});
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// HELPERS COMMISSION 1.2.3 ASSURANCE
+// Le VRAI CA de l'agent général = somme des commissions (pas les primes)
+// La prime est encaissée pour le compte de Wafa Assurance, l'agent ne garde
+// que sa commission. C'est ce qui constitue son chiffre d'affaires comptable.
+// ═══════════════════════════════════════════════════════════════════════
+function _asComm(c){
+  // Commission saisie en priorité, sinon recalcul à partir prime × taux branche
+  return Number(c.comm)||Math.round((Number(c.prime)||0)*(AS_COMM_RATES[c.branche]||0.10));
+}
+function asCommissionMonth(month){
+  return App.memo('asComm:'+month,()=>(DB.contrats||[]).filter(c=>getMonth(c.date)===month).reduce((s,c)=>s+_asComm(c),0));
+}
+function asCommissionDay(date){
+  return App.memo('asCommDay:'+date,()=>(DB.contrats||[]).filter(c=>c.date===date).reduce((s,c)=>s+_asComm(c),0));
+}
+function asCommissionFiltered(filterFn){
+  // Pas memoizé : la fonction filterFn rend la clé non-déterministe
+  return(DB.contrats||[]).filter(filterFn).reduce((s,c)=>s+_asComm(c),0);
+}
+function asPrimeMonth(month){
+  return App.memo('asPrime:'+month,()=>(DB.contrats||[]).filter(c=>getMonth(c.date)===month).reduce((s,c)=>s+(Number(c.prime)||0),0));
+}
+
 let asBrancheFilter='all';
+
+// ══════════════════════════════════════════════════════════════════
+// PANNEAU PARAMÈTRES COMMISSIONS (édition des taux par branche)
+// ══════════════════════════════════════════════════════════════════
+function renderASRatesEditor(){
+  const cont=document.getElementById('as-rates-editor');if(!cont)return;
+  const branches=AS_BRANCHES;
+  const rates=AS_COMM_RATES;
+  cont.innerHTML=branches.map((b,i)=>{
+    const taux=Math.round(((rates[b]||0)*100)*100)/100; // % avec 2 décimales
+    const col=AS_BR_COLORS[b]||'#7B2FBE';
+    return`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
+      <span style="min-width:160px;font-weight:600;color:${col};font-size:13px">${b}</span>
+      <div style="display:flex;align-items:center;gap:4px">
+        <input type="number" step="0.5" min="0" max="100" value="${taux}" id="as-rate-${i}" style="width:90px;height:32px" oninput="onASRateChange(${i})">
+        <span style="font-size:12px;color:var(--muted)">%</span>
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="removeASBranche(${i})" title="Supprimer cette branche">×</button>
+    </div>`;
+  }).join('')||'<div style="color:var(--muted);font-size:12px;padding:8px 0">Aucune branche définie. Ajoutez-en une ci-dessous.</div>';
+}
+
+// Mémorise temporairement les changements (avant Sauvegarder)
+const _asRatesPending={};
+function onASRateChange(idx){
+  const branche=AS_BRANCHES[idx];if(!branche)return;
+  const v=Number(document.getElementById('as-rate-'+idx).value)||0;
+  _asRatesPending[branche]=v/100; // converti % → décimal
+}
+
+function addASBranche(){
+  const nom=(document.getElementById('as-new-branche').value||'').trim().toUpperCase();
+  const taux=Number(document.getElementById('as-new-taux').value)||0;
+  if(!nom){showToast('Nom de branche requis');return;}
+  if(AS_BRANCHES.indexOf(nom)>=0){showToast('Cette branche existe déjà');return;}
+  AS_BRANCHES.push(nom);
+  AS_COMM_RATES[nom]=taux/100;
+  if(!AS_BR_COLORS[nom])AS_BR_COLORS[nom]='#7B2FBE';
+  document.getElementById('as-new-branche').value='';
+  document.getElementById('as-new-taux').value='';
+  renderASRatesEditor();
+  refreshASBrancheSelects();
+  showToast('✅ Branche '+nom+' ajoutée — n\'oubliez pas de sauvegarder');
+}
+
+function removeASBranche(idx){
+  const branche=AS_BRANCHES[idx];if(!branche)return;
+  if(!confirm('Supprimer la branche '+branche+' ? (les contrats existants ne sont PAS supprimés)'))return;
+  AS_BRANCHES.splice(idx,1);
+  delete AS_COMM_RATES[branche];
+  delete _asRatesPending[branche];
+  renderASRatesEditor();
+  refreshASBrancheSelects();
+}
+
+function resetASRates(){
+  if(!confirm('Restaurer les branches & taux par défaut ?'))return;
+  AS_BRANCHES=AS_BRANCHES_DEFAULT.slice();
+  AS_COMM_RATES=Object.assign({},AS_COMM_RATES_DEFAULT);
+  Object.keys(_asRatesPending).forEach(k=>delete _asRatesPending[k]);
+  renderASRatesEditor();
+  refreshASBrancheSelects();
+  showToast('🔄 Réinitialisé — cliquez Sauvegarder pour persister');
+}
+
+function saveASRates(){
+  // Applique les changements en attente
+  Object.keys(_asRatesPending).forEach(b=>{AS_COMM_RATES[b]=_asRatesPending[b];delete _asRatesPending[b];});
+  // Persiste dans DB.parametresFinance.as
+  if(!DB.parametresFinance)DB.parametresFinance={};
+  if(!DB.parametresFinance.as)DB.parametresFinance.as={};
+  DB.parametresFinance.as.branches=AS_BRANCHES.slice();
+  DB.parametresFinance.as.commissionRates=Object.assign({},AS_COMM_RATES);
+  saveSubtree('parametresFinance/as',DB.parametresFinance.as);
+  refreshASConfig();
+  refreshASBrancheSelects();
+  renderASRatesEditor();
+  renderAssurance&&renderAssurance();
+  showToast('💾 Paramètres commissions sauvegardés');
+}
+
+// Met à jour tous les <select> de branche (saisie quotidienne + saisie hebdo)
+function refreshASBrancheSelects(){
+  ['as-branche','as-week-branche'].forEach(id=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    const cur=sel.value;
+    sel.innerHTML=AS_BRANCHES.map(b=>`<option value="${b}">${b}</option>`).join('');
+    if(cur&&AS_BRANCHES.indexOf(cur)>=0)sel.value=cur;
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SAISIE HEBDOMADAIRE — total prime par semaine, par branche
+// Stocké dans DB.contrats avec flag weekly:true et date=lundi de la semaine
+// ══════════════════════════════════════════════════════════════════
+// Convertit une string "2026-W17" en date du lundi de cette semaine (YYYY-MM-DD)
+function _isoWeekToMonday(weekStr){
+  // weekStr format: "2026-W17"
+  const m=/^(\d{4})-W(\d{1,2})$/.exec(weekStr||'');
+  if(!m)return null;
+  const year=Number(m[1]);const week=Number(m[2]);
+  // Le lundi de la semaine ISO N de l'année Y
+  const simple=new Date(Date.UTC(year,0,1+(week-1)*7));
+  const dow=simple.getUTCDay();
+  const monday=new Date(simple);
+  if(dow<=4)monday.setUTCDate(simple.getUTCDate()-simple.getUTCDay()+1);
+  else monday.setUTCDate(simple.getUTCDate()+8-simple.getUTCDay());
+  return monday.toISOString().split('T')[0];
+}
+
+function calcASWeekComm(){
+  const branche=getVal('as-week-branche');
+  const prime=getNum('as-week-prime');
+  const taux=AS_COMM_RATES[branche]||0;
+  setVal('as-week-comm',Math.round(prime*taux));
+}
+
+function saveASWeek(){
+  const weekStr=getVal('as-week-period');
+  const branche=getVal('as-week-branche');
+  const prime=getNum('as-week-prime');
+  if(!weekStr){showToast('⚠️ Semaine requise');return;}
+  if(!branche){showToast('⚠️ Branche requise');return;}
+  if(prime<=0){showToast('⚠️ Prime requise');return;}
+  const monday=_isoWeekToMonday(weekStr);
+  if(!monday){showToast('⚠️ Format de semaine invalide');return;}
+  const editId=getVal('as-week-edit-id');
+  const taux=AS_COMM_RATES[branche]||0;
+  const commCalc=getNum('as-week-comm')||Math.round(prime*taux);
+  const entry={
+    id:editId?Number(editId):Date.now(),
+    date:monday,                // lundi de la semaine — pour cohérence avec aggregations
+    weekly:true,                // marqueur saisie hebdomadaire
+    weekISO:weekStr,            // ex: '2026-W17'
+    type:'hebdo',               // type spécifique (≠ nouvelle/renouvellement/avenant)
+    branche,
+    marque:'Agence',
+    porteur:'Cumul semaine '+weekStr,
+    lieu:'',
+    nb:getNum('as-week-nb')||1,
+    prime,
+    n1:getNum('as-week-n1'),
+    comm:commCalc,
+    note:getVal('as-week-note')||''
+  };
+  if(editId){
+    const i=DB.contrats.findIndex(c=>c.id===Number(editId));
+    if(i>=0)DB.contrats[i]=entry;
+  }else DB.contrats.push(entry);
+  DB.contrats.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  // Reset form
+  ['as-week-edit-id','as-week-prime','as-week-comm','as-week-nb','as-week-n1','as-week-note'].forEach(id=>setVal(id,''));
+  document.getElementById('as-week-btn').textContent='📅 Enregistrer la semaine';
+  saveItem('contrats',entry);
+  renderAssurance();
+  showToast('✅ Saisie hebdomadaire enregistrée — '+weekStr+' / '+branche);
+}
+
+function editASWeek(id){
+  const e=DB.contrats.find(c=>c.id===id);if(!e||!e.weekly)return;
+  setVal('as-week-period',e.weekISO||'');
+  setVal('as-week-branche',e.branche||'');
+  setVal('as-week-prime',e.prime||0);
+  setVal('as-week-comm',e.comm||0);
+  setVal('as-week-nb',e.nb||0);
+  setVal('as-week-n1',e.n1||0);
+  setVal('as-week-note',e.note||'');
+  setVal('as-week-edit-id',e.id);
+  document.getElementById('as-week-btn').textContent='✏️ Modifier la semaine';
+  document.getElementById('as-tab-contrats').scrollIntoView({behavior:'smooth'});
+  showToast('Saisie hebdo chargée pour modification');
+}
+
 function addContrat(){
   const d=getVal('as-date');if(!d||!getVal('as-porteur')){showToast('Date et porteur requis');return;}
   const editId=getVal('as-edit-id');
@@ -4241,9 +5137,19 @@ function editContrat(id){
   document.getElementById('as-btn').textContent='✏️ Modifier';
   document.getElementById('as-tab-contrats').scrollIntoView({behavior:'smooth'});showToast('Contrat chargé');
 }
-function deleteContrat(id){if(!confirm('Supprimer ce contrat ?'))return;DB.contrats=DB.contrats.filter(c=>c.id!==id);removeItem('contrats',id);renderAssurance();}
+function deleteContrat(id){if(!confirm('Supprimer ce contrat ?'))return;const i=DB.contrats.findIndex(c=>c.id===id);if(i<0)return;DB.contrats.splice(i,1);removeItem('contrats',id).then(()=>{if(DB.contrats.some(c=>c.id===id))saveSubtree('contrats',DB.contrats);});renderAssurance();}
 function setASBrancheFilter(b){asBrancheFilter=b;renderAssurance();}
 function renderAssurance(){
+  renderASMonthTabs();
+  // Initialise les sélecteurs de branche + éditeur des taux à chaque rendu (idempotent)
+  refreshASBrancheSelects();
+  renderASRatesEditor();
+  // Pré-remplit la semaine ISO courante pour la saisie hebdo si vide
+  const wkInput=document.getElementById('as-week-period');
+  if(wkInput&&!wkInput.value){
+    const now=new Date();const yr=now.getFullYear();const wk=getWeek(today());
+    wkInput.value=yr+'-W'+String(wk).padStart(2,'0');
+  }
   const m=curMonth(),y=curYear(),w=curWeek();
   const monthC=DB.contrats.filter(c=>getMonth(c.date)===m);
   const weekC=DB.contrats.filter(c=>getWeek(c.date)===w&&getYear(c.date)===y);
@@ -4312,17 +5218,33 @@ function renderAssurance(){
   // Historique
   let entries=DB.contrats;
   if(asBrancheFilter!=='all')entries=entries.filter(c=>(c.branche||'AUTO')===asBrancheFilter);
+  // Filtre mois (window.asMonthFilter)
+  const asMo=window.asMonthFilter||'all';
+  if(asMo!=='all')entries=entries.filter(c=>getMonth(c.date)===asMo);
+  entries.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(Number(b.id)||0)-(Number(a.id)||0));
   const histEl=document.getElementById('as-history');
-  if(histEl)histEl.innerHTML=entries.slice(0,50).map(c=>{
-    const n1=c.n1||0;const ev=n1>0?Math.round((c.prime-n1)/n1*100):0;
-    const br=c.branche||'AUTO';
-    return`<tr><td>${fmtDate(c.date)}</td><td><span class="badge ${c.type==='nouvelle'?'badge-green':c.type==='avenant'?'badge-yellow':'badge-blue'}">${c.type==='nouvelle'?'Nouvelle':c.type==='avenant'?'Avenant':'Renouv.'}</span></td><td><span style="color:${AS_BR_COLORS[br]};font-weight:600;font-size:11px">${br}</span></td><td>${c.marque||'—'}</td><td>${c.porteur}</td><td style="color:var(--muted);font-size:11px">${c.lieu||'—'}</td><td>${c.nb}</td><td>${fmt(c.prime)}</td><td style="color:var(--muted)">${n1?fmt(n1):'—'}</td><td style="color:${n1>0?(ev>=0?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:600">${n1>0?(ev>=0?'+':'')+ev+'%':'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="editContrat(${c.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteContrat(${c.id})">×</button></div></td></tr>`;
-  }).join('')||'<tr><td colspan="11" style="color:var(--muted);text-align:center;padding:16px">Aucun contrat</td></tr>';
+  if(histEl){
+    const list=asMo!=='all'?entries:entries.slice(0,500);
+    const limited=asMo==='all'&&entries.length>500;
+    histEl.innerHTML=list.map(c=>{
+      const n1=c.n1||0;const ev=n1>0?Math.round((c.prime-n1)/n1*100):0;
+      const br=c.branche||'AUTO';
+      // Distinction visuelle saisie hebdomadaire
+      const isWeek=!!c.weekly;
+      const typeLabel=isWeek?'📅 Hebdo':(c.type==='nouvelle'?'Nouvelle':c.type==='avenant'?'Avenant':'Renouv.');
+      const typeBadge=isWeek?'badge-purple':(c.type==='nouvelle'?'badge-green':c.type==='avenant'?'badge-yellow':'badge-blue');
+      const editFn=isWeek?'editASWeek':'editContrat';
+      const dateDisp=isWeek?(c.weekISO||fmtDate(c.date)):fmtDate(c.date);
+      const rowStyle=isWeek?'background:rgba(124,58,237,.04);':'';
+      return`<tr style="${rowStyle}"><td>${dateDisp}</td><td><span class="badge ${typeBadge}">${typeLabel}</span></td><td><span style="color:${AS_BR_COLORS[br]||'#7B2FBE'};font-weight:600;font-size:11px">${br}</span></td><td>${c.marque||'—'}</td><td>${c.porteur||'—'}</td><td style="color:var(--muted);font-size:11px">${esc(c.lieu)||'—'}</td><td>${c.nb||'—'}</td><td>${fmt(c.prime)}</td><td style="color:var(--muted)">${n1?fmt(n1):'—'}</td><td style="color:${n1>0?(ev>=0?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:600">${n1>0?(ev>=0?'+':'')+ev+'%':'—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-edit" onclick="${editFn}(${c.id})">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteContrat(${c.id})">×</button></div></td></tr>`;
+    }).join('')+(limited?`<tr><td colspan="11" style="color:var(--yellow);text-align:center;padding:10px;font-size:11px">⚠️ ${entries.length} contrats — affichage limité à 500. Filtrez par mois pour tout voir.</td></tr>`:'')||'<tr><td colspan="11" style="color:var(--muted);text-align:center;padding:16px">Aucun contrat pour cette période</td></tr>';
+  }
 
   const caisse=DB.caisse.as;const mC=caisse.filter(e=>getMonth(e.date)===m);
   const cM=document.getElementById('as-caisse-metrics');if(cM)cM.innerHTML=`<div class="metric"><div class="metric-label">Encaissements</div><div class="metric-val" style="color:var(--green)">${fmt(mC.reduce((a,b)=>a+b.enc,0))}</div></div><div class="metric"><div class="metric-label">Versements</div><div class="metric-val" style="color:var(--at)">${fmt(mC.reduce((a,b)=>a+b.bank,0))}</div></div><div class="metric"><div class="metric-label">Solde actuel</div><div class="metric-val" style="color:var(--as)">${fmt(caisse.length?caisse[0].calcule:0)}</div></div>`;
   const ctrlEl=document.getElementById('as-caisse-ctrl');if(ctrlEl)ctrlEl.innerHTML=caisse.slice(0,5).map(e=>`<div class="caisse-row"><span style="color:var(--muted)">${fmtDate(e.date)}</span><span style="color:var(--green)">+${fmt(e.enc)}</span><span style="color:var(--red)">-${fmt(e.dec)}</span><strong>${fmt(e.calcule)}</strong></div>`).join('')||'<div style="color:var(--muted);font-size:13px">Aucune saisie</div>';
-  const hEl=document.getElementById('as-caisse-hist');if(hEl)hEl.innerHTML=caisse.slice(0,20).map(e=>`<tr><td>${fmtDate(e.date)}</td><td style="color:var(--green)">+${fmt(e.enc)}</td><td style="color:var(--red)">-${fmt(e.dec)}</td><td>-${fmt(e.bank)}</td><td style="font-weight:500">${fmt(e.calcule)}</td></tr>`).join('');
+  // Caisse AS — limite étendue à 100 entrées (~3 mois max)
+  const hEl=document.getElementById('as-caisse-hist');if(hEl)hEl.innerHTML=caisse.slice(0,100).map(e=>`<tr><td>${fmtDate(e.date)}</td><td style="color:var(--green)">+${fmt(e.enc)}</td><td style="color:var(--red)">-${fmt(e.dec)}</td><td>-${fmt(e.bank)}</td><td style="font-weight:500">${fmt(e.calcule)}</td></tr>`).join('');
 
   // Analyse — KPIs experts assurance Maroc
   const an=document.getElementById('as-analyse');
@@ -4380,7 +5302,7 @@ function saveTask(){
 }
 function filterT(f){renderTasks(f);}
 function toggleTask(id){const t=DB.tasks.find(t=>t.id===id);if(t){t.done=!t.done;saveItem('tasks',t);renderTasks('all');}}
-function deleteTask(id){if(confirm('Supprimer cette tâche ?')){DB.tasks=DB.tasks.filter(t=>t.id!==id);removeItem('tasks',id);renderTasks('all');}}
+function deleteTask(id){if(confirm('Supprimer cette tâche ?')){const i=DB.tasks.findIndex(t=>t.id===id);if(i<0)return;DB.tasks.splice(i,1);removeItem('tasks',id).then(()=>{if(DB.tasks.some(t=>t.id===id))saveSubtree('tasks',DB.tasks);});renderTasks('all');}}
 
 function renderTasks(filter){
   const all=DB.tasks;
@@ -4396,7 +5318,7 @@ function renderTasks(filter){
   function tH(t){const overdue=t.date&&t.date<today()&&!t.done;return`<div class="task-row${overdue?' ' :''}${t.done?' ':''}">
     <div class="task-check ${t.done?'done':''}" onclick="toggleTask(${t.id})">${t.done?'✓':''}</div>
     <div style="flex:1;min-width:0">
-      <div style="font-size:13px;${t.done?'text-decoration:line-through;opacity:.5':''};margin-bottom:2px">${t.title}</div>
+      <div style="font-size:13px;${t.done?'text-decoration:line-through;opacity:.5':''};margin-bottom:2px">${esc(t.title)}</div>
       ${t.note?`<div style="font-size:11px;color:var(--muted);margin-bottom:2px">${t.note}</div>`:''}
       <div style="font-size:11px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         <span style="color:${colors[t.entity]||'#888'}">${t.entity}</span>
@@ -4418,365 +5340,6 @@ function renderTasks(filter){
 }
 // Override du bouton Nouvelle tâche
 document.querySelector('[onclick="openModal(\'m-task\')"]').setAttribute('onclick',"openNewTask()");
-
-// ════════════════════════════
-// RAPPORTS HEBDO — ENRICHIS
-// ════════════════════════════
-function addReport(){
-  const entity=getVal('mr-ent');const caWeek=getNum('mr-ca-week');
-  if(!entity){showToast('Entité requise');return;}
-  const rpt={id:Date.now(),entity,resp:getVal('mr-resp')||'—',week:getNum('mr-week'),monthRef:getVal('mr-month-ref'),caWeek,caMonth:getNum('mr-ca-month'),obj:getNum('mr-obj'),nb:getNum('mr-nb'),enc:getNum('mr-enc'),creances:getNum('mr-creances'),n1:getNum('mr-n1'),trend:getVal('mr-trend'),alert:getVal('mr-alert')||'RAS',action:getVal('mr-action')||'',comment:getVal('mr-comment')||'',date:new Date().toLocaleDateString('fr-MA',{day:'numeric',month:'short',year:'numeric'}),dateISO:today()};
-  DB.reports.push(rpt);saveItem('reports',rpt);closeModal('m-report');
-  ['mr-resp','mr-ca-week','mr-ca-month','mr-obj','mr-nb','mr-enc','mr-creances','mr-n1','mr-alert','mr-action','mr-comment'].forEach(id=>setVal(id,''));
-  renderReports();
-}
-
-// ════════════════════════════
-// CASH-FLOW GROUPE — Vue DGA Trésorerie consolidée
-// ════════════════════════════
-let cfEntFilter='all';
-function setCfEntFilter(e){cfEntFilter=e;document.querySelectorAll('#cf-entity-tabs .btn').forEach(b=>b.classList.remove('btn-primary'));event.target.classList.add('btn-primary');renderCashflow();}
-
-// === Sélecteur multi-mois (1 à 3 mois, même non contigus) ===
-let cfSelectedMonths=[]; // ['2026-03','2026-05']
-function cfMonthName(ym){const[y,m]=ym.split('-');const mn=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'][Number(m)-1]||m;return mn+' '+y;}
-function cfInitMonthPicker(){
-  // Init year selector with available years from DB + current year
-  const sel=document.getElementById('cf-months-year');if(!sel)return;
-  const years=new Set([Number(curYear())]);
-  const collect=arr=>arr.forEach(e=>{if(e&&e.date)years.add(Number(e.date.substring(0,4)));});
-  collect(DB.caisse.as);collect(DB.caisse.fc);collect(DB.cl.assistance);collect(DB.at);collect(DB.contrats);collect(DB.fc);
-  const ys=[...years].filter(y=>y>=2020&&y<=2100).sort((a,b)=>b-a);
-  const cur=Number(sel.value)||Number(curYear());
-  sel.innerHTML=ys.map(y=>`<option value="${y}"${y===cur?' selected':''}>${y}</option>`).join('');
-  // Sync selection from GLOBAL_REF if active
-  if(GLOBAL_REF&&GLOBAL_REF.mode==='months'&&Array.isArray(GLOBAL_REF.months))cfSelectedMonths=GLOBAL_REF.months.slice();
-  cfRenderMonthChips();
-}
-function cfRenderMonthChips(){
-  const wrap=document.getElementById('cf-month-chips');if(!wrap)return;
-  const yEl=document.getElementById('cf-months-year');const y=yEl?yEl.value:curYear();
-  const months=Array.from({length:12},(_,i)=>y+'-'+String(i+1).padStart(2,'0'));
-  wrap.innerHTML=months.map(ym=>{
-    const sel=cfSelectedMonths.indexOf(ym)>=0;
-    const bg=sel?'#6366F1':'transparent';const col=sel?'#fff':'var(--text)';const bd=sel?'#6366F1':'var(--border)';
-    return`<button class="btn btn-sm" onclick="cfToggleMonth('${ym}')" style="background:${bg};color:${col};border-color:${bd};font-size:11px;padding:4px 10px">${sel?'✓ ':''}${cfMonthName(ym)}</button>`;
-  }).join('');
-  const info=document.getElementById('cf-months-info');
-  if(info){
-    if(!cfSelectedMonths.length)info.textContent='Aucun mois sélectionné — la période globale s\'applique.';
-    else info.innerHTML='<strong style="color:#6366F1">'+cfSelectedMonths.length+' mois sélectionné(s) :</strong> '+cfSelectedMonths.slice().sort().map(cfMonthName).join(' · ')+(cfSelectedMonths.length>=3?' <span style="color:var(--yellow)">· max 3 atteint</span>':'');
-  }
-}
-function cfToggleMonth(ym){
-  const i=cfSelectedMonths.indexOf(ym);
-  if(i>=0)cfSelectedMonths.splice(i,1);
-  else{
-    if(cfSelectedMonths.length>=3){showToast('⚠️ Maximum 3 mois');return;}
-    cfSelectedMonths.push(ym);
-  }
-  cfRenderMonthChips();
-}
-function cfClearMonthsFilter(){
-  cfSelectedMonths=[];cfRenderMonthChips();
-  if(GLOBAL_REF&&GLOBAL_REF.mode==='months'){GLOBAL_REF=null;refreshTopDate();renderCashflow();showToast('Sélection multi-mois effacée');}
-}
-function cfApplyMonthsFilter(){
-  if(!cfSelectedMonths.length){showToast('⚠️ Sélectionnez au moins 1 mois');return;}
-  const ms=cfSelectedMonths.slice().sort();
-  GLOBAL_REF={date:ms[0]+'-15',mode:'months',months:ms};
-  refreshTopDate();renderCashflow();
-  showToast('✓ '+ms.length+' mois appliqué(s)');
-}
-function renderCashflow(){
-  cfInitMonthPicker();
-  const r=getRange();
-  const nbDays=rangeNbDays();
-
-  // Bandeau filtre
-  const lbl=document.getElementById('cf-range-label');if(lbl)lbl.textContent=r.label;
-  const info=document.getElementById('cf-range-info');if(info){
-    if(r.mode==='months'&&r.months)info.textContent='Mois sélectionnés : '+r.months.map(cfMonthName).join(' · ');
-    else info.textContent='Du '+fmtDate(r.from)+' au '+fmtDate(r.to)+' · '+nbDays+' jour(s)';
-  }
-
-  // === 1. AGRÉGATION DES DONNÉES ===
-  // CA par entité (proxy encaissements opérationnels)
-  const clA=DB.cl.assistance.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.ca||0),0);
-  const clL=rangeMonths().reduce((a,mo)=>a+aggCLLldMonth(mo).ca,0);
-  const clP=rangeMonths().reduce((a,mo)=>a+aggCLPartMonth(mo).ca,0);
-  const caCL=clA+clL+clP;
-  const caAT=DB.at.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.ca||0),0);
-  const caAS=DB.contrats.filter(c=>inRange(c.date)).reduce((a,b)=>a+(b.prime||0),0);
-  const caFC=DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.rec||0),0);
-  const caGroupe=caCL+caAT+caAS+caFC;
-
-  // Caisses réelles (mouvements de trésorerie)
-  const caisseAS=DB.caisse.as.filter(e=>inRange(e.date));
-  const caisseFC=DB.caisse.fc.filter(e=>inRange(e.date));
-  const encAS=caisseAS.reduce((a,b)=>a+(b.enc||0),0);
-  const decAS=caisseAS.reduce((a,b)=>a+(b.dec||0),0);
-  const bankAS=caisseAS.reduce((a,b)=>a+(b.bank||0),0);
-  const encFC=caisseFC.reduce((a,b)=>a+(b.rec||0),0);
-  const decFC=caisseFC.reduce((a,b)=>a+(b.dep||0),0);
-  const bankFC=caisseFC.reduce((a,b)=>a+(b.remise||0),0);
-  const encTotal=encAS+encFC;
-  const decTotal=decAS+decFC;
-  const bankTotal=bankAS+bankFC;
-  const cashFlowNet=encTotal-decTotal-bankTotal;
-
-  // Soldes actuels caisse (le plus récent)
-  const soldeAS=DB.caisse.as.length?DB.caisse.as[0].calcule||0:0;
-  const soldeFC=DB.caisse.fc.length?DB.caisse.fc[0].calcule||0:0;
-  const soldeGroupe=soldeAS+soldeFC;
-
-  // Foodcost (sortie matières F Corner) — vrai décaissement opérationnel
-  const fcMatieres=DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.foodcost||0),0);
-  const fcDepOps=DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.dep||0),0);
-
-  // Créances (rapports avec créances saisis)
-  const creancesGroupe=DB.reports.filter(rp=>inRange(rp.dateISO||rp.date)).reduce((a,b)=>a+(b.creances||0),0);
-
-  // N-1 comparison
-  const clAN1=DB.cl.assistance.filter(e=>inRangeN1(e.date)).reduce((a,b)=>a+(b.ca||0),0);
-  const atN1=DB.at.filter(e=>inRangeN1(e.date)).reduce((a,b)=>a+(b.ca||0),0);
-  const asN1=DB.contrats.filter(c=>inRangeN1(c.date)).reduce((a,b)=>a+(b.prime||0),0);
-  const fcN1=DB.fc.filter(e=>inRangeN1(e.date)).reduce((a,b)=>a+(b.rec||0),0);
-  const caN1=clAN1+atN1+asN1+fcN1;
-  const evoCA=caN1>0?Math.round((caGroupe-caN1)/caN1*100):0;
-
-  // Cash runway (jours de trésorerie disponibles)
-  const burnRate=nbDays>0?(decTotal+bankTotal+fcDepOps+fcMatieres)/nbDays:0;
-  const runway=burnRate>0?Math.round(soldeGroupe/burnRate):999;
-
-  // Charge prudente (tout sauf banque)
-  const chargesRealesTotal=decTotal+fcDepOps+fcMatieres;
-  const margeOpEstime=caGroupe-chargesRealesTotal;
-  const margeOpPct=caGroupe>0?Math.round(margeOpEstime/caGroupe*100):0;
-
-  // === 2. KPIs ===
-  const kpi=document.getElementById('cf-kpi');
-  if(kpi)kpi.innerHTML=`
-    <div class="metric"><div class="metric-label">💰 CA Groupe</div><div class="metric-val" style="color:#10B981">${fmt(caGroupe)}</div><div class="metric-sub">MAD · ${nbDays}j</div></div>
-    <div class="metric"><div class="metric-label">📊 vs N-1</div><div class="metric-val" style="color:${caN1>0?(evoCA>=0?'var(--green)':'var(--red)'):'var(--muted)'}">${caN1>0?(evoCA>=0?'+':'')+evoCA+'%':'—'}</div><div class="metric-sub">N-1: ${fmt(caN1)}</div></div>
-    <div class="metric"><div class="metric-label">📥 Encaissements</div><div class="metric-val" style="color:var(--green)">${fmt(encTotal)}</div><div class="metric-sub">MAD (caisses)</div></div>
-    <div class="metric"><div class="metric-label">📤 Décaissements</div><div class="metric-val" style="color:var(--red)">${fmt(decTotal)}</div><div class="metric-sub">MAD (caisses)</div></div>
-    <div class="metric"><div class="metric-label">🏦 Versements banque</div><div class="metric-val" style="color:var(--at)">${fmt(bankTotal)}</div><div class="metric-sub">MAD remis</div></div>
-    <div class="metric"><div class="metric-label">💵 Solde caisses</div><div class="metric-val" style="color:#10B981">${fmt(soldeGroupe)}</div><div class="metric-sub">AS: ${fmt(soldeAS)} · FC: ${fmt(soldeFC)}</div></div>
-    <div class="metric"><div class="metric-label">🔄 Cash-flow net</div><div class="metric-val" style="color:${cashFlowNet>=0?'var(--green)':'var(--red)'}">${cashFlowNet>=0?'+':''}${fmt(cashFlowNet)}</div><div class="metric-sub">enc - dec - banque</div></div>
-    <div class="metric"><div class="metric-label">⏱️ Cash runway</div><div class="metric-val" style="color:${runway>=60?'var(--green)':runway>=30?'var(--yellow)':'var(--red)'}">${runway>=999?'∞':runway+'j'}</div><div class="metric-sub">avant rupture cash</div></div>
-    <div class="metric"><div class="metric-label">💎 Marge op. estimée</div><div class="metric-val" style="color:${margeOpPct>=20?'var(--green)':margeOpPct>=10?'var(--yellow)':'var(--red)'}">${margeOpPct}%</div><div class="metric-sub">${fmt(margeOpEstime)} MAD</div></div>
-    <div class="metric"><div class="metric-label">⚠️ Créances clients</div><div class="metric-val" style="color:${creancesGroupe>caGroupe*0.3?'var(--red)':creancesGroupe>caGroupe*0.15?'var(--yellow)':'var(--green)'}">${fmt(creancesGroupe)}</div><div class="metric-sub">MAD à recouvrer</div></div>
-    <div class="metric"><div class="metric-label">📅 CA / jour moyen</div><div class="metric-val">${fmt(nbDays>0?Math.round(caGroupe/nbDays):0)}</div><div class="metric-sub">MAD/jour</div></div>
-    <div class="metric"><div class="metric-label">🍦 Coût matières FC</div><div class="metric-val" style="color:var(--fc)">${fmt(fcMatieres)}</div><div class="metric-sub">MAD (food cost)</div></div>`;
-
-  // === 3. SCORE DE SANTÉ TRÉSORERIE ===
-  const sScore=(()=>{
-    let s=0,max=0;
-    // Cash runway
-    max+=25;s+=runway>=90?25:runway>=60?20:runway>=30?12:runway>=15?5:0;
-    // Cash-flow net positif
-    max+=20;s+=cashFlowNet>=0?20:cashFlowNet>=-caGroupe*0.05?10:0;
-    // Marge opérationnelle
-    max+=20;s+=margeOpPct>=20?20:margeOpPct>=15?15:margeOpPct>=10?10:margeOpPct>=5?5:0;
-    // Évolution N-1
-    max+=15;s+=evoCA>=10?15:evoCA>=0?12:evoCA>=-5?7:0;
-    // Créances vs CA
-    max+=10;const ratio=caGroupe>0?creancesGroupe/caGroupe:0;s+=ratio<=0.1?10:ratio<=0.2?7:ratio<=0.3?3:0;
-    // Solde caisse > burn rate 30j
-    max+=10;s+=soldeGroupe>=burnRate*30?10:soldeGroupe>=burnRate*15?5:0;
-    return Math.round(s/max*100);
-  })();
-  const sCol=sScore>=75?'var(--green)':sScore>=50?'var(--yellow)':'var(--red)';
-  const sLbl=sScore>=75?'🟢 Excellente santé financière':sScore>=50?'🟡 Santé correcte — points de vigilance':'🔴 Santé fragile — actions urgentes requises';
-  const hcard=document.getElementById('cf-health');
-  if(hcard)hcard.innerHTML=`
-    <div style="display:flex;gap:14px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
-      <div style="font-size:42px;font-weight:700;color:${sCol}">${sScore}</div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:600;color:${sCol}">${sLbl}</div>
-        <div class="prog-bar" style="margin-top:6px"><div class="prog-fill" style="width:${sScore}%;background:${sCol}"></div></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">Score sur 100 · 6 critères : runway, cash-flow, marge, croissance, créances, couverture caisse</div>
-      </div>
-    </div>`;
-
-  // === 4. DÉTAIL PAR ENTITÉ ===
-  const ents=[
-    {key:'cl',name:'🚗 Cars Land',col:'var(--cl)',ca:caCL,n1:clAN1,detail:`Assist: ${fmt(clA)} · LLD: ${fmt(clL)} · Part: ${fmt(clP)}`},
-    {key:'at',name:'🌍 Arabian Tours',col:'var(--at)',ca:caAT,n1:atN1,detail:`${DB.at.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.constats||0),0)} missions`},
-    {key:'as',name:'🛡️ 1.2.3 Assurance',col:'var(--as)',ca:caAS,n1:asN1,detail:`${DB.contrats.filter(c=>inRange(c.date)).length} contrats · Solde caisse: ${fmt(soldeAS)}`},
-    {key:'fc',name:'☕ F Corner',col:'var(--fc)',ca:caFC,n1:fcN1,detail:`${DB.fc.filter(e=>inRange(e.date)).reduce((a,b)=>a+(b.clients||0),0)} couverts · Solde caisse: ${fmt(soldeFC)}`}
-  ];
-  const entsEl=document.getElementById('cf-entities');
-  if(entsEl)entsEl.innerHTML=ents.map(e=>{
-    const pctCA=caGroupe>0?Math.round(e.ca/caGroupe*100):0;
-    const ev=e.n1>0?Math.round((e.ca-e.n1)/e.n1*100):0;
-    return `<div class="metric" style="border-left:3px solid ${e.col}">
-      <div class="metric-label">${e.name}</div>
-      <div class="metric-val" style="color:${e.col}">${fmt(e.ca)}</div>
-      <div class="metric-sub">${pctCA}% du Groupe · ${e.n1>0?(ev>=0?'+':'')+ev+'% N-1':'N-1 N/A'}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">${e.detail}</div>
-    </div>`;
-  }).join('');
-
-  // === 5. PIE CHARTS ===
-  const totCA=caGroupe||1;
-  const pCa=document.getElementById('cf-pie-ca');
-  if(pCa)pCa.innerHTML=ents.map(e=>{const pct=Math.round(e.ca/totCA*100);return`<div class="prog-row"><span class="prog-label" style="color:${e.col};font-size:11px">${e.name}</span><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${e.col}"></div></div><span class="prog-val">${pct}% · ${fmt(e.ca)}</span></div>`;}).join('');
-
-  const pCash=document.getElementById('cf-pie-cash');
-  if(pCash){
-    const items=[
-      {l:'CA Groupe (entrées)',v:caGroupe,c:'var(--green)'},
-      {l:'Coût matières FC',v:fcMatieres,c:'#FFB347'},
-      {l:'Décaissements caisses',v:decTotal,c:'var(--red)'},
-      {l:'Versements banque',v:bankTotal,c:'var(--at)'},
-      {l:'Autres charges FC',v:fcDepOps,c:'#A78BFA'}
-    ];
-    const max=Math.max(...items.map(i=>i.v),1);
-    pCash.innerHTML=items.map(i=>`<div class="prog-row"><span class="prog-label" style="font-size:11px">${i.l}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(i.v/max*100)}%;background:${i.c}"></div></div><span class="prog-val">${fmt(i.v)}</span></div>`).join('');
-  }
-
-  // === 6. ÉVOLUTION MENSUELLE (encaissements vs décaissements) ===
-  const evol=document.getElementById('cf-evolution');
-  if(evol){
-    const months=rangeMonths();
-    const data=months.map(mo=>{
-      const enc=DB.caisse.as.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.enc||0),0)+
-                DB.caisse.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.rec||0),0);
-      const dec=DB.caisse.as.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.dec||0),0)+
-                DB.caisse.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.dep||0),0);
-      const bk=DB.caisse.as.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.bank||0),0)+
-               DB.caisse.fc.filter(e=>getMonth(e.date)===mo).reduce((a,b)=>a+(b.remise||0),0);
-      return{mo,enc,dec,bk,net:enc-dec-bk};
-    });
-    const maxV=Math.max(...data.flatMap(d=>[d.enc,d.dec+d.bk]),1);
-    if(months.length===0||data.every(d=>d.enc===0&&d.dec===0))evol.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Aucune donnée de caisse sur la période</div>';
-    else evol.innerHTML=`<div style="display:flex;align-items:flex-end;gap:14px;height:180px;padding:10px 0;overflow-x:auto">${data.map(d=>{
-      const hEnc=Math.round(d.enc/maxV*100);
-      const hDec=Math.round((d.dec+d.bk)/maxV*100);
-      return`<div style="display:flex;flex-direction:column;align-items:center;min-width:60px">
-        <div style="font-size:10px;color:${d.net>=0?'var(--green)':'var(--red)'};font-weight:600">${d.net>=0?'+':''}${fmt(d.net)}</div>
-        <div style="display:flex;gap:3px;align-items:flex-end;height:140px">
-          <div style="width:18px;height:${hEnc}%;background:var(--green);border-radius:3px 3px 0 0" title="Enc: ${fmt(d.enc)}"></div>
-          <div style="width:18px;height:${hDec}%;background:var(--red);border-radius:3px 3px 0 0" title="Dec+Bk: ${fmt(d.dec+d.bk)}"></div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">${d.mo.substring(5)}</div>
-      </div>`;}).join('')}</div>
-      <div style="display:flex;gap:12px;font-size:11px;color:var(--muted);justify-content:center;margin-top:6px"><span>🟢 Encaissements</span><span>🔴 Décaiss. + Banque</span></div>`;
-  }
-
-  // === 7. TOP MOUVEMENTS ===
-  const allCaisse=[
-    ...DB.caisse.as.filter(e=>inRange(e.date)).map(e=>({...e,ent:'AS',entName:'1.2.3 Assurance',entCol:'var(--as)'})),
-    ...DB.caisse.fc.filter(e=>inRange(e.date)).map(e=>({...e,ent:'FC',entName:'F Corner',entCol:'var(--fc)',enc:e.rec,dec:e.dep,bank:e.remise}))
-  ];
-  const topEnc=document.getElementById('cf-top-enc');
-  if(topEnc){
-    const top=[...allCaisse].sort((a,b)=>(b.enc||0)-(a.enc||0)).slice(0,8);
-    topEnc.innerHTML=top.length?top.map(e=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${fmtDate(e.date)} · <span style="color:${e.entCol};font-weight:500">${e.entName}</span></span><span style="color:var(--green);font-weight:600">+${fmt(e.enc||0)}</span></div>`).join(''):'<div style="color:var(--muted);font-size:13px">Aucun mouvement</div>';
-  }
-  const topDec=document.getElementById('cf-top-dec');
-  if(topDec){
-    const top=[...allCaisse].sort((a,b)=>((b.dec||0)+(b.bank||0))-((a.dec||0)+(a.bank||0))).slice(0,8);
-    topDec.innerHTML=top.length?top.map(e=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${fmtDate(e.date)} · <span style="color:${e.entCol};font-weight:500">${e.entName}</span></span><span style="color:var(--red);font-weight:600">-${fmt((e.dec||0)+(e.bank||0))}</span></div>`).join(''):'<div style="color:var(--muted);font-size:13px">Aucun mouvement</div>';
-  }
-
-  // === 8. ALERTES & RECOMMANDATIONS MANAGEMENT ===
-  const alerts=[];
-  if(runway<30)alerts.push({type:'red',ico:'🚨',title:'Cash runway critique',msg:`Vous n'avez que ${runway}j de trésorerie au rythme actuel. Action immédiate : accélérer le recouvrement créances (${fmt(creancesGroupe)} MAD), reporter dépenses non essentielles, négocier délai fournisseurs.`});
-  else if(runway<60)alerts.push({type:'yellow',ico:'⚠️',title:'Cash runway à surveiller',msg:`${runway}j de trésorerie disponible. Mettez en place un plan de relance créances et un suivi hebdomadaire des décaissements.`});
-
-  if(cashFlowNet<0)alerts.push({type:'yellow',ico:'📉',title:'Cash-flow net négatif',msg:`Sur la période, vous avez décaissé ${fmt(-cashFlowNet)} MAD de plus que vous avez encaissé. Si ce déficit persiste 3 mois, la trésorerie s'effrite. Vérifiez les versements banque (peut être normal si vous accumulez en compte).`});
-
-  if(creancesGroupe>caGroupe*0.3)alerts.push({type:'red',ico:'💸',title:'Créances clients excessives',msg:`Les créances (${fmt(creancesGroupe)} MAD) représentent ${Math.round(creancesGroupe/caGroupe*100)}% du CA — vous financez vos clients. Cible: <20%. Action : audit clients, relance systématique J+30/45/60, escalade pour les >90j.`});
-
-  if(margeOpPct<10&&caGroupe>0)alerts.push({type:'yellow',ico:'📊',title:'Marge opérationnelle faible',msg:`Marge à ${margeOpPct}% — sous le seuil de sécurité 15%. Revoyez la structure de coûts F Corner (food cost ?) et les frais variables.`});
-
-  // Concentration risk
-  const maxEntPct=Math.max(...ents.map(e=>caGroupe>0?e.ca/caGroupe:0))*100;
-  if(maxEntPct>50)alerts.push({type:'yellow',ico:'⚖️',title:'Concentration entité forte',msg:`Une seule entité fait ${Math.round(maxEntPct)}% du CA Groupe — risque de dépendance. Diversifiez les revenus pour réduire la fragilité.`});
-
-  // Solde caisse vs versement banque
-  if(soldeAS>50000)alerts.push({type:'yellow',ico:'🏦',title:'Solde caisse Assurance élevé',msg:`Solde 1.2.3 Assurance = ${fmt(soldeAS)} MAD en espèces. Cash en caisse = risque (vol, contrôle). Versez en banque régulièrement.`});
-
-  if(evoCA>=10)alerts.push({type:'green',ico:'🚀',title:'Croissance dynamique',msg:`+${evoCA}% vs N-1. Profitez de cette dynamique pour investir : capacités, équipe, ou réserve pour saisir des opportunités.`});
-
-  if(!alerts.length)alerts.push({type:'green',ico:'✅',title:'Tout est sous contrôle',msg:'Aucune alerte critique. Maintenez la rigueur de saisie quotidienne pour des analyses fines.'});
-
-  const alEl=document.getElementById('cf-alerts');
-  if(alEl)alEl.innerHTML=alerts.map(a=>`<div class="alert alert-${a.type}" style="margin-bottom:8px"><strong>${a.ico} ${a.title}</strong><br><span style="font-size:12px">${a.msg}</span></div>`).join('');
-
-  // === 9. TABLEAU DÉTAILLÉ ===
-  let mvts=allCaisse.slice();
-  if(cfEntFilter==='as')mvts=mvts.filter(e=>e.ent==='AS');
-  else if(cfEntFilter==='fc')mvts=mvts.filter(e=>e.ent==='FC');
-  mvts.sort((a,b)=>b.date.localeCompare(a.date));
-  const histEl=document.getElementById('cf-history');
-  if(histEl)histEl.innerHTML=mvts.slice(0,80).map(e=>{
-    const net=(e.enc||0)-(e.dec||0)-(e.bank||0);
-    const type=net>0?'<span class="badge badge-green">↑ Net positif</span>':net<0?'<span class="badge badge-red">↓ Net négatif</span>':'<span class="badge badge-blue">Équilibré</span>';
-    return`<tr><td>${fmtDate(e.date)}</td><td><span style="color:${e.entCol};font-weight:600;font-size:11px">${e.entName}</span></td><td style="color:var(--green)">+${fmt(e.enc||0)}</td><td style="color:var(--red)">-${fmt(e.dec||0)}</td><td style="color:var(--at)">-${fmt(e.bank||0)}</td><td style="font-weight:600">${fmt(e.calcule||0)}</td><td>${type}</td></tr>`;
-  }).join('')||'<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:16px">Aucun mouvement de caisse sur la période</td></tr>';
-}
-
-function renderReports(){
-  const filterEnt=getVal('rpt-filter-ent');
-  const filterMonth=getVal('rpt-filter-month');
-  const filterSearch=getVal('rpt-filter-search').toLowerCase();
-  let reports=[...DB.reports].reverse();
-  if(filterEnt&&filterEnt!=='all')reports=reports.filter(r=>r.entity===filterEnt);
-  if(filterMonth)reports=reports.filter(r=>r.monthRef===filterMonth||(r.dateISO&&r.dateISO.substring(0,7)===filterMonth));
-  if(filterSearch)reports=reports.filter(r=>(r.resp||'').toLowerCase().includes(filterSearch)||(r.alert||'').toLowerCase().includes(filterSearch)||(r.action||'').toLowerCase().includes(filterSearch)||(r.comment||'').toLowerCase().includes(filterSearch));
-
-  // SYNTHESE
-  const totalCA=reports.reduce((a,b)=>a+b.caWeek,0);
-  const totalEnc=reports.reduce((a,b)=>a+(b.enc||0),0);
-  const totalCreances=reports.reduce((a,b)=>a+(b.creances||0),0);
-  const totalNb=reports.reduce((a,b)=>a+(b.nb||0),0);
-  const entCount=[...new Set(reports.map(r=>r.entity))].length;
-  const synthEl=document.getElementById('rpt-synthese');
-  if(synthEl)synthEl.innerHTML=`<div class="metric"><div class="metric-label">CA total — rapports filtrés</div><div class="metric-val" style="color:var(--green)">${fmt(totalCA)}</div><div class="metric-sub">MAD semaine(s)</div></div><div class="metric"><div class="metric-label">Encaissements</div><div class="metric-val">${fmt(totalEnc)}</div><div class="metric-sub">MAD</div></div><div class="metric"><div class="metric-label">Créances</div><div class="metric-val" style="color:var(--yellow)">${fmt(totalCreances)}</div><div class="metric-sub">MAD</div></div><div class="metric"><div class="metric-label">Contrats / Missions</div><div class="metric-val">${fmt(totalNb)}</div><div class="metric-sub">${reports.length} rapport(s) · ${entCount} société(s)</div></div>`;
-
-  const countEl=document.getElementById('rpt-count');
-  if(countEl)countEl.textContent=`${reports.length} rapport(s) trouvé(s)`;
-
-  const trendIcons={hausse:'📈',stable:'➡️',baisse:'📉'};
-  const trendColors={hausse:'var(--green)',stable:'var(--yellow)',baisse:'var(--red)'};
-  const entColors={'Cars Land':'var(--cl)','Arabian Tours':'var(--at)','1.2.3 Assurance':'var(--as)','F Corner':'var(--fc)'};
-
-  document.getElementById('report-list').innerHTML=reports.length?reports.map(r=>{
-    const pct=r.obj>0?Math.round(r.caMonth/r.obj*100):0;
-    const evo=r.n1>0?Math.round((r.caMonth-r.n1)/r.n1*100):0;
-    return`<div class="rapport-card">
-      <div class="rapport-header">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span style="font-family:var(--font-head);font-size:15px;font-weight:700;color:${entColors[r.entity]||'var(--text)'}">${r.entity}</span>
-            ${r.trend?`<span style="color:${trendColors[r.trend]}">${trendIcons[r.trend]||''}</span>`:''}
-            ${r.alert&&r.alert!=='RAS'?`<span class="badge badge-yellow">${r.alert}</span>`:`<span class="badge badge-green">RAS</span>`}
-          </div>
-          <div style="font-size:12px;color:var(--muted)">${r.resp} · S${r.week||'?'} · ${r.monthRef||r.date}</div>
-        </div>
-        <button class="btn btn-sm btn-danger" onclick="deleteReport(${r.id})">×</button>
-      </div>
-      <div class="rapport-kpis">
-        <div class="rapport-kpi"><div class="rapport-kpi-label">CA Semaine</div><div class="rapport-kpi-val" style="color:var(--green)">${fmt(r.caWeek)} MAD</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-label">CA Mois</div><div class="rapport-kpi-val">${fmt(r.caMonth)} MAD</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-label">Objectif mensuel</div><div class="rapport-kpi-val">${r.obj>0?fmt(r.obj)+' MAD':'—'}</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-label">Réalisation</div><div class="rapport-kpi-val" style="color:${pct>=100?'var(--green)':pct>=70?'var(--yellow)':'var(--red)'}">${r.obj>0?pct+'%':'—'}</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-label">Contrats / Missions</div><div class="rapport-kpi-val">${r.nb?fmt(r.nb):'—'}</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-label">Encaissements</div><div class="rapport-kpi-val" style="color:var(--green)">${r.enc?fmt(r.enc)+' MAD':'—'}</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-label">Créances</div><div class="rapport-kpi-val" style="color:${r.creances>0?'var(--yellow)':'var(--green)'}">${r.creances?fmt(r.creances)+' MAD':'0'}</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-label">Évolution N/N-1</div><div class="rapport-kpi-val" style="color:${trendColor(evo)}">${r.n1>0?(evo>=0?'+':'')+evo+'%':'—'}</div></div>
-      </div>
-      ${r.obj>0?`<div style="margin-bottom:8px"><div class="prog-bar" style="height:6px;border-radius:3px"><div class="prog-fill" style="width:${Math.min(100,pct)}%;background:${entColors[r.entity]||'var(--text)'}"></div></div></div>`:''}
-      ${r.action?`<div style="font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Action : </span>${r.action}</div>`:''}
-      ${r.comment?`<div class="alert alert-blue" style="font-size:12px;margin-top:8px">${r.comment}</div>`:''}
-    </div>`;
-  }).join(''):'<div style="color:var(--muted);text-align:center;padding:40px;font-size:14px">Aucun rapport correspondant aux filtres</div>';
-}
-function deleteReport(id){if(!confirm('Supprimer ce rapport ?'))return;DB.reports=DB.reports.filter(r=>r.id!==id);removeItem('reports',id);renderReports();}
 
 // ════════════════════════════
 // MODULE DGA — PILOTAGE DIRECTION GÉNÉRALE
@@ -4811,7 +5374,7 @@ function dgaCaMois(code,month){
     return a+aggCLLldMonth(month).ca+aggCLPartMonth(month).ca;
   }
   if(code==='at')return(DB.at||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.ca||0),0);
-  if(code==='as')return(DB.contrats||[]).filter(c=>getMonth(c.date)===month).reduce((s,b)=>s+(b.prime||0),0);
+  if(code==='as')return asCommissionMonth(month);  // commissions = vrai CA agent
   if(code==='fc')return(DB.fc||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.rec||0),0);
   return 0;
 }
@@ -4819,7 +5382,7 @@ function dgaCaMois(code,month){
 function dgaCaJour(code,date){
   if(code==='cl')return(DB.cl.assistance||[]).filter(e=>e.date===date).reduce((s,b)=>s+(b.ca||0),0);
   if(code==='at')return(DB.at||[]).filter(e=>e.date===date).reduce((s,b)=>s+(b.ca||0),0);
-  if(code==='as')return(DB.contrats||[]).filter(c=>c.date===date).reduce((s,b)=>s+(b.prime||0),0);
+  if(code==='as')return asCommissionDay(date);  // commissions = vrai CA agent
   if(code==='fc')return(DB.fc||[]).filter(e=>e.date===date).reduce((s,b)=>s+(b.rec||0),0);
   return 0;
 }
@@ -4905,7 +5468,7 @@ function renderDGAMatin(){
   // Tâches en retard
   const retard=(DB.tasks||[]).filter(t=>!t.done&&t.date&&t.date<todayStr);
   const elR=document.getElementById('dga-matin-retard');
-  if(elR)elR.innerHTML=retard.length>0?retard.map(t=>`<div class="alert alert-red" style="font-size:12px;margin-bottom:4px">⚠️ <strong>En retard</strong> — ${t.title} (${t.entity||'—'}) — Échéance : ${dgaFmtDateCourt(t.date)} (${dgaJoursDepuis(t.date)}j) <button class="btn btn-sm" style="margin-left:8px;padding:2px 8px;font-size:10px" onclick="openEditTask(${t.id})">Traiter</button></div>`).join(''):'<div style="color:var(--green);padding:8px 0;font-size:13px">✅ Aucune tâche en retard</div>';
+  if(elR)elR.innerHTML=retard.length>0?retard.map(t=>`<div class="alert alert-red" style="font-size:12px;margin-bottom:4px">⚠️ <strong>En retard</strong> — ${esc(t.title)} (${t.entity||'—'}) — Échéance : ${dgaFmtDateCourt(t.date)} (${dgaJoursDepuis(t.date)}j) <button class="btn btn-sm" style="margin-left:8px;padding:2px 8px;font-size:10px" onclick="openEditTask(${t.id})">Traiter</button></div>`).join(''):'<div style="color:var(--green);padding:8px 0;font-size:13px">✅ Aucune tâche en retard</div>';
 }
 
 function genererAlertesDGA(checkDate){
@@ -4949,7 +5512,7 @@ function genererActionsDGA(checkDate){
   const urgent=(DB.tasks||[]).filter(t=>!t.done&&(t.date===todayStr||(t.date&&t.date<todayStr&&t.prio==='rouge')));
   urgent.slice(0,3).forEach(t=>{
     const ret=t.date&&t.date<todayStr;
-    actions.push({action:`${ret?'⚠️ RETARD — ':''}${t.title}`,detail:`${t.entity||'—'} · Priorité ${t.prio} · ${t.date?dgaFmtDateCourt(t.date):'Sans date'}`,prio:t.prio==='rouge'?'haute':'moyenne'});
+    actions.push({action:`${ret?'⚠️ RETARD — ':''}${esc(t.title)}`,detail:`${t.entity||'—'} · Priorité ${t.prio} · ${t.date?dgaFmtDateCourt(t.date):'Sans date'}`,prio:t.prio==='rouge'?'haute':'moyenne'});
   });
   // 3) Réunions du jour
   (DB.agenda||[]).filter(e=>e.date===todayStr&&!e.done).forEach(r=>{
@@ -5052,7 +5615,7 @@ function renderDGAMois(){
     const faits=[];
     const all=[].concat((DB.cl.assistance||[]).filter(e=>getMonth(e.date)===cm).map(e=>({d:e.date,v:e.ca||0})),
       (DB.at||[]).filter(e=>getMonth(e.date)===cm).map(e=>({d:e.date,v:e.ca||0})),
-      (DB.contrats||[]).filter(c=>getMonth(c.date)===cm).map(c=>({d:c.date,v:c.prime||0})),
+      (DB.contrats||[]).filter(c=>getMonth(c.date)===cm).map(c=>({d:c.date,v:_asComm(c)})),  // commission = CA agent
       (DB.fc||[]).filter(e=>getMonth(e.date)===cm).map(e=>({d:e.date,v:e.rec||0})));
     if(all.length>0){
       const par={};all.forEach(x=>{par[x.d]=(par[x.d]||0)+x.v;});
@@ -5108,7 +5671,20 @@ const FIN_SOUS_CATS={
     cl:['Véhicules (acquisition)','Carburant','Pièces détachées','Entretien véhicules','Pneus','Lavage','Sous-traitance assistance','Autres achats'],
     at:['Prestations sous-traitées','Matériel mission','Carburant','Hébergement clients','Repas / réceptions','Autres achats'],
     as:['Rétrocommissions courtiers','Frais d\'apport','Autres achats'],
-    fc:['Café / Sucre / Lait','Viennoiseries','Sandwichs / Plats','Boissons','Snacks','Emballages','Produits hygiène','Autres marchandises']
+    fc:[
+      // Marchandises alimentaires (food cost)
+      'Légumes','Fruits','Viande','Poulet','Œufs','Poisson / Crevettes',
+      'Café','Lait','Sucre','Farine','Huile','Beurre','Fromage','Pain','Pâtisseries',
+      // Catégories génériques
+      'Épicerie','Boissons','Sodas','Eau','Jus','Glaces / Crème glacée','Chocolat / Confiserie',
+      // Fournisseurs spécifiques (saisis comme sous-catégories pour traçabilité)
+      'MCDF (Matières)','COPAG (Lait/Yaourt)','MARJANE (Épicerie)','METRO (Frais)',
+      // Anciennes catégories (rétrocompat)
+      'Viennoiseries','Sandwichs / Plats','Snacks',
+      // Non-alimentaire
+      'Emballages','Produits hygiène','Petit matériel / Réparation','Gaz',
+      'Autres marchandises'
+    ]
   },
   externes:['Loyer','Énergie (électricité)','Eau','Télécom (internet/téléphone)','Marketing / Publicité','Honoraires (comptable/juridique)','Maintenance / Réparations','Assurance société','Fournitures bureau','Transport / Déplacements','Frais bancaires','Hébergement web / Logiciels','Nettoyage','Sécurité','Autres charges externes'],
   personnel:['Salaires bruts','CNSS','AMO','Mutuelle / Prévoyance','Formation','Primes','Tickets restaurant','Autres charges sociales'],
@@ -5125,16 +5701,18 @@ function finSousCats(soc,cat){
   return(sc[soc]||[]).slice();
 }
 
-// Récupère le CA TTC tel que saisi par les utilisateurs.
-// Pour CL / AT / FC le montant saisi est en TTC (ces sociétés sont assujetties TVA).
-// Pour 1.2.3 Assurance, la prime est exonérée → considérée comme HT (= TTC = montant brut).
+// Récupère le CA tel que saisi par les utilisateurs.
+// • CL / AT / FC : CA TTC (sociétés assujetties à la TVA)
+// • 1.2.3 Assurance : COMMISSION (vrai CA de l'agent ; la prime est encaissée
+//   pour le compte de Wafa et ne constitue pas le CA de votre société).
+//   Les commissions d'assurance sont exonérées de TVA.
 function finCaMois(soc,month){
   if(soc==='cl'){
     const a=(DB.cl.assistance||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.ca||0),0);
     return a+aggCLLldMonth(month).ca+aggCLPartMonth(month).ca;
   }
   if(soc==='at')return(DB.at||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.ca||0),0);
-  if(soc==='as')return(DB.contrats||[]).filter(c=>getMonth(c.date)===month).reduce((s,b)=>s+(b.prime||0),0);
+  if(soc==='as')return asCommissionMonth(month);  // ✅ commissions, pas primes
   if(soc==='fc')return(DB.fc||[]).filter(e=>getMonth(e.date)===month).reduce((s,b)=>s+(b.rec||0),0);
   return 0;
 }
@@ -5234,51 +5812,51 @@ function finTotalHT(soc,month,cat){
 
 // CPC complet pour une société et un mois — renvoie tous les agrégats
 // IMPORTANT : Le CA est saisi en TTC pour CL/AT/FC. On convertit en HT pour le CPC comptable.
+// ⚡ Memoizée : appelée 15+ fois par render → gain perf énorme
 function finCalculCPC(soc,month){
-  const caTTC=finCaMois(soc,month);                    // CA TTC tel que saisi
-  const caHT=finCaMoisHT(soc,month);                   // CA HT (déduction TVA collectée)
-  const tvaCollectee=caTTC-caHT;                       // TVA reversée à l'État
-  const achats=finTotalHT(soc,month,'achats');
-  const externes=finTotalHT(soc,month,'externes');
-  const personnel=finTotalHT(soc,month,'personnel');
-  const impots=finTotalHT(soc,month,'impots');
-  const amortissements=finTotalHT(soc,month,'amortissements');
-  const financieres=finTotalHT(soc,month,'financieres');
-  const margeBrute=caHT-achats;
-  const ebe=margeBrute-externes-personnel-impots;
-  const resExpl=ebe-amortissements;
-  const resCourant=resExpl-financieres;
-  const cfg=(DB.parametresFinance&&DB.parametresFinance[soc])||{regimeFiscal:'normal',tauxCM:0.25};
-
-  // ─── Calcul IS selon barème Maroc 2026 (LF 2023) ───
-  const isCalc=calcIS_Maroc2026(resCourant,caHT,{
-    regimeFiscal:cfg.regimeFiscal||'normal',
-    tauxCM:cfg.tauxCM!==undefined?cfg.tauxCM:0.25,
-    cmMin:3000
+  return App.memo('cpc:'+soc+':'+month,()=>{
+    const caTTC=finCaMois(soc,month);                    // CA TTC tel que saisi
+    const caHT=finCaMoisHT(soc,month);                   // CA HT (déduction TVA collectée)
+    const tvaCollectee=caTTC-caHT;                       // TVA reversée à l'État
+    const achats=finTotalHT(soc,month,'achats');
+    const externes=finTotalHT(soc,month,'externes');
+    const personnel=finTotalHT(soc,month,'personnel');
+    const impots=finTotalHT(soc,month,'impots');
+    const amortissements=finTotalHT(soc,month,'amortissements');
+    const financieres=finTotalHT(soc,month,'financieres');
+    const margeBrute=caHT-achats;
+    const ebe=margeBrute-externes-personnel-impots;
+    const resExpl=ebe-amortissements;
+    const resCourant=resExpl-financieres;
+    const cfg=(DB.parametresFinance&&DB.parametresFinance[soc])||{regimeFiscal:'normal',tauxCM:0.25};
+    const isCalc=calcIS_Maroc2026(resCourant,caHT,{
+      regimeFiscal:cfg.regimeFiscal||'normal',
+      tauxCM:cfg.tauxCM!==undefined?cfg.tauxCM:0.25,
+      cmMin:3000
+    });
+    const is=isCalc.isFinal;
+    const resNet=resCourant-is;
+    const cashOp=resNet+amortissements;
+    const pct=v=>caHT>0?(v/caHT*100):0;
+    return{
+      caTTC,caHT,tvaCollectee,
+      achats,externes,personnel,impots,amortissements,financieres,
+      margeBrute,ebe,resExpl,resCourant,is,resNet,cashOp,
+      pctAchats:pct(achats),pctExternes:pct(externes),pctPersonnel:pct(personnel),pctImpots:pct(impots),
+      pctAmort:pct(amortissements),pctFin:pct(financieres),
+      pctMargeBrute:pct(margeBrute),pctEBE:pct(ebe),pctResExpl:pct(resExpl),pctResNet:pct(resNet),pctCash:pct(cashOp),
+      isCalcule:isCalc.isCalcule,
+      cm:isCalc.cm,
+      cmAnnuelle:isCalc.cmAnnuelle,
+      methodeIS:isCalc.methodeAppliquee,
+      tauxIS_affiche:isCalc.tauxAffiche,
+      methodeBareme:isCalc.methodeBareme,
+      regimeFiscal:cfg.regimeFiscal||'normal',
+      tauxCM_pct:cfg.tauxCM!==undefined?cfg.tauxCM:0.25,
+      hasTVA:!!(cfg.hasTVA),
+      tauxTVA:cfg.tauxTVADefaut||0
+    };
   });
-  const is=isCalc.isFinal;
-  const resNet=resCourant-is;
-  const cashOp=resNet+amortissements;
-  const pct=v=>caHT>0?(v/caHT*100):0;
-  return{
-    caTTC,caHT,tvaCollectee,
-    achats,externes,personnel,impots,amortissements,financieres,
-    margeBrute,ebe,resExpl,resCourant,is,resNet,cashOp,
-    pctAchats:pct(achats),pctExternes:pct(externes),pctPersonnel:pct(personnel),pctImpots:pct(impots),
-    pctAmort:pct(amortissements),pctFin:pct(financieres),
-    pctMargeBrute:pct(margeBrute),pctEBE:pct(ebe),pctResExpl:pct(resExpl),pctResNet:pct(resNet),pctCash:pct(cashOp),
-    // Détail fiscal IS Maroc 2026
-    isCalcule:isCalc.isCalcule,         // IS pur (barème)
-    cm:isCalc.cm,                       // Cotisation Minimale mensuelle
-    cmAnnuelle:isCalc.cmAnnuelle,       // CM annuelle
-    methodeIS:isCalc.methodeAppliquee,  // 'IS' ou 'CM'
-    tauxIS_affiche:isCalc.tauxAffiche,  // ex: '20%' ou '20% + 35%'
-    methodeBareme:isCalc.methodeBareme,
-    regimeFiscal:cfg.regimeFiscal||'normal',
-    tauxCM_pct:cfg.tauxCM!==undefined?cfg.tauxCM:0.25,
-    hasTVA:!!(cfg.hasTVA),
-    tauxTVA:cfg.tauxTVADefaut||0
-  };
 }
 
 // Mois précédent N-1 (même mois année précédente)
@@ -5289,17 +5867,18 @@ function finMoisN1(month){
 // ─────────────────────────────────────────────────────────────────
 // POINT MORT (Break-even) — CA minimum pour ne pas perdre d'argent
 // ─────────────────────────────────────────────────────────────────
-// Logique :
-//   Charges variables = Achats + Charges financières (proportionnels au CA)
-//   Charges fixes     = Externes + Personnel + Impôts + Amortissements
+// Logique comptable rigoureuse :
+//   Charges variables = Achats / coût des ventes (proportionnels au CA)
+//   Charges fixes     = Externes + Personnel + Impôts + Amortissements + Financières
+//                       (financières = intérêts d'emprunt = engagement fixe)
 //   TMCV (taux marge sur coûts variables) = (CA − CV) / CA
 //   Point mort        = Charges fixes / TMCV
 //   Marge sécurité %  = (CA − Point mort) / CA × 100
 //   Indice sécurité   = jour du mois où le point mort est atteint
 function finPointMort(soc,month){
   const cpc=finCalculCPC(soc,month);
-  const cv=cpc.achats+cpc.financieres;
-  const cf=cpc.externes+cpc.personnel+cpc.impots+cpc.amortissements;
+  const cv=cpc.achats; // seul vrai variable
+  const cf=cpc.externes+cpc.personnel+cpc.impots+cpc.amortissements+cpc.financieres;
   // Si CA nul, on ne peut estimer le TMCV → utiliser un TMCV par défaut sectoriel
   let tmcv;
   if(cpc.caHT>0){tmcv=(cpc.caHT-cv)/cpc.caHT;}
@@ -5569,12 +6148,23 @@ function saveDepense(){
       renderDepensesSoc(map[id]);renderCPCSoc(map[id]);
     }
   }
+  // 🔗 Liaison reverse : si la dépense est F Corner, on rafraîchit aussi la saisie quotidienne
+  // pour que les totaux Achats/Compte/Dép. esp. dans l'historique se mettent à jour live.
+  if(soc==='fc'){
+    if(typeof renderFC==='function')renderFC();
+    if(typeof renderDash==='function'&&document.getElementById('p-dashboard')&&document.getElementById('p-dashboard').classList.contains('active'))renderDash();
+  }
 }
 
 function deleteDepense(id){
   if(!confirm('Supprimer cette dépense ?'))return;
-  DB.depenses=(DB.depenses||[]).filter(d=>d.id!==id);
-  removeItem('depenses',id);   // ⚡ Quick Win A : remove granulaire
+  if(!DB.depenses)DB.depenses=[];
+  const i=DB.depenses.findIndex(d=>d.id===id);
+  if(i<0)return;
+  // Mémoriser le contexte avant suppression pour la sync reverse
+  const removedSoc=DB.depenses[i].societe;
+  DB.depenses.splice(i,1);   // splice par index : supprime UNE seule entrée même si id dupliqué
+  removeItem('depenses',id).then(()=>{if(DB.depenses.some(d=>d.id===id))saveSubtree('depenses',DB.depenses);});
   const cur=document.querySelector('.page.active');
   if(cur){
     const pid=cur.id.replace('p-','');
@@ -5584,6 +6174,8 @@ function deleteDepense(id){
       if(map[pid]){renderDepensesSoc(map[pid]);renderCPCSoc(map[pid]);}
     }
   }
+  // 🔗 Liaison reverse : si la dépense supprimée concernait F Corner, refresh des totaux
+  if(removedSoc==='fc'&&typeof renderFC==='function')renderFC();
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -5618,7 +6210,10 @@ function renderDepensesSoc(soc){
       tEl.innerHTML=`<table class="data-table"><thead><tr><th>Date</th><th>Mode</th><th>Catégorie</th><th>Fournisseur / Description</th><th style="text-align:right">HT</th><th style="text-align:right">TVA</th><th style="text-align:right">TTC</th><th></th></tr></thead><tbody>`+
         list.map(d=>{
           const cat=FIN_CATEGORIES[d.categorie];
-          return`<tr><td>${fmtDate(d.date)}</td><td>${d.mode==='banque'?'🏦':'💵'} ${d.mode}</td><td><span style="color:${cat?cat.col:'#888'};font-size:11px">${cat?cat.label:d.categorie}</span>${d.sousCategorie?'<br><span style="font-size:10px;color:var(--muted)">'+d.sousCategorie+'</span>':''}</td><td><strong>${d.fournisseur||'—'}</strong>${d.description?'<br><span style="font-size:11px;color:var(--muted)">'+d.description+'</span>':''}${d.pieceRef?'<br><span style="font-size:10px;color:var(--muted)">Pièce : '+d.pieceRef+'</span>':''}</td><td style="text-align:right">${fmt(d.ht)}</td><td style="text-align:right;color:var(--muted)">${fmt(d.tva)}</td><td style="text-align:right;font-weight:600">${fmt(d.ttc)}</td><td><button class="btn btn-sm" onclick="openDepenseModal('${soc}',${d.id})" title="Modifier">✏️</button> <button class="btn btn-sm" onclick="deleteDepense(${d.id})" title="Supprimer">🗑️</button></td></tr>`;
+          // Legacy : anciennes dépenses auto-générées de l'ancienne architecture (rétrocompat)
+          const isLegacy=d.source==='fc-quotidien';
+          const legacyBadge=isLegacy?`<span class="badge badge-gray" style="font-size:9px;padding:1px 6px;margin-left:4px" title="Ancienne dépense générée par l'ancien système — modifiable normalement">📦 legacy</span>`:'';
+          return`<tr><td>${fmtDate(d.date)}${legacyBadge}</td><td>${d.mode==='banque'?'🏦':'💵'} ${d.mode}</td><td><span style="color:${cat?cat.col:'#888'};font-size:11px">${cat?cat.label:d.categorie}</span>${d.sousCategorie?'<br><span style="font-size:10px;color:var(--muted)">'+d.sousCategorie+'</span>':''}</td><td><strong>${esc(d.fournisseur)||'—'}</strong>${d.description?'<br><span style="font-size:11px;color:var(--muted)">'+d.description+'</span>':''}${d.pieceRef?'<br><span style="font-size:10px;color:var(--muted)">Pièce : '+d.pieceRef+'</span>':''}</td><td style="text-align:right">${fmt(d.ht)}</td><td style="text-align:right;color:var(--muted)">${fmt(d.tva)}</td><td style="text-align:right;font-weight:600">${fmt(d.ttc)}</td><td><button class="btn btn-sm" onclick="openDepenseModal('${soc}',${d.id})" title="Modifier">✏️</button> <button class="btn btn-sm" onclick="deleteDepense(${d.id})" title="Supprimer">🗑️</button></td></tr>`;
         }).join('')+`</tbody></table>`;
     }
   }
@@ -5863,7 +6458,7 @@ function renderFinance(){
     const all=(DB.depenses||[]).filter(d=>(soc==='all'||d.societe===soc)&&getMonth(d.date)===month);
     all.sort((a,b)=>(Number(b.ht)||0)-(Number(a.ht)||0));
     const top10=all.slice(0,10);
-    topEl.innerHTML=top10.length===0?'<div style="color:var(--muted);padding:10px 0">Aucune dépense ce mois</div>':`<table class="data-table" style="font-size:12px"><thead><tr><th>Société</th><th>Date</th><th>Catégorie</th><th>Description</th><th style="text-align:right">HT</th></tr></thead><tbody>`+top10.map(d=>{const m=FIN_SOCIETES[d.societe];const c=FIN_CATEGORIES[d.categorie];return`<tr><td><span style="color:${m?m.col:'#888'}">${m?m.icone+' '+m.nom:d.societe}</span></td><td>${fmtDate(d.date)}</td><td><span style="font-size:11px;color:${c?c.col:'#888'}">${c?c.label:d.categorie}</span>${d.sousCategorie?'<br><span style="font-size:10px;color:var(--muted)">'+d.sousCategorie+'</span>':''}</td><td>${d.fournisseur||'—'}${d.description?' — <span style="color:var(--muted);font-size:11px">'+d.description+'</span>':''}</td><td style="text-align:right;font-weight:600">${fmt(d.ht)}</td></tr>`;}).join('')+`</tbody></table>`;
+    topEl.innerHTML=top10.length===0?'<div style="color:var(--muted);padding:10px 0">Aucune dépense ce mois</div>':`<table class="data-table" style="font-size:12px"><thead><tr><th>Société</th><th>Date</th><th>Catégorie</th><th>Description</th><th style="text-align:right">HT</th></tr></thead><tbody>`+top10.map(d=>{const m=FIN_SOCIETES[d.societe];const c=FIN_CATEGORIES[d.categorie];return`<tr><td><span style="color:${m?m.col:'#888'}">${m?m.icone+' '+m.nom:d.societe}</span></td><td>${fmtDate(d.date)}</td><td><span style="font-size:11px;color:${c?c.col:'#888'}">${c?c.label:d.categorie}</span>${d.sousCategorie?'<br><span style="font-size:10px;color:var(--muted)">'+d.sousCategorie+'</span>':''}</td><td>${esc(d.fournisseur)||'—'}${d.description?' — <span style="color:var(--muted);font-size:11px">'+d.description+'</span>':''}</td><td style="text-align:right;font-weight:600">${fmt(d.ht)}</td></tr>`;}).join('')+`</tbody></table>`;
   }
 
   // Alertes intelligentes
@@ -6136,7 +6731,7 @@ function printCPCGroupe(){
 // AGENDA
 // ════════════════════════════
 function addAgendaEvent(){const title=getVal('ag-title').trim();if(!title){showToast('Titre requis');return;}const ev={id:Date.now(),title,type:getVal('ag-type'),ent:getVal('ag-ent'),date:getVal('ag-date'),time:getVal('ag-time'),lieu:getVal('ag-lieu'),participants:getVal('ag-participants'),notes:getVal('ag-notes'),prio:getVal('ag-prio'),done:false};DB.agenda.push(ev);DB.agenda.sort((a,b)=>a.date.localeCompare(b.date));saveItem('agenda',ev);closeModal('m-agenda');['ag-title','ag-lieu','ag-participants','ag-notes'].forEach(id=>setVal(id,''));renderAgenda();}
-function deleteAgenda(id){if(confirm('Supprimer ?')){DB.agenda=DB.agenda.filter(e=>e.id!==id);removeItem('agenda',id);renderAgenda();}}
+function deleteAgenda(id){if(confirm('Supprimer ?')){const i=DB.agenda.findIndex(e=>e.id===id);if(i<0)return;DB.agenda.splice(i,1);removeItem('agenda',id).then(()=>{if(DB.agenda.some(e=>e.id===id))saveSubtree('agenda',DB.agenda);});renderAgenda();}}
 function toggleAgenda(id){const e=DB.agenda.find(e=>e.id===id);if(e){e.done=!e.done;saveItem('agenda',e);renderAgenda();}}
 function agendaFilter(f){renderAgenda(f);}
 function renderAgenda(filter='all'){
@@ -6144,11 +6739,11 @@ function renderAgenda(filter='all'){
   const todayStr=today();const weekEnd=new Date();weekEnd.setDate(weekEnd.getDate()+7);const weekEndStr=weekEnd.toISOString().split('T')[0];
   let events=filter==='all'?DB.agenda:DB.agenda.filter(e=>e.type===filter);
   const wkEl=document.getElementById('agenda-week');
-  if(wkEl)wkEl.innerHTML=DB.agenda.filter(e=>e.date>=todayStr&&e.date<=weekEndStr&&!e.done).map(e=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="width:3px;align-self:stretch;border-radius:2px;background:${tC[e.type]};flex-shrink:0;margin-top:2px"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${e.title}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${fmtDate(e.date)}${e.time?' · '+e.time:''} · ${e.ent}</div></div><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:${tC[e.type]}22;color:${tC[e.type]}">${tL[e.type]}</span></div>`).join('')||'<div style="color:var(--muted);font-size:13px;padding:8px 0">Aucun événement cette semaine</div>';
+  if(wkEl)wkEl.innerHTML=DB.agenda.filter(e=>e.date>=todayStr&&e.date<=weekEndStr&&!e.done).map(e=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="width:3px;align-self:stretch;border-radius:2px;background:${tC[e.type]};flex-shrink:0;margin-top:2px"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${esc(e.title)}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${fmtDate(e.date)}${e.time?' · '+e.time:''} · ${e.ent}</div></div><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:${tC[e.type]}22;color:${tC[e.type]}">${tL[e.type]}</span></div>`).join('')||'<div style="color:var(--muted);font-size:13px;padding:8px 0">Aucun événement cette semaine</div>';
   const dlEl=document.getElementById('agenda-deadlines');
-  if(dlEl)dlEl.innerHTML=DB.agenda.filter(e=>e.type==='deadline'&&!e.done&&e.date>=todayStr).slice(0,6).map(e=>{const d=Math.ceil((new Date(e.date)-new Date(todayStr))/(1000*86400));const c=d<=2?'var(--red)':d<=7?'var(--yellow)':'var(--green)';return`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-size:18px;font-weight:700;color:${c};min-width:30px;text-align:center">${d}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${e.title}</div><div style="font-size:11px;color:var(--muted)">${fmtDate(e.date)} · ${e.ent}</div></div></div>`;}).join('')||'<div style="color:var(--green);font-size:13px;padding:8px 0">✅ Aucune deadline proche</div>';
+  if(dlEl)dlEl.innerHTML=DB.agenda.filter(e=>e.type==='deadline'&&!e.done&&e.date>=todayStr).slice(0,6).map(e=>{const d=Math.ceil((new Date(e.date)-new Date(todayStr))/(1000*86400));const c=d<=2?'var(--red)':d<=7?'var(--yellow)':'var(--green)';return`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-size:18px;font-weight:700;color:${c};min-width:30px;text-align:center">${d}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${esc(e.title)}</div><div style="font-size:11px;color:var(--muted)">${fmtDate(e.date)} · ${e.ent}</div></div></div>`;}).join('')||'<div style="color:var(--green);font-size:13px;padding:8px 0">✅ Aucune deadline proche</div>';
   const grouped={};events.forEach(e=>{const mo=e.date?e.date.substring(0,7):'Sans date';if(!grouped[mo])grouped[mo]=[];grouped[mo].push(e);});
-  let html='';Object.keys(grouped).sort().forEach(mo=>{const label=mo!=='Sans date'?new Date(mo+'-01').toLocaleDateString('fr-MA',{month:'long',year:'numeric'}):'Sans date';html+=`<div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin:12px 0 7px;letter-spacing:.06em">${label}</div>`;grouped[mo].forEach(e=>{const d=e.date?Math.ceil((new Date(e.date)-new Date(todayStr))/(1000*86400)):null;html+=`<div style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:5px;${e.done?'opacity:.45':''}"><div onclick="toggleAgenda(${e.id})" style="width:16px;height:16px;border-radius:50%;border:1.5px solid ${e.done?tC[e.type]:'rgba(15,23,42,.15)'};background:${e.done?tC[e.type]:'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;margin-top:2px">${e.done?'✓':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;${e.done?'text-decoration:line-through':''}">${e.title}</div><div style="font-size:11px;color:var(--muted);margin-top:3px">${e.date?fmtDate(e.date):''}${e.time?' · '+e.time:''}${e.lieu?' · '+e.lieu:''}${d!==null&&!e.done?` · <span style="color:${d<0?'var(--red)':d<=3?'var(--yellow)':'var(--muted)'}">${d<0?Math.abs(d)+'j retard':d===0?'Auj.':d+'j'}</span>`:''}</div>${e.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px;font-style:italic">${e.notes}</div>`:''}</div><button onclick="deleteAgenda(${e.id})" style="background:none;border:none;color:rgba(255,71,87,.4);cursor:pointer;font-size:18px;padding:0 3px;line-height:1;flex-shrink:0">×</button></div>`;});});
+  let html='';Object.keys(grouped).sort().forEach(mo=>{const label=mo!=='Sans date'?new Date(mo+'-01').toLocaleDateString('fr-MA',{month:'long',year:'numeric'}):'Sans date';html+=`<div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin:12px 0 7px;letter-spacing:.06em">${label}</div>`;grouped[mo].forEach(e=>{const d=e.date?Math.ceil((new Date(e.date)-new Date(todayStr))/(1000*86400)):null;html+=`<div style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:5px;${e.done?'opacity:.45':''}"><div onclick="toggleAgenda(${e.id})" style="width:16px;height:16px;border-radius:50%;border:1.5px solid ${e.done?tC[e.type]:'rgba(15,23,42,.15)'};background:${e.done?tC[e.type]:'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;margin-top:2px">${e.done?'✓':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;${e.done?'text-decoration:line-through':''}">${esc(e.title)}</div><div style="font-size:11px;color:var(--muted);margin-top:3px">${e.date?fmtDate(e.date):''}${e.time?' · '+e.time:''}${e.lieu?' · '+e.lieu:''}${d!==null&&!e.done?` · <span style="color:${d<0?'var(--red)':d<=3?'var(--yellow)':'var(--muted)'}">${d<0?Math.abs(d)+'j retard':d===0?'Auj.':d+'j'}</span>`:''}</div>${e.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px;font-style:italic">${e.notes}</div>`:''}</div><button onclick="deleteAgenda(${e.id})" style="background:none;border:none;color:rgba(255,71,87,.4);cursor:pointer;font-size:18px;padding:0 3px;line-height:1;flex-shrink:0">×</button></div>`;});});
   const listEl=document.getElementById('agenda-list');if(listEl)listEl.innerHTML=html||'<div style="color:var(--muted);font-size:13px;padding:14px 0">Aucun événement</div>';
 }
 
