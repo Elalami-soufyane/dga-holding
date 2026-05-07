@@ -1214,6 +1214,21 @@ input[type=hidden]{display:none;}
       <button class="btn btn-sm" onclick="clHistFilter='Maroc Assistance International';renderCLAssistHistory()">MAI</button>
     </div>
     <div id="cl-a-month-summary" style="margin-bottom:10px"></div>
+
+    <!-- 🆕 Cross-tab : Ville × Client + Client × Ville -->
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">🏙️ Ville × Client (mois courant)</div><div class="tbl-wrap" id="cl-ville-by-client"></div></div>
+      <div class="card"><div class="card-title">👤 Client × Ville (mois courant)</div><div class="tbl-wrap" id="cl-client-by-ville"></div></div>
+    </div>
+    <!-- Drilldown détaillé par ville -->
+    <div class="section-title">🔍 Détail par ville → ventilation par client</div>
+    <div id="cl-ville-drilldown" style="margin-bottom:14px"></div>
+    <!-- Drilldown détaillé par client -->
+    <div class="section-title">🔍 Détail par client → ventilation par ville</div>
+    <div id="cl-client-drilldown" style="margin-bottom:14px"></div>
+    <div class="divider"></div>
+
+    <div class="section-title">📋 Historique brut</div>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Ville</th><th>Client</th><th>Contrats</th><th>CA (MAD)</th><th>CA N-1</th><th>Δ%</th><th>Note</th><th>Actions</th></tr></thead><tbody id="cl-a-history"></tbody></table></div>
   </div>
   <div id="cl-tab-lld" style="display:none">
@@ -1488,13 +1503,23 @@ input[type=hidden]{display:none;}
     <div class="card mb12"><div class="card-title">CA par ville</div><div id="at-ville-chart"></div></div>
     <div class="grid3" id="at-ville-details"></div>
     <div class="divider"></div>
+    <!-- 🆕 Cross-tab : par ville → détail par client -->
+    <div class="section-title">🔍 Détail par ville → ventilation par client</div>
+    <div class="card mb12"><div class="card-title">Tableau croisé : Ville × Client (mois courant)</div><div class="tbl-wrap" id="at-ville-by-client"></div></div>
+    <!-- Cards expandables par ville avec leur détail client -->
+    <div id="at-ville-drilldown"></div>
+    <div class="divider"></div>
     <div class="section-title">Évolution mensuelle</div>
     <div class="card"><div id="at-ville-evolution"></div></div>
   </div>
   <div id="at-tab-clients" style="display:none">
     <div id="at-client-ranking"></div>
     <div class="divider"></div>
-    <div id="at-client-detail"></div>
+    <!-- 🆕 Cross-tab : par client → détail par ville -->
+    <div class="section-title">🔍 Détail par client → ventilation par ville</div>
+    <div class="card mb12"><div class="card-title">Tableau croisé : Client × Ville (mois courant)</div><div class="tbl-wrap" id="at-client-detail"></div></div>
+    <!-- Cards expandables par client avec leur détail ville -->
+    <div id="at-client-drilldown"></div>
   </div>
   <div id="at-tab-stats" style="display:none">
     <div class="card mb12">
@@ -1809,8 +1834,70 @@ input[type=hidden]{display:none;}
     <div class="ent-icon" style="background:var(--primary)">📊</div>
     <div><div class="ent-name">Pilotage Financier</div><div class="ent-sub">Rentabilité consolidée du Groupe Benthami — CPC, EBE, Résultat net</div></div>
   </div>
-  <!-- Filtres -->
-  <div class="card mb12" style="border-left:3px solid #FFD700">
+  <!-- ════════════════════════════════════════════════════════════════
+       NAVIGATION 3 VUES : Tableau de Bord / Cockpit / Vue Mensuelle
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="tabs" style="margin-bottom:14px">
+    <div class="tab active" data-fintab="tdb" onclick="setFinTab('tdb',this)">📊 Tableau de Bord</div>
+    <div class="tab" data-fintab="cockpit" onclick="setFinTab('cockpit',this)">🎯 Cockpit Exécutif</div>
+    <div class="tab" data-fintab="mensuel" onclick="setFinTab('mensuel',this)">📋 Vue Mensuelle</div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       SECTION 🅰 — TABLEAU DE BORD POWER BI-STYLE (slicers + KPIs focus)
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="fin-section-tdb">
+    <!-- Slicers (filtres Power BI-style) -->
+    <div class="card mb12" style="background:linear-gradient(180deg,var(--primary-soft),#FFFFFF 60%);border-left:3px solid var(--primary)">
+      <div class="card-title" style="color:var(--primary-text)">🎚️ Filtres slicer</div>
+
+      <!-- Slicer Sociétés -->
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--gray-600);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">🏢 Sociétés</div>
+        <div id="tdb-socs-chips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+
+      <!-- Slicer Période -->
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--gray-600);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">📅 Période</div>
+        <div id="tdb-period-chips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+
+      <!-- Custom Date Range (visible si preset='custom') -->
+      <div id="tdb-custom-range" style="display:none;margin-bottom:10px">
+        <div class="form-row3">
+          <div><label class="flabel">Du (mois)</label><input type="month" id="tdb-from" onchange="tdbCustomChange()"></div>
+          <div><label class="flabel">Au (mois)</label><input type="month" id="tdb-to" onchange="tdbCustomChange()"></div>
+          <div style="display:flex;align-items:flex-end"><button class="btn btn-sm" onclick="tdbResetCustom()">🔄 Reset</button></div>
+        </div>
+      </div>
+
+      <!-- Résumé période active -->
+      <div id="tdb-period-label" style="font-size:12px;color:var(--primary-text);font-weight:600;padding:8px;background:rgba(99,102,241,.06);border-radius:8px"></div>
+    </div>
+
+    <!-- Hero KPIs (4 + 4 = 8 cards focus) -->
+    <div class="grid4 mb12" id="tdb-kpis-row1"></div>
+    <div class="grid4 mb12" id="tdb-kpis-row2"></div>
+
+    <!-- Visualizations row 1 : Évolution + Mix -->
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">📈 Évolution mensuelle (CA HT + Résultat Net)</div><div id="tdb-evolution"></div></div>
+      <div class="card"><div class="card-title">🥧 Répartition CA par société (% & cumulé)</div><div id="tdb-mix"></div></div>
+    </div>
+
+    <!-- Visualizations row 2 : Top performers + Top charges -->
+    <div class="grid2 mb12">
+      <div class="card"><div class="card-title">🏆 Performance par société (rentabilité)</div><div class="tbl-wrap" id="tdb-perf"></div></div>
+      <div class="card"><div class="card-title">💸 Top 5 catégories de charges</div><div id="tdb-top-charges"></div></div>
+    </div>
+
+    <!-- Synthèse compacte (1 ligne) -->
+    <div class="card mb12" style="border-left:3px solid var(--gold-premium)"><div class="card-title">⚡ Insight rapide</div><div id="tdb-insight" style="font-size:13px;line-height:1.6"></div></div>
+  </div>
+
+  <!-- Filtres Cockpit/Mensuel (existants) -->
+  <div id="fin-section-classic-filters" class="card mb12" style="border-left:3px solid #FFD700;display:none">
     <div class="form-row3" style="align-items:end">
       <div><label class="flabel">Société</label>
         <select id="fin-societe" onchange="renderFinance()">
@@ -1828,11 +1915,63 @@ input[type=hidden]{display:none;}
       </div>
     </div>
   </div>
+  <!-- ════════════════════════════════════════════════════════════════
+       SECTION 🎯 COCKPIT EXÉCUTIF — Vue analytique multi-périodes
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="fin-section-cockpit" style="display:none">
+  <!-- ════════════════════════════════════════════════════════════════
+       🎯 EXECUTIVE COCKPIT — Vue analytique complète multi-périodes
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card mb12" style="border-left:3px solid var(--primary);background:linear-gradient(180deg,var(--primary-soft) 0%,#FFFFFF 30%)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      <div class="card-title" style="margin:0;color:var(--primary-text)">🎯 Cockpit Exécutif — Pilotage Stratégique</div>
+      <div class="period-selector" style="margin:0">
+        <button class="period-btn" data-finview="mois" onclick="setFinView('mois')">Mois</button>
+        <button class="period-btn active" data-finview="ytd" onclick="setFinView('ytd')">YTD</button>
+        <button class="period-btn" data-finview="annee" onclick="setFinView('annee')">Année</button>
+        <button class="period-btn" data-finview="12mois" onclick="setFinView('12mois')">12 derniers mois</button>
+      </div>
+    </div>
+    <div id="fin-cockpit-period-label" style="font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:500"></div>
+    <!-- Hero KPIs (8 indicateurs clés) -->
+    <div class="gridauto" id="fin-cockpit-hero"></div>
+  </div>
+
+  <!-- BLOC ÉVOLUTION DYNAMIQUE -->
+  <div class="grid2 mb12">
+    <div class="card"><div class="card-title">📈 Évolution CA & Résultat Net (12 mois)</div><div id="fin-cockpit-trend"></div></div>
+    <div class="card"><div class="card-title">📊 Run-rate &amp; Forecast annuel</div><div id="fin-cockpit-forecast"></div></div>
+  </div>
+
+  <!-- BLOC CONCENTRATION & MIX -->
+  <div class="grid2 mb12">
+    <div class="card"><div class="card-title">🥧 Concentration CA par société (HHI + Pareto)</div><div id="fin-cockpit-concentration"></div></div>
+    <div class="card"><div class="card-title">💎 Contribution au Résultat Net</div><div id="fin-cockpit-rn-contrib"></div></div>
+  </div>
+
+  <!-- BLOC SAISONNALITÉ -->
+  <div class="card mb12"><div class="card-title">🌡️ Saisonnalité — Heatmap CA par mois (3 dernières années)</div><div id="fin-cockpit-seasonality"></div></div>
+
+  <!-- BLOC DÉCOMPOSITION CHARGES -->
+  <div class="grid2 mb12">
+    <div class="card"><div class="card-title">💸 Pareto charges (top 10)</div><div id="fin-cockpit-charges-pareto"></div></div>
+    <div class="card"><div class="card-title">⚖️ Structure de coûts (% du CA HT)</div><div id="fin-cockpit-cost-structure"></div></div>
+  </div>
+
+  <!-- BLOC ALERTES PRO + RUNWAY -->
+  <div class="card mb12" style="border-left:3px solid var(--yellow)"><div class="card-title">🚨 Alertes intelligentes &amp; Diagnostic forward-looking</div><div id="fin-cockpit-alerts-pro"></div></div>
+  </div><!-- /fin-section-cockpit -->
+
+  <!-- ════════════════════════════════════════════════════════════════
+       SECTION 📋 VUE MENSUELLE — KPIs détaillés du mois (existante)
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="fin-section-mensuel" style="display:none">
+  <div class="section-title">📋 Vue mensuelle détaillée</div>
   <!-- KPIs consolidés -->
   <div class="grid4" id="fin-kpis"></div>
   <div class="divider"></div>
   <!-- Alertes intelligentes -->
-  <div class="card mb12"><div class="card-title">🚨 Alertes & Diagnostic</div><div id="fin-alertes"></div></div>
+  <div class="card mb12"><div class="card-title">🚨 Alertes &amp; Diagnostic mensuel</div><div id="fin-alertes"></div></div>
   <!-- POINT MORT + SCORES SANTÉ -->
   <div class="grid2">
     <div class="card" style="border-left:3px solid #FFD700"><div class="card-title">🎯 Point mort consolidé / par société</div><div id="fin-pm"></div></div>
@@ -1847,6 +1986,7 @@ input[type=hidden]{display:none;}
   </div>
   <div class="divider"></div>
   <div class="card"><div class="card-title">🔝 Top 10 dépenses du mois</div><div class="tbl-wrap" id="fin-top"></div></div>
+  </div><!-- /fin-section-mensuel -->
 </div>
 
 <!-- ZONE D'IMPRESSION (masquée à l'écran, visible uniquement à l'impression) -->
@@ -3387,6 +3527,101 @@ function renderCLAssistHistory(){
         ${fObj>0?`<div><b>vs Objectif :</b> <span style="color:${objPct>=100?'var(--green)':objPct>=70?'var(--yellow)':'var(--red)'};font-weight:700">${objPct}%</span> (obj. ${fmt(fObj)})</div>`:''}
       </div></div>`:'';
   }
+  // ═══════════════════════════════════════════════════════════════
+  // 🆕 CROSS-TAB CARS LAND ASSISTANCE — Ville × Client (bidirectionnel)
+  // Source : `entries` (déjà filtré par mois/client/ville)
+  // ═══════════════════════════════════════════════════════════════
+  const _clStat=(c,v)=>{
+    const sub=entries.filter(e=>e.client===c&&e.ville===v);
+    return{ca:sub.reduce((a,b)=>a+(b.ca||0),0),contrats:sub.reduce((a,b)=>a+(b.contrats||0),0),nb:sub.length};
+  };
+  // Liste dynamique des clients et villes effectivement présents (en plus des constantes)
+  const _clCli=[...new Set(entries.map(e=>e.client))].filter(Boolean).sort();
+  const _clVil=[...new Set([...CL_VILLES,...entries.map(e=>e.ville).filter(Boolean)])];
+  const _clTotalCA=entries.reduce((a,b)=>a+(b.ca||0),0);
+
+  // 1) Pivot Ville × Client
+  const vbcEl=document.getElementById('cl-ville-by-client');
+  if(vbcEl){
+    if(!_clCli.length){vbcEl.innerHTML='<div style="color:var(--muted);padding:14px;font-size:13px">Aucune donnée pour ce mois</div>';}
+    else{
+      vbcEl.innerHTML=`<table class="data-table" style="font-size:12px"><thead><tr><th>🏙️ Ville</th>${_clCli.map(c=>`<th style="text-align:right">${esc(c)}</th>`).join('')}<th style="text-align:right;color:var(--cl-dark)">Total</th></tr></thead><tbody>`+
+        _clVil.map(v=>{
+          const cells=_clCli.map(c=>{const s=_clStat(c,v);return s.ca>0?`<td style="text-align:right"><b>${fmt(s.ca)}</b><br><span style="font-size:10px;color:var(--muted)">${s.contrats} ctr</span></td>`:`<td style="text-align:right;color:var(--gray-300)">—</td>`;}).join('');
+          const totV=_clCli.reduce((a,c)=>a+_clStat(c,v).ca,0);
+          const ctrV=_clCli.reduce((a,c)=>a+_clStat(c,v).contrats,0);
+          const pctV=_clTotalCA>0?Math.round(totV/_clTotalCA*100):0;
+          if(totV===0)return'';
+          return`<tr><td><span class="vpill ${CL_VCL[v]||''}">${v}</span></td>${cells}<td style="text-align:right;font-weight:700;color:${CL_VC[v]||'var(--cl)'}">${fmt(totV)} <span style="color:var(--muted);font-size:10px">(${pctV}%)</span><br><span style="font-size:10px;color:var(--muted)">${ctrV} ctr</span></td></tr>`;
+        }).join('')+
+        `<tr style="background:var(--gray-50);font-weight:700;border-top:2px solid var(--border2)"><td>Total client</td>${_clCli.map(c=>{const tot=_clVil.reduce((a,v)=>a+_clStat(c,v).ca,0);const pct=_clTotalCA>0?Math.round(tot/_clTotalCA*100):0;return`<td style="text-align:right;color:var(--cl-dark)">${fmt(tot)}<br><span style="font-size:10px;color:var(--muted)">${pct}%</span></td>`;}).join('')}<td style="text-align:right;color:var(--gold-premium)">${fmt(_clTotalCA)}</td></tr>`+
+        `</tbody></table>`;
+    }
+  }
+
+  // 2) Pivot Client × Ville
+  const cbvEl=document.getElementById('cl-client-by-ville');
+  if(cbvEl){
+    if(!_clCli.length){cbvEl.innerHTML='<div style="color:var(--muted);padding:14px;font-size:13px">Aucun client ce mois</div>';}
+    else{
+      cbvEl.innerHTML=`<table class="data-table" style="font-size:12px"><thead><tr><th>👤 Client</th>${_clVil.map(v=>`<th style="text-align:right"><span class="vpill ${CL_VCL[v]||''}">${v}</span></th>`).join('')}<th style="text-align:right;color:var(--cl-dark)">Total</th></tr></thead><tbody>`+
+        _clCli.map(c=>{
+          const cells=_clVil.map(v=>{const s=_clStat(c,v);return s.ca>0?`<td style="text-align:right"><b>${fmt(s.ca)}</b><br><span style="font-size:10px;color:var(--muted)">${s.contrats} ctr</span></td>`:`<td style="text-align:right;color:var(--gray-300)">—</td>`;}).join('');
+          const totC=_clVil.reduce((a,v)=>a+_clStat(c,v).ca,0);
+          const ctrC=_clVil.reduce((a,v)=>a+_clStat(c,v).contrats,0);
+          const pctC=_clTotalCA>0?Math.round(totC/_clTotalCA*100):0;
+          return`<tr><td><b>${esc(c)}</b></td>${cells}<td style="text-align:right;font-weight:700;color:var(--cl-dark)">${fmt(totC)} <span style="color:var(--muted);font-size:10px">(${pctC}%)</span><br><span style="font-size:10px;color:var(--muted)">${ctrC} ctr</span></td></tr>`;
+        }).join('')+
+        `<tr style="background:var(--gray-50);font-weight:700;border-top:2px solid var(--border2)"><td>Total ville</td>${_clVil.map(v=>{const tot=_clCli.reduce((a,c)=>a+_clStat(c,v).ca,0);const pct=_clTotalCA>0?Math.round(tot/_clTotalCA*100):0;return`<td style="text-align:right;color:${CL_VC[v]||'var(--cl)'}">${fmt(tot)}<br><span style="font-size:10px;color:var(--muted)">${pct}%</span></td>`;}).join('')}<td style="text-align:right;color:var(--gold-premium)">${fmt(_clTotalCA)}</td></tr>`+
+        `</tbody></table>`;
+    }
+  }
+
+  // 3) Drilldown par ville (cards détaillées)
+  const vDDcl=document.getElementById('cl-ville-drilldown');
+  if(vDDcl){
+    vDDcl.innerHTML=_clVil.map(v=>{
+      const vE=entries.filter(e=>e.ville===v);
+      if(!vE.length)return'';
+      const totCA=vE.reduce((a,b)=>a+(b.ca||0),0);
+      const totCtr=vE.reduce((a,b)=>a+(b.contrats||0),0);
+      const clients=[...new Set(vE.map(e=>e.client))];
+      const ranked=clients.map(c=>{const s=_clStat(c,v);const pct=totCA>0?Math.round(s.ca/totCA*100):0;return{c,...s,pct};}).sort((a,b)=>b.ca-a.ca);
+      const col=CL_VC[v]||'var(--cl)';
+      return`<div class="card mb12" style="border-left:3px solid ${col}">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:${col}">🏙️ ${v}</div>
+          <div style="font-size:13px;color:var(--gray-700)"><b>${fmt(totCA)} MAD</b> · ${totCtr} contrats · ${clients.length} client(s)</div>
+        </div>
+        <table class="data-table" style="font-size:12px"><thead><tr><th>Client</th><th style="text-align:right">CA</th><th style="text-align:right">Contrats</th><th style="text-align:right">Saisies</th><th style="text-align:right">% ville</th></tr></thead><tbody>
+          ${ranked.map(r=>`<tr><td><b>${esc(r.c)}</b></td><td style="text-align:right;font-weight:600;color:${col}">${fmt(r.ca)}</td><td style="text-align:right">${r.contrats}</td><td style="text-align:right;color:var(--muted)">${r.nb}</td><td style="text-align:right"><div class="prog-bar" style="display:inline-block;width:60px;vertical-align:middle;height:6px"><div class="prog-fill" style="width:${r.pct}%;background:${col}"></div></div> ${r.pct}%</td></tr>`).join('')}
+        </tbody></table>
+      </div>`;
+    }).join('')||'<div style="color:var(--muted);padding:14px;font-size:13px">Aucune donnée</div>';
+  }
+
+  // 4) Drilldown par client (cards détaillées)
+  const cDDcl=document.getElementById('cl-client-drilldown');
+  if(cDDcl){
+    cDDcl.innerHTML=_clCli.map(c=>{
+      const cE=entries.filter(e=>e.client===c);
+      if(!cE.length)return'';
+      const totCA=cE.reduce((a,b)=>a+(b.ca||0),0);
+      const totCtr=cE.reduce((a,b)=>a+(b.contrats||0),0);
+      const villes=_clVil.filter(v=>cE.some(e=>e.ville===v));
+      const ranked=villes.map(v=>{const s=_clStat(c,v);const pct=totCA>0?Math.round(s.ca/totCA*100):0;return{v,...s,pct};}).sort((a,b)=>b.ca-a.ca);
+      return`<div class="card mb12" style="border-left:3px solid var(--cl)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--cl-dark)">👤 ${esc(c)}</div>
+          <div style="font-size:13px;color:var(--gray-700)"><b>${fmt(totCA)} MAD</b> · ${totCtr} contrats · ${villes.length} ville(s)</div>
+        </div>
+        <table class="data-table" style="font-size:12px"><thead><tr><th>Ville</th><th style="text-align:right">CA</th><th style="text-align:right">Contrats</th><th style="text-align:right">% client</th></tr></thead><tbody>
+          ${ranked.map(r=>`<tr><td><span class="vpill ${CL_VCL[r.v]||''}">${r.v}</span></td><td style="text-align:right;font-weight:600;color:${CL_VC[r.v]||'var(--cl)'}">${fmt(r.ca)}</td><td style="text-align:right">${r.contrats}</td><td style="text-align:right"><div class="prog-bar" style="display:inline-block;width:60px;vertical-align:middle;height:6px"><div class="prog-fill" style="width:${r.pct}%;background:${CL_VC[r.v]||'var(--cl)'}"></div></div> ${r.pct}%</td></tr>`).join('')}
+        </tbody></table>
+      </div>`;
+    }).join('')||'<div style="color:var(--muted);padding:14px;font-size:13px">Aucun client ce mois</div>';
+  }
+
   // Mois sélectionné → toutes les lignes ; "Tous mois" → 500 max (perf)
   const list=clMonthFilter!=='all'?entries:entries.slice(0,500);
   const limited=clMonthFilter==='all'&&entries.length>500;
@@ -4154,8 +4389,101 @@ function renderArabian(){
   const cR=document.getElementById('at-client-ranking');
   if(cR){const clients=[...new Set(monthE.map(e=>e.client))];const ranked=clients.map(c=>({client:c,ca:monthE.filter(e=>e.client===c).reduce((a,b)=>a+b.ca,0),missions:monthE.filter(e=>e.client===c).reduce((a,b)=>a+b.constats,0)})).sort((a,b)=>b.ca-a.ca);const maxCA=ranked.length?ranked[0].ca:1;cR.innerHTML=ranked.length?ranked.map((r,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:7px"><div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--muted2);min-width:22px">${i+1}</div><div style="flex:1"><div style="font-weight:600;margin-bottom:3px">${r.client}</div><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(r.ca/maxCA*100)}%;background:var(--at)"></div></div></div><div style="text-align:right;min-width:100px"><div style="font-weight:700;color:var(--at)">${fmt(r.ca)} MAD</div><div style="font-size:11px;color:var(--muted)">${fmt(r.missions)} missions</div></div></div>`).join(''):'<div style="color:var(--muted);font-size:13px;padding:14px 0">Aucun client ce mois</div>';}
 
+  // ═══════════════════════════════════════════════════════════════
+  // 🆕 CROSS-TAB ARABIAN TOURS — Ville × Client (bidirectionnel)
+  // ═══════════════════════════════════════════════════════════════
+  // Helper : statistiques d'une intersection (ville, client)
+  const _atStat=(c,v)=>{
+    const sub=monthE.filter(e=>e.client===c&&e.ville===v);
+    return{ca:sub.reduce((a,b)=>a+b.ca,0),mis:sub.reduce((a,b)=>a+b.constats,0),nb:sub.length};
+  };
+
+  // 1) Tableau pivot Ville (lignes) × Client (colonnes) — vue VILLE
+  const vC=document.getElementById('at-ville-by-client');
+  if(vC){
+    const clients=[...new Set(monthE.map(e=>e.client))].filter(Boolean).sort();
+    if(!clients.length){vC.innerHTML='<div style="color:var(--muted);padding:14px;font-size:13px">Aucune donnée pour ce mois</div>';}
+    else{
+      const totalCA=monthE.reduce((a,b)=>a+b.ca,0);
+      vC.innerHTML=`<table class="data-table" style="font-size:12px"><thead><tr><th>🏙️ Ville</th>${clients.map(c=>`<th style="text-align:right">${esc(c)}</th>`).join('')}<th style="text-align:right;color:var(--at-dark)">Total ville</th></tr></thead><tbody>`+
+        AT_VILLES.map(v=>{
+          const cells=clients.map(c=>{const s=_atStat(c,v);return s.ca>0?`<td style="text-align:right"><b>${fmt(s.ca)}</b><br><span style="font-size:10px;color:var(--muted)">${s.mis} mis · ${s.nb}sai</span></td>`:`<td style="text-align:right;color:var(--gray-300)">—</td>`;}).join('');
+          const totV=clients.reduce((a,c)=>a+_atStat(c,v).ca,0);
+          const misV=clients.reduce((a,c)=>a+_atStat(c,v).mis,0);
+          const pctV=totalCA>0?Math.round(totV/totalCA*100):0;
+          return`<tr><td><span class="vpill ${AT_VCL[v]||''}">${v}</span></td>${cells}<td style="text-align:right;font-weight:700;color:${AT_VC[v]}">${fmt(totV)} <span style="color:var(--muted);font-size:10px">(${pctV}%)</span><br><span style="font-size:10px;color:var(--muted)">${misV} mis</span></td></tr>`;
+        }).join('')+
+        // Ligne total par client
+        `<tr style="background:var(--gray-50);font-weight:700;border-top:2px solid var(--border2)"><td>Total client</td>${clients.map(c=>{const tot=AT_VILLES.reduce((a,v)=>a+_atStat(c,v).ca,0);const pct=totalCA>0?Math.round(tot/totalCA*100):0;return`<td style="text-align:right;color:var(--at-dark)">${fmt(tot)}<br><span style="font-size:10px;color:var(--muted)">${pct}%</span></td>`;}).join('')}<td style="text-align:right;color:var(--gold-premium)">${fmt(totalCA)}</td></tr>`+
+        `</tbody></table>`;
+    }
+  }
+
+  // 2) Drilldown : par ville, liste détaillée des clients (cards expandables visuellement)
+  const vDD=document.getElementById('at-ville-drilldown');
+  if(vDD){
+    vDD.innerHTML=AT_VILLES.map(v=>{
+      const vE=monthE.filter(e=>e.ville===v);
+      if(!vE.length)return'';
+      const totCA=vE.reduce((a,b)=>a+b.ca,0);
+      const totMis=vE.reduce((a,b)=>a+b.constats,0);
+      const clients=[...new Set(vE.map(e=>e.client))];
+      const ranked=clients.map(c=>{const s=_atStat(c,v);const pct=totCA>0?Math.round(s.ca/totCA*100):0;return{c,...s,pct};}).sort((a,b)=>b.ca-a.ca);
+      return`<div class="card mb12" style="border-left:3px solid ${AT_VC[v]}">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:${AT_VC[v]}">🏙️ ${v}</div>
+          <div style="font-size:13px;color:var(--gray-700)"><b>${fmt(totCA)} MAD</b> · ${totMis} missions · ${clients.length} client(s)</div>
+        </div>
+        <table class="data-table" style="font-size:12px"><thead><tr><th>Client</th><th style="text-align:right">CA</th><th style="text-align:right">Missions</th><th style="text-align:right">Saisies</th><th style="text-align:right">% ville</th></tr></thead><tbody>
+          ${ranked.map(r=>`<tr><td><b>${esc(r.c)}</b></td><td style="text-align:right;font-weight:600;color:${AT_VC[v]}">${fmt(r.ca)}</td><td style="text-align:right">${r.mis}</td><td style="text-align:right;color:var(--muted)">${r.nb}</td><td style="text-align:right"><div class="prog-bar" style="display:inline-block;width:60px;vertical-align:middle;height:6px"><div class="prog-fill" style="width:${r.pct}%;background:${AT_VC[v]}"></div></div> ${r.pct}%</td></tr>`).join('')}
+        </tbody></table>
+      </div>`;
+    }).join('')||'<div style="color:var(--muted);padding:14px;font-size:13px">Aucune donnée pour ce mois</div>';
+  }
+
+  // 3) Tableau pivot Client (lignes) × Ville (colonnes) — vue CLIENT
   const cD=document.getElementById('at-client-detail');
-  if(cD){const clients=[...new Set(monthE.map(e=>e.client))].sort();cD.innerHTML=clients.length?`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Client</th>${AT_VILLES.map(v=>`<th><span class="vpill ${AT_VCL[v]}">${v}</span></th>`).join('')}<th>Total</th><th>Missions</th></tr></thead><tbody>${clients.map(c=>{const vCAs=AT_VILLES.map(v=>monthE.filter(e=>e.client===c&&e.ville===v).reduce((a,b)=>a+b.ca,0));const vMs=AT_VILLES.map(v=>monthE.filter(e=>e.client===c&&e.ville===v).reduce((a,b)=>a+b.constats,0));return`<tr><td>${c}</td>${vCAs.map((ca,i)=>`<td>${ca>0?fmt(ca):'—'}</td>`).join('')}<td style="font-weight:600;color:var(--at)">${fmt(vCAs.reduce((a,b)=>a+b,0))}</td><td>${fmt(vMs.reduce((a,b)=>a+b,0))}</td></tr>`;}).join('')}</tbody></table></div>`:'<div style="color:var(--muted);font-size:13px;padding:14px 0">Aucun client</div>';}
+  if(cD){
+    const clients=[...new Set(monthE.map(e=>e.client))].filter(Boolean).sort();
+    if(!clients.length){cD.innerHTML='<div style="color:var(--muted);font-size:13px;padding:14px 0">Aucun client ce mois</div>';}
+    else{
+      const totalCA=monthE.reduce((a,b)=>a+b.ca,0);
+      cD.innerHTML=`<table class="data-table" style="font-size:12px"><thead><tr><th>👤 Client</th>${AT_VILLES.map(v=>`<th style="text-align:right"><span class="vpill ${AT_VCL[v]||''}">${v}</span></th>`).join('')}<th style="text-align:right;color:var(--at-dark)">Total client</th></tr></thead><tbody>`+
+        clients.map(c=>{
+          const cells=AT_VILLES.map(v=>{const s=_atStat(c,v);return s.ca>0?`<td style="text-align:right"><b>${fmt(s.ca)}</b><br><span style="font-size:10px;color:var(--muted)">${s.mis} mis</span></td>`:`<td style="text-align:right;color:var(--gray-300)">—</td>`;}).join('');
+          const totC=AT_VILLES.reduce((a,v)=>a+_atStat(c,v).ca,0);
+          const misC=AT_VILLES.reduce((a,v)=>a+_atStat(c,v).mis,0);
+          const pctC=totalCA>0?Math.round(totC/totalCA*100):0;
+          return`<tr><td><b>${esc(c)}</b></td>${cells}<td style="text-align:right;font-weight:700;color:var(--at-dark)">${fmt(totC)} <span style="color:var(--muted);font-size:10px">(${pctC}%)</span><br><span style="font-size:10px;color:var(--muted)">${misC} mis</span></td></tr>`;
+        }).join('')+
+        // Ligne total par ville
+        `<tr style="background:var(--gray-50);font-weight:700;border-top:2px solid var(--border2)"><td>Total ville</td>${AT_VILLES.map(v=>{const tot=clients.reduce((a,c)=>a+_atStat(c,v).ca,0);const pct=totalCA>0?Math.round(tot/totalCA*100):0;return`<td style="text-align:right;color:${AT_VC[v]}">${fmt(tot)}<br><span style="font-size:10px;color:var(--muted)">${pct}%</span></td>`;}).join('')}<td style="text-align:right;color:var(--gold-premium)">${fmt(totalCA)}</td></tr>`+
+        `</tbody></table>`;
+    }
+  }
+
+  // 4) Drilldown : par client, liste détaillée des villes
+  const cDD=document.getElementById('at-client-drilldown');
+  if(cDD){
+    const clients=[...new Set(monthE.map(e=>e.client))].sort();
+    cDD.innerHTML=clients.map(c=>{
+      const cE=monthE.filter(e=>e.client===c);
+      if(!cE.length)return'';
+      const totCA=cE.reduce((a,b)=>a+b.ca,0);
+      const totMis=cE.reduce((a,b)=>a+b.constats,0);
+      const villes=AT_VILLES.filter(v=>cE.some(e=>e.ville===v));
+      const ranked=villes.map(v=>{const s=_atStat(c,v);const pct=totCA>0?Math.round(s.ca/totCA*100):0;return{v,...s,pct};}).sort((a,b)=>b.ca-a.ca);
+      return`<div class="card mb12" style="border-left:3px solid var(--at)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--at-dark)">👤 ${esc(c)}</div>
+          <div style="font-size:13px;color:var(--gray-700)"><b>${fmt(totCA)} MAD</b> · ${totMis} missions · ${villes.length} ville(s)</div>
+        </div>
+        <table class="data-table" style="font-size:12px"><thead><tr><th>Ville</th><th style="text-align:right">CA</th><th style="text-align:right">Missions</th><th style="text-align:right">% client</th></tr></thead><tbody>
+          ${ranked.map(r=>`<tr><td><span class="vpill ${AT_VCL[r.v]||''}">${r.v}</span></td><td style="text-align:right;font-weight:600;color:${AT_VC[r.v]}">${fmt(r.ca)}</td><td style="text-align:right">${r.mis}</td><td style="text-align:right"><div class="prog-bar" style="display:inline-block;width:60px;vertical-align:middle;height:6px"><div class="prog-fill" style="width:${r.pct}%;background:${AT_VC[r.v]}"></div></div> ${r.pct}%</td></tr>`).join('')}
+        </tbody></table>
+      </div>`;
+    }).join('')||'<div style="color:var(--muted);padding:14px;font-size:13px">Aucun client ce mois</div>';
+  }
 
   // STATS filtered (month/ville/client)
   const sMo=atStats.month||curMonth();const sVille=atStats.ville;const sClient=atStats.client;
@@ -6360,6 +6688,646 @@ function renderCPCSoc(soc){
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// 🅰 TABLEAU DE BORD POWER BI-STYLE — Slicers multi-sélection + KPIs focus
+// ═══════════════════════════════════════════════════════════════════
+window.tdbState=window.tdbState||{
+  societes:['cl','at','as','fc'],   // multi-select : par défaut tout
+  preset:'mois',                    // 'today','week','mois','quarter','ytd','annee','12mois','custom'
+  customFrom:null,                  // 'YYYY-MM' format mois
+  customTo:null
+};
+const TDB_PRESETS=[
+  {id:'today',     label:'📅 Aujourd\'hui'},
+  {id:'week',      label:'📅 Cette semaine'},
+  {id:'mois',      label:'📅 Mois courant'},
+  {id:'quarter',   label:'📅 Trimestre'},
+  {id:'ytd',       label:'📅 YTD (depuis 01/01)'},
+  {id:'annee',     label:'📅 Année courante'},
+  {id:'12mois',    label:'📅 12 mois glissants'},
+  {id:'custom',    label:'📅 Personnalisée'}
+];
+
+// Bascule onglet TDB / Cockpit / Mensuel
+function setFinTab(id,el){
+  const sections={tdb:'fin-section-tdb',cockpit:'fin-section-cockpit',mensuel:'fin-section-mensuel'};
+  Object.values(sections).forEach(s=>{const e=document.getElementById(s);if(e)e.style.display='none';});
+  const target=document.getElementById(sections[id]);if(target)target.style.display='block';
+  // Filtres classiques visibles seulement pour cockpit + mensuel (TDB a ses propres slicers)
+  const cf=document.getElementById('fin-section-classic-filters');if(cf)cf.style.display=id==='tdb'?'none':'block';
+  document.querySelectorAll('[data-fintab]').forEach(b=>b.classList.toggle('active',b.dataset.fintab===id));
+  renderFinance();
+}
+
+// Toggle société dans le slicer
+function tdbToggleSoc(soc){
+  const arr=window.tdbState.societes;
+  const i=arr.indexOf(soc);
+  if(soc==='all'){
+    window.tdbState.societes=arr.length===4?[]:['cl','at','as','fc'];
+  }else{
+    if(i>=0)arr.splice(i,1);else arr.push(soc);
+    if(arr.length===0)window.tdbState.societes=['cl','at','as','fc']; // garde-fou : jamais vide
+  }
+  renderTDB();
+}
+
+// Définit le preset période
+function tdbSetPreset(p){
+  window.tdbState.preset=p;
+  const cust=document.getElementById('tdb-custom-range');
+  if(cust)cust.style.display=p==='custom'?'block':'none';
+  renderTDB();
+}
+
+function tdbCustomChange(){
+  window.tdbState.customFrom=getVal('tdb-from');
+  window.tdbState.customTo=getVal('tdb-to');
+  renderTDB();
+}
+function tdbResetCustom(){
+  setVal('tdb-from','');setVal('tdb-to','');
+  window.tdbState.customFrom=null;window.tdbState.customTo=null;
+  renderTDB();
+}
+
+// Calcule la liste de mois selon le preset
+function _tdbResolveMonths(){
+  const s=window.tdbState;
+  const today=new Date();
+  const yr=today.getFullYear();
+  const mo=today.getMonth();
+  const ymOf=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  const months=[];
+  if(s.preset==='today'||s.preset==='week'||s.preset==='mois'){
+    months.push(ymOf(today));
+  }else if(s.preset==='quarter'){
+    const startMonth=Math.floor(mo/3)*3;
+    for(let i=0;i<3;i++){
+      const d=new Date(yr,startMonth+i,1);
+      if(d<=today)months.push(ymOf(d));
+    }
+  }else if(s.preset==='ytd'){
+    for(let i=0;i<=mo;i++)months.push(ymOf(new Date(yr,i,1)));
+  }else if(s.preset==='annee'){
+    for(let i=0;i<12;i++)months.push(ymOf(new Date(yr,i,1)));
+  }else if(s.preset==='12mois'){
+    for(let i=11;i>=0;i--){
+      const d=new Date(yr,mo-i,1);months.push(ymOf(d));
+    }
+  }else if(s.preset==='custom'&&s.customFrom&&s.customTo){
+    const[fy,fm]=s.customFrom.split('-').map(Number);
+    const[ty,tm]=s.customTo.split('-').map(Number);
+    let cy=fy,cm=fm;
+    while(cy<ty||(cy===ty&&cm<=tm)){
+      months.push(cy+'-'+String(cm).padStart(2,'0'));
+      cm++;if(cm>12){cm=1;cy++;}
+      if(months.length>120)break; // garde-fou
+    }
+  }else{
+    months.push(ymOf(today));
+  }
+  return months;
+}
+
+// Label lisible de la période active
+function _tdbPeriodLabel(months){
+  const s=window.tdbState;
+  const preset=TDB_PRESETS.find(p=>p.id===s.preset);
+  if(!months.length)return(preset?preset.label:'')+' · aucune donnée';
+  const first=months[0],last=months[months.length-1];
+  let date='';
+  if(s.preset==='today')date=' · '+new Date().toLocaleDateString('fr-MA',{day:'numeric',month:'long',year:'numeric'});
+  else if(s.preset==='week')date=' · semaine '+curWeek();
+  else if(months.length===1)date=' · '+fmtMoLong(first);
+  else date=' · '+fmtMoLong(first)+' → '+fmtMoLong(last)+' ('+months.length+' mois)';
+  return(preset?preset.label:'')+date;
+}
+
+// Rendu des chips slicer
+function _tdbRenderChips(){
+  // Sociétés
+  const socsEl=document.getElementById('tdb-socs-chips');
+  if(socsEl){
+    const all=window.tdbState.societes.length===4;
+    const allChip=`<button class="period-btn ${all?'active':''}" onclick="tdbToggleSoc('all')">${all?'✓ ':''}🏢 Tout</button>`;
+    const chips=Object.entries(FIN_SOCIETES).map(([k,v])=>{
+      const active=window.tdbState.societes.indexOf(k)>=0;
+      return`<button class="period-btn ${active?'active':''}" style="${active?'border-color:'+v.col+';color:'+v.col:''}" onclick="tdbToggleSoc('${k}')">${active?'✓ ':''}${v.icone} ${v.nom}</button>`;
+    }).join('');
+    socsEl.innerHTML=allChip+chips;
+  }
+  // Période
+  const perEl=document.getElementById('tdb-period-chips');
+  if(perEl){
+    perEl.innerHTML=TDB_PRESETS.map(p=>{
+      const active=window.tdbState.preset===p.id;
+      return`<button class="period-btn ${active?'active':''}" onclick="tdbSetPreset('${p.id}')">${p.label}</button>`;
+    }).join('');
+  }
+}
+
+// Render principal du TDB
+function renderTDB(){
+  _tdbRenderChips();
+  const socs=window.tdbState.societes.slice();
+  const months=_tdbResolveMonths();
+
+  // Label période
+  const lblEl=document.getElementById('tdb-period-label');
+  if(lblEl)lblEl.textContent=_tdbPeriodLabel(months)+' · '+socs.length+' société(s) sélectionnée(s)';
+
+  if(months.length===0){
+    ['tdb-kpis-row1','tdb-kpis-row2','tdb-evolution','tdb-mix','tdb-perf','tdb-top-charges','tdb-insight'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='<div style="color:var(--muted);padding:14px;font-size:13px">Aucune période sélectionnée</div>';});
+    return;
+  }
+
+  // Agrégation principale
+  const agg=_finAggMulti(socs,months);
+  // N-1 (mêmes mois année précédente)
+  const monthsN1=months.map(m=>{const[y,mm]=m.split('-');return(Number(y)-1)+'-'+mm;});
+  const aggN1=_finAggMulti(socs,monthsN1);
+  const pct=v=>agg.caHT>0?(v/agg.caHT*100):0;
+  const totalCharges=agg.achats+agg.externes+agg.personnel+agg.impots+agg.amortissements+agg.financieres;
+
+  // ─── KPIs row 1 (4 cards) : volumes ─────────────────────────────
+  const r1=document.getElementById('tdb-kpis-row1');
+  if(r1){
+    const evoCA=aggN1.caHT>0?Math.round((agg.caHT-aggN1.caHT)/aggN1.caHT*100):null;
+    const evoEBE=aggN1.ebe!==0?Math.round((agg.ebe-aggN1.ebe)/Math.abs(aggN1.ebe)*100):null;
+    const evoRN=aggN1.resNet!==0?Math.round((agg.resNet-aggN1.resNet)/Math.abs(aggN1.resNet)*100):null;
+    const colE=v=>v===null?'var(--muted)':v>=0?'var(--green)':'var(--red)';
+    const sigE=v=>v===null?'—':(v>=0?'+':'')+v+'%';
+    r1.innerHTML=`
+      <div class="metric" style="border-left:3px solid var(--gold-premium)"><div class="metric-label">💰 CA HT</div><div class="metric-val" style="color:var(--gold-premium)">${fmt(Math.round(agg.caHT))}</div><div class="metric-sub">vs N-1 : <span style="color:${colE(evoCA)}">${sigE(evoCA)}</span></div></div>
+      <div class="metric" style="border-left:3px solid var(--green)"><div class="metric-label">📊 EBE</div><div class="metric-val" style="color:${agg.ebe>=0?'var(--green)':'var(--red)'}">${fmt(Math.round(agg.ebe))}</div><div class="metric-sub">${pct(agg.ebe).toFixed(1)}% · vs N-1 <span style="color:${colE(evoEBE)}">${sigE(evoEBE)}</span></div></div>
+      <div class="metric" style="border-left:3px solid var(--primary)"><div class="metric-label">🎯 Résultat Net</div><div class="metric-val" style="color:${agg.resNet>=0?'var(--green)':'var(--red)'}">${fmt(Math.round(agg.resNet))}</div><div class="metric-sub">${pct(agg.resNet).toFixed(1)}% · vs N-1 <span style="color:${colE(evoRN)}">${sigE(evoRN)}</span></div></div>
+      <div class="metric" style="border-left:3px solid var(--blue)"><div class="metric-label">💵 Cash op.</div><div class="metric-val" style="color:var(--blue-dark)">${fmt(Math.round(agg.cashOp))}</div><div class="metric-sub">${pct(agg.cashOp).toFixed(1)}% · RN + amort.</div></div>`;
+  }
+
+  // ─── KPIs row 2 (4 cards) : ratios ──────────────────────────────
+  const r2=document.getElementById('tdb-kpis-row2');
+  if(r2){
+    r2.innerHTML=`
+      <div class="metric"><div class="metric-label">💎 Marge brute</div><div class="metric-val" style="color:var(--green)">${pct(agg.margeBrute).toFixed(1)}%</div><div class="metric-sub">${fmt(Math.round(agg.margeBrute))} MAD</div></div>
+      <div class="metric"><div class="metric-label">💸 Total charges</div><div class="metric-val" style="color:var(--red-dark)">${pct(totalCharges).toFixed(1)}%</div><div class="metric-sub">${fmt(Math.round(totalCharges))} MAD</div></div>
+      <div class="metric"><div class="metric-label">🏦 TVA collectée</div><div class="metric-val">${fmt(Math.round(agg.tvaCollectee))}</div><div class="metric-sub">${pct(agg.tvaCollectee).toFixed(1)}% · à reverser</div></div>
+      <div class="metric"><div class="metric-label">📅 CA moyen / mois</div><div class="metric-val">${fmt(Math.round(agg.caHT/months.length))}</div><div class="metric-sub">sur ${months.length} mois</div></div>`;
+  }
+
+  // ─── Évolution (chart bars CA + label RN coloré) ────────────────
+  const eEl=document.getElementById('tdb-evolution');
+  if(eEl){
+    const series=_finCASeries(socs,months);
+    const rnSeries=_finRNSeries(socs,months);
+    const maxCA=Math.max(...series.map(s=>s.ca),1);
+    eEl.innerHTML=`<div class="chart-bar-wrap" style="height:160px">${series.map((s,i)=>{
+      const h=Math.round(s.ca/maxCA*100);
+      const rn=rnSeries[i].rn;
+      return`<div class="chart-bar-col" title="${fmtMoLong(s.mois)} · CA ${fmt(Math.round(s.ca))} · RN ${fmt(Math.round(rn))}"><div class="chart-bar-val">${s.ca>0?Math.round(s.ca/1000)+'k':''}</div><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="chart-bar-inner" style="height:${h}%;background:var(--primary);width:100%"></div></div><div class="chart-bar-label" style="color:${rn>=0?'var(--green)':'var(--red)'};font-weight:600">${rn!==0?(rn>=0?'+':'')+Math.round(rn/1000)+'k':''}</div><div class="chart-bar-label">${s.mois.substring(5)}</div></div>`;
+    }).join('')}</div>`;
+  }
+
+  // ─── Répartition (Pareto par société) ───────────────────────────
+  const mixEl=document.getElementById('tdb-mix');
+  if(mixEl){
+    const bySoc=_finAggBySoc(socs,months);
+    const sorted=Object.entries(bySoc).map(([k,v])=>({soc:k,...v})).sort((a,b)=>b.caHT-a.caHT);
+    const total=sorted.reduce((s,e)=>s+e.caHT,0)||1;
+    let cum=0;
+    mixEl.innerHTML=sorted.map(s=>{
+      const meta=FIN_SOCIETES[s.soc];
+      const p=s.caHT/total*100;cum+=p;
+      return`<div class="prog-row"><span class="prog-label" style="color:${meta.col}">${meta.icone} ${meta.nom}</span><div class="prog-bar"><div class="prog-fill" style="width:${p}%;background:${meta.col}"></div></div><span class="prog-val">${p.toFixed(1)}% · ${fmt(Math.round(s.caHT))}</span></div><div style="font-size:10px;color:var(--muted);margin:-4px 0 4px 144px">Cumul Pareto : ${cum.toFixed(1)}%</div>`;
+    }).join('');
+  }
+
+  // ─── Performance par société (table) ────────────────────────────
+  const pEl=document.getElementById('tdb-perf');
+  if(pEl){
+    const bySoc=_finAggBySoc(socs,months);
+    const rows=Object.entries(bySoc).map(([k,v])=>{
+      const meta=FIN_SOCIETES[k];
+      const mb=v.caHT>0?(v.caHT-v.achats)/v.caHT*100:0;
+      const ebePct=v.caHT>0?v.ebe/v.caHT*100:0;
+      const rnPct=v.caHT>0?v.resNet/v.caHT*100:0;
+      const col=v=>v>=15?'var(--green)':v>=5?'var(--yellow)':'var(--red)';
+      return`<tr><td style="color:${meta.col};font-weight:600">${meta.icone} ${meta.nom}</td><td style="text-align:right">${fmt(Math.round(v.caHT))}</td><td style="text-align:right;color:${col(mb)}">${mb.toFixed(1)}%</td><td style="text-align:right;color:${col(ebePct)}">${ebePct.toFixed(1)}%</td><td style="text-align:right;font-weight:700;color:${v.resNet>=0?'var(--green)':'var(--red)'}">${fmt(Math.round(v.resNet))}</td></tr>`;
+    }).join('');
+    pEl.innerHTML=`<table class="data-table" style="font-size:12px"><thead><tr><th>Société</th><th style="text-align:right">CA HT</th><th style="text-align:right">Marge B.</th><th style="text-align:right">EBE %</th><th style="text-align:right">RN</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  // ─── Top 5 charges ──────────────────────────────────────────────
+  const tcEl=document.getElementById('tdb-top-charges');
+  if(tcEl){
+    const top=_finTopChargesPareto(socs,months,5);
+    const totalCh=top.reduce((s,r)=>s+r[1],0)||1;
+    tcEl.innerHTML=top.length===0?'<div style="color:var(--muted);padding:14px;font-size:13px">Aucune charge</div>':top.map(r=>{
+      const p=r[1]/totalCh*100;
+      return`<div class="prog-row"><span class="prog-label" style="font-size:12px">${esc(r[0])}</span><div class="prog-bar"><div class="prog-fill" style="width:${p}%;background:var(--yellow-dark)"></div></div><span class="prog-val">${p.toFixed(1)}% · ${fmt(Math.round(r[1]))}</span></div>`;
+    }).join('');
+  }
+
+  // ─── Insight rapide (1 phrase synthèse exécutive) ───────────────
+  const insEl=document.getElementById('tdb-insight');
+  if(insEl){
+    const evoCA=aggN1.caHT>0?Math.round((agg.caHT-aggN1.caHT)/aggN1.caHT*100):null;
+    let insight='';
+    if(agg.caHT===0){insight='ℹ️ Aucune activité enregistrée sur la période sélectionnée. Vérifiez les filtres ou saisissez vos données.';}
+    else if(agg.resNet<0){insight=`🚨 <b>Période en perte</b> de ${fmt(Math.abs(Math.round(agg.resNet)))} MAD. CA HT ${fmt(Math.round(agg.caHT))}, EBE ${fmt(Math.round(agg.ebe))}. <b>Action prioritaire :</b> revoir la structure de coûts ou augmenter le CA.`;}
+    else if(evoCA!==null&&evoCA>=15){insight=`🚀 <b>Excellente dynamique</b> : CA en croissance de +${evoCA}% vs N-1, RN positif de ${fmt(Math.round(agg.resNet))} MAD (${pct(agg.resNet).toFixed(1)}% du CA). Capitalisez sur cette dynamique.`;}
+    else if(evoCA!==null&&evoCA<-10){insight=`📉 <b>Recul significatif</b> : CA en baisse de ${evoCA}% vs N-1. RN ${pct(agg.resNet).toFixed(1)}%. <b>Action :</b> identifier les drivers de la baisse par société.`;}
+    else{insight=`✅ <b>Performance stable</b> : CA HT ${fmt(Math.round(agg.caHT))} MAD sur ${months.length} mois, RN ${fmt(Math.round(agg.resNet))} (${pct(agg.resNet).toFixed(1)}%), Cash op ${fmt(Math.round(agg.cashOp))} MAD.${evoCA!==null?' vs N-1 : '+(evoCA>=0?'+':'')+evoCA+'%.':''}`;}
+    insEl.innerHTML=insight;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXECUTIVE COCKPIT — Helpers analytiques (Senior Data Analyst)
+// HHI · Run-rate · Forecast · Saisonnalité · Pareto · Multi-périodes
+// ═══════════════════════════════════════════════════════════════════
+
+// État de la vue Cockpit (mois | ytd | annee | 12mois)
+window.finView=window.finView||'ytd';
+function setFinView(v){
+  window.finView=v;
+  document.querySelectorAll('[data-finview]').forEach(b=>b.classList.toggle('active',b.dataset.finview===v));
+  renderFinance();
+}
+
+// Liste des mois selon la vue choisie (relative au mois sélectionné)
+function _finPeriodMonths(refMonth,view){
+  const[y,m]=refMonth.split('-').map(Number);
+  const months=[];
+  if(view==='mois'){months.push(refMonth);}
+  else if(view==='ytd'){
+    // Du janvier de l'année au mois sélectionné
+    for(let mm=1;mm<=m;mm++)months.push(y+'-'+String(mm).padStart(2,'0'));
+  }
+  else if(view==='annee'){
+    // Toute l'année du mois sélectionné
+    for(let mm=1;mm<=12;mm++)months.push(y+'-'+String(mm).padStart(2,'0'));
+  }
+  else if(view==='12mois'){
+    // 12 derniers mois glissants (incluant le mois sélectionné)
+    for(let i=11;i>=0;i--){
+      const d=new Date(y,m-1-i,1);
+      months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+    }
+  }
+  return months;
+}
+
+// Label lisible de la période
+function _finPeriodLabel(view,months){
+  if(!months.length)return'';
+  const first=months[0],last=months[months.length-1];
+  if(view==='mois')return'📅 '+fmtMoLong(first);
+  if(view==='ytd')return'📅 YTD : '+fmtMoLong(first)+' → '+fmtMoLong(last);
+  if(view==='annee')return'📅 Année '+first.substring(0,4);
+  if(view==='12mois')return'📅 12 mois glissants : '+fmtMoLong(first)+' → '+fmtMoLong(last);
+  return'';
+}
+
+// Agrégat consolidé sur N mois pour N sociétés
+function _finAggMulti(socs,months){
+  return App.memo('aggMulti:'+socs.join(',')+':'+months.join(','),()=>{
+    const agg={caTTC:0,caHT:0,tvaCollectee:0,achats:0,externes:0,personnel:0,impots:0,amortissements:0,financieres:0,margeBrute:0,ebe:0,resExpl:0,resCourant:0,is:0,resNet:0,cashOp:0};
+    socs.forEach(s=>{months.forEach(m=>{
+      const c=finCalculCPC(s,m);
+      Object.keys(agg).forEach(k=>{agg[k]+=c[k]||0;});
+    });});
+    return agg;
+  });
+}
+
+// Agrégat par société sur N mois (pour Pareto / contribution)
+function _finAggBySoc(socs,months){
+  const out={};
+  socs.forEach(s=>{
+    const a={caHT:0,resNet:0,ebe:0,achats:0,externes:0,personnel:0,impots:0,amortissements:0,financieres:0};
+    months.forEach(m=>{const c=finCalculCPC(s,m);Object.keys(a).forEach(k=>{a[k]+=c[k]||0;});});
+    out[s]=a;
+  });
+  return out;
+}
+
+// Indice Herfindahl-Hirschman (concentration de marché)
+// HHI = somme des (part de marché %)² → 0-10000
+// < 1500 : marché peu concentré ; 1500-2500 : modérément ; > 2500 : très concentré
+function _finHHI(values){
+  const total=values.reduce((s,v)=>s+v,0);
+  if(total<=0)return 0;
+  return Math.round(values.reduce((s,v)=>{const p=v/total*100;return s+p*p;},0));
+}
+
+// Run-rate annualisé (extrapolation linéaire des mois écoulés à 12 mois)
+function _finRunRate(values){
+  const valid=values.filter(v=>typeof v==='number'&&!isNaN(v));
+  if(!valid.length)return 0;
+  const sum=valid.reduce((s,v)=>s+v,0);
+  return Math.round(sum/valid.length*12);
+}
+
+// Régression linéaire simple → retourne {slope, intercept, forecast(x)}
+function _finLinearRegression(yValues){
+  const n=yValues.length;if(n<2)return{slope:0,intercept:yValues[0]||0};
+  let sx=0,sy=0,sxy=0,sxx=0;
+  yValues.forEach((y,i)=>{sx+=i;sy+=y;sxy+=i*y;sxx+=i*i;});
+  const slope=(n*sxy-sx*sy)/(n*sxx-sx*sx)||0;
+  const intercept=(sy-slope*sx)/n;
+  return{slope,intercept,forecast:x=>slope*x+intercept};
+}
+
+// Évolution d'un montant (CA HT) mois par mois sur 12 mois — retourne array
+function _finCASeries(socs,months){
+  return months.map(m=>{
+    let total=0;socs.forEach(s=>{total+=finCalculCPC(s,m).caHT;});
+    return{mois:m,ca:total};
+  });
+}
+
+// Évolution Résultat Net mois par mois
+function _finRNSeries(socs,months){
+  return months.map(m=>{
+    let total=0;socs.forEach(s=>{total+=finCalculCPC(s,m).resNet;});
+    return{mois:m,rn:total};
+  });
+}
+
+// Moyenne mobile sur fenêtre N
+function _finMovingAvg(values,window){
+  return values.map((_,i)=>{
+    const start=Math.max(0,i-window+1);
+    const slice=values.slice(start,i+1);
+    return slice.reduce((s,v)=>s+v,0)/slice.length;
+  });
+}
+
+// Saisonnalité : matrice CA[année][mois] sur N années
+function _finSeasonality(socs,nYears){
+  const curY=Number(curYear());
+  const matrix=[];
+  for(let y=curY-nYears+1;y<=curY;y++){
+    const row={year:y,months:[]};
+    for(let m=1;m<=12;m++){
+      const ym=y+'-'+String(m).padStart(2,'0');
+      let total=0;socs.forEach(s=>{total+=finCalculCPC(s,ym).caHT;});
+      row.months.push({mois:m,ca:total});
+    }
+    matrix.push(row);
+  }
+  return matrix;
+}
+
+// Top 10 dépenses par sous-catégorie sur la période
+function _finTopChargesPareto(socs,months,limit){
+  limit=limit||10;
+  const map={};
+  (DB.depenses||[]).forEach(d=>{
+    if(!d||!d.date)return;
+    if(socs.indexOf(d.societe)<0)return;
+    if(months.indexOf(getMonth(d.date))<0)return;
+    const cat=FIN_CATEGORIES[d.categorie];
+    const key=(cat?cat.label:d.categorie||'?')+(d.sousCategorie?' / '+d.sousCategorie:'');
+    map[key]=(map[key]||0)+(Number(d.ht)||0);
+  });
+  return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,limit);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXECUTIVE COCKPIT — Renderers
+// ═══════════════════════════════════════════════════════════════════
+
+function renderFinCockpit(socs,refMonth){
+  const view=window.finView||'ytd';
+  const months=_finPeriodMonths(refMonth,view);
+  const monthsN1=months.map(m=>{const[y,mm]=m.split('-');return(Number(y)-1)+'-'+mm;});
+  const periodLabel=_finPeriodLabel(view,months);
+  const lblEl=document.getElementById('fin-cockpit-period-label');
+  if(lblEl)lblEl.innerHTML=periodLabel+' · '+months.length+' mois · '+socs.length+' société(s) analysée(s)';
+
+  const agg=_finAggMulti(socs,months);
+  const aggN1=_finAggMulti(socs,monthsN1);
+  const pct=v=>agg.caHT>0?(v/agg.caHT*100):0;
+  const evo=(a,b)=>b!==0?Math.round((a-b)/Math.abs(b)*100):null;
+
+  // ─── 1. HERO KPIs ────────────────────────────────────────────
+  const hero=document.getElementById('fin-cockpit-hero');
+  if(hero){
+    const evoCA=evo(agg.caHT,aggN1.caHT);
+    const evoEBE=evo(agg.ebe,aggN1.ebe);
+    const evoRN=evo(agg.resNet,aggN1.resNet);
+    const totalCharges=agg.achats+agg.externes+agg.personnel+agg.impots+agg.amortissements+agg.financieres;
+    const colE=v=>v===null?'var(--muted)':v>=0?'var(--green)':'var(--red)';
+    const sigE=v=>v===null?'—':(v>=0?'+':'')+v+'%';
+    hero.innerHTML=`
+      <div class="metric" style="border-left:3px solid var(--gold-premium)"><div class="metric-label">💰 CA HT ${socs.length===4?'Groupe':''}</div><div class="metric-val" style="color:var(--gold-premium)">${fmt(Math.round(agg.caHT))}</div><div class="metric-sub">vs N-1 : <span style="color:${colE(evoCA)}">${sigE(evoCA)}</span> · TTC ${fmt(Math.round(agg.caTTC))}</div></div>
+      <div class="metric"><div class="metric-label">💎 Marge brute</div><div class="metric-val" style="color:var(--green)">${pct(agg.margeBrute).toFixed(1)}%</div><div class="metric-sub">${fmt(Math.round(agg.margeBrute))} MAD</div></div>
+      <div class="metric"><div class="metric-label">📊 EBE / EBITDA</div><div class="metric-val" style="color:${agg.ebe>=0?'var(--green)':'var(--red)'}">${pct(agg.ebe).toFixed(1)}%</div><div class="metric-sub">${fmt(Math.round(agg.ebe))} · vs N-1 <span style="color:${colE(evoEBE)}">${sigE(evoEBE)}</span></div></div>
+      <div class="metric"><div class="metric-label">🎯 Résultat Net</div><div class="metric-val" style="color:${agg.resNet>=0?'var(--green)':'var(--red)'}">${pct(agg.resNet).toFixed(1)}%</div><div class="metric-sub">${fmt(Math.round(agg.resNet))} · vs N-1 <span style="color:${colE(evoRN)}">${sigE(evoRN)}</span></div></div>
+      <div class="metric"><div class="metric-label">💵 Cash opérationnel</div><div class="metric-val" style="color:var(--gold-premium)">${fmt(Math.round(agg.cashOp))}</div><div class="metric-sub">${pct(agg.cashOp).toFixed(1)}% du CA · RN + amortissements</div></div>
+      <div class="metric"><div class="metric-label">💸 Total charges</div><div class="metric-val" style="color:var(--red-dark)">${fmt(Math.round(totalCharges))}</div><div class="metric-sub">${pct(totalCharges).toFixed(1)}% du CA HT</div></div>
+      <div class="metric"><div class="metric-label">🏦 TVA collectée</div><div class="metric-val">${fmt(Math.round(agg.tvaCollectee))}</div><div class="metric-sub">à reverser à l'État</div></div>
+      <div class="metric"><div class="metric-label">📅 CA mensuel moyen</div><div class="metric-val">${fmt(Math.round(agg.caHT/months.length))}</div><div class="metric-sub">sur ${months.length} mois</div></div>`;
+  }
+
+  // ─── 2. ÉVOLUTION 12 MOIS + Moyenne mobile ───────────────────
+  const trendEl=document.getElementById('fin-cockpit-trend');
+  if(trendEl){
+    // Force 12 derniers mois pour la tendance, indépendamment de la vue
+    const trendMonths=_finPeriodMonths(refMonth,'12mois');
+    const series=_finCASeries(socs,trendMonths);
+    const rnSeries=_finRNSeries(socs,trendMonths);
+    const caValues=series.map(s=>s.ca);
+    const ma3=_finMovingAvg(caValues,3);
+    const maxCA=Math.max(...caValues,1);
+    const bars=series.map((s,i)=>{
+      const h=Math.round(s.ca/maxCA*100);
+      const isCur=s.mois===refMonth;
+      const rn=rnSeries[i].rn;
+      const rnPos=rn>=0;
+      return`<div class="chart-bar-col" title="${fmtMoLong(s.mois)} · CA ${fmt(Math.round(s.ca))} · RN ${fmt(Math.round(rn))} · MA3 ${fmt(Math.round(ma3[i]))}"><div class="chart-bar-val">${s.ca>0?Math.round(s.ca/1000)+'k':''}</div><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div class="chart-bar-inner" style="height:${h}%;background:${isCur?'var(--gold-premium)':'var(--primary)'};width:100%"></div></div><div class="chart-bar-label" style="color:${rnPos?'var(--green)':'var(--red)'};font-weight:600">${rn!==0?(rnPos?'+':'')+Math.round(rn/1000)+'k':''}</div><div class="chart-bar-label">${s.mois.substring(5)}</div></div>`;
+    }).join('');
+    const totalCA=caValues.reduce((a,b)=>a+b,0);
+    const meanCA=totalCA/caValues.length;
+    const lastMA=Math.round(ma3[ma3.length-1]);
+    trendEl.innerHTML=`<div class="chart-bar-wrap" style="height:160px">${bars}</div>
+      <div style="display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px;flex-wrap:wrap">
+        <span><b>Total :</b> ${fmt(Math.round(totalCA))} MAD</span>
+        <span><b>Moyenne :</b> ${fmt(Math.round(meanCA))} /mois</span>
+        <span><b>Moy. mobile 3M :</b> ${fmt(lastMA)} <span style="color:${lastMA>meanCA?'var(--green)':'var(--red)'}">${lastMA>meanCA?'↗ tendance haussière':'↘ tendance baissière'}</span></span>
+      </div>`;
+  }
+
+  // ─── 3. RUN-RATE & FORECAST ANNUEL ────────────────────────────
+  const fcEl=document.getElementById('fin-cockpit-forecast');
+  if(fcEl){
+    const curY=refMonth.substring(0,4);
+    const yearMonths=[];for(let i=1;i<=12;i++)yearMonths.push(curY+'-'+String(i).padStart(2,'0'));
+    const refIdx=Number(refMonth.substring(5,7));
+    const elapsedMonths=yearMonths.slice(0,refIdx);
+    const series=_finCASeries(socs,elapsedMonths).map(s=>s.ca);
+    const rnElapsed=_finRNSeries(socs,elapsedMonths).map(s=>s.rn);
+    const runRateCA=_finRunRate(series);
+    const runRateRN=_finRunRate(rnElapsed);
+    // Régression linéaire pour forecast
+    const reg=_finLinearRegression(series);
+    let forecastTotal=0;
+    for(let i=0;i<12;i++){
+      forecastTotal+=Math.max(0,reg.forecast(i));
+    }
+    forecastTotal=Math.round(forecastTotal);
+    // Tendance (slope positif = croissance)
+    const slopePct=series.length>0&&series[0]>0?Math.round(reg.slope/series[0]*100):0;
+    const trendIco=reg.slope>0?'📈':reg.slope<0?'📉':'➡️';
+    const trendCol=reg.slope>0?'var(--green)':reg.slope<0?'var(--red)':'var(--muted)';
+    fcEl.innerHTML=`
+      <div class="grid2">
+        <div class="metric"><div class="metric-label">⚡ Run-rate CA annualisé</div><div class="metric-val" style="color:var(--gold-premium)">${fmt(runRateCA)}</div><div class="metric-sub">extrapolation des ${elapsedMonths.length} mois écoulés × 12</div></div>
+        <div class="metric"><div class="metric-label">🎯 Run-rate RN annualisé</div><div class="metric-val" style="color:${runRateRN>=0?'var(--green)':'var(--red)'}">${fmt(runRateRN)}</div><div class="metric-sub">projection résultat fin ${curY}</div></div>
+        <div class="metric"><div class="metric-label">📊 Forecast régression</div><div class="metric-val">${fmt(forecastTotal)}</div><div class="metric-sub">tendance linéaire ${curY}</div></div>
+        <div class="metric"><div class="metric-label">${trendIco} Tendance MoM</div><div class="metric-val" style="color:${trendCol}">${slopePct>=0?'+':''}${slopePct}%</div><div class="metric-sub">croissance mensuelle moyenne</div></div>
+      </div>`;
+  }
+
+  // ─── 4. CONCENTRATION CA (HHI + Pareto) ───────────────────────
+  const concEl=document.getElementById('fin-cockpit-concentration');
+  if(concEl){
+    const bySoc=_finAggBySoc(['cl','at','as','fc'],months);
+    const caValues=Object.values(bySoc).map(a=>a.caHT);
+    const hhi=_finHHI(caValues);
+    const hhiCol=hhi<1500?'var(--green)':hhi<2500?'var(--yellow)':'var(--red)';
+    const hhiLbl=hhi<1500?'Diversifié':hhi<2500?'Modérément concentré':'Très concentré';
+    const totalCA=caValues.reduce((a,b)=>a+b,0)||1;
+    const sorted=Object.entries(bySoc).map(([k,v])=>({soc:k,...v})).sort((a,b)=>b.caHT-a.caHT);
+    let cum=0;
+    const rows=sorted.map(s=>{
+      const meta=FIN_SOCIETES[s.soc];
+      const pct=s.caHT/totalCA*100;
+      cum+=pct;
+      return`<div class="prog-row"><span class="prog-label" style="color:${meta.col}">${meta.icone} ${meta.nom}</span><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${meta.col}"></div></div><span class="prog-val">${pct.toFixed(1)}% · ${fmt(Math.round(s.caHT))}</span></div><div style="font-size:10px;color:var(--muted);margin:-4px 0 6px 144px">Cumul Pareto : ${cum.toFixed(1)}%</div>`;
+    }).join('');
+    concEl.innerHTML=`
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px;background:var(--gray-50);border-radius:8px;margin-bottom:12px">
+        <div><div style="font-size:11px;color:var(--muted)">Indice HHI</div><div style="font-family:var(--font-head);font-size:22px;font-weight:700;color:${hhiCol}">${hhi}</div></div>
+        <div style="flex:1"><div style="font-weight:600;color:${hhiCol};font-size:13px">${hhiLbl}</div><div style="font-size:11px;color:var(--muted)">< 1500 diversifié · 1500-2500 modéré · > 2500 risque concentration</div></div>
+      </div>
+      ${rows}`;
+  }
+
+  // ─── 5. CONTRIBUTION RN PAR SOCIÉTÉ ───────────────────────────
+  const rnEl=document.getElementById('fin-cockpit-rn-contrib');
+  if(rnEl){
+    const bySoc=_finAggBySoc(['cl','at','as','fc'],months);
+    const totalRN=Object.values(bySoc).reduce((s,v)=>s+v.resNet,0);
+    const sorted=Object.entries(bySoc).map(([k,v])=>({soc:k,...v})).sort((a,b)=>b.resNet-a.resNet);
+    rnEl.innerHTML=`
+      <div style="text-align:center;padding:8px;background:var(--gray-50);border-radius:8px;margin-bottom:12px">
+        <div style="font-size:11px;color:var(--muted)">Résultat Net consolidé</div>
+        <div style="font-family:var(--font-head);font-size:22px;font-weight:700;color:${totalRN>=0?'var(--green)':'var(--red)'}">${fmt(Math.round(totalRN))} MAD</div>
+      </div>
+      ${sorted.map(s=>{
+        const meta=FIN_SOCIETES[s.soc];
+        const margePct=s.caHT>0?(s.resNet/s.caHT*100):0;
+        const contribPct=totalRN!==0?(s.resNet/totalRN*100):0;
+        return`<div style="padding:8px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><span style="color:${meta.col};font-weight:600">${meta.icone} ${meta.nom}</span><span style="font-size:12px"><b style="color:${s.resNet>=0?'var(--green)':'var(--red)'}">${fmt(Math.round(s.resNet))}</b> · ${margePct.toFixed(1)}% · contrib ${contribPct.toFixed(0)}%</span></div>`;
+      }).join('')}`;
+  }
+
+  // ─── 6. SAISONNALITÉ (heatmap 3 ans) ──────────────────────────
+  const seasEl=document.getElementById('fin-cockpit-seasonality');
+  if(seasEl){
+    const matrix=_finSeasonality(socs,3);
+    const allValues=matrix.flatMap(r=>r.months.map(m=>m.ca)).filter(v=>v>0);
+    const maxV=Math.max(...allValues,1);
+    const moisNoms=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+    const heatmap=`<div style="overflow-x:auto"><table style="border-collapse:separate;border-spacing:2px;font-size:11px;min-width:560px">
+      <thead><tr><th style="padding:4px;text-align:left">Année</th>${moisNoms.map(m=>`<th style="padding:4px;text-align:center;color:var(--muted)">${m}</th>`).join('')}<th style="padding:4px;text-align:right;color:var(--gold-premium)">Total</th></tr></thead>
+      <tbody>${matrix.map(row=>{
+        const total=row.months.reduce((s,m)=>s+m.ca,0);
+        return`<tr><td style="padding:4px;font-weight:700">${row.year}</td>${row.months.map(m=>{
+          if(m.ca<=0)return`<td style="padding:6px;background:var(--gray-100);border-radius:4px;text-align:center;color:var(--gray-400)">—</td>`;
+          const intensity=m.ca/maxV;
+          const bg=`rgba(99,102,241,${0.10+intensity*0.70})`;
+          const col=intensity>0.5?'#FFFFFF':'var(--gray-900)';
+          return`<td style="padding:6px;background:${bg};border-radius:4px;text-align:center;color:${col};font-weight:600;min-width:48px" title="${row.year}-${String(m.mois).padStart(2,'0')} : ${fmt(Math.round(m.ca))}">${m.ca>=1000?Math.round(m.ca/1000)+'k':Math.round(m.ca)}</td>`;
+        }).join('')}<td style="padding:4px;text-align:right;font-weight:700;color:var(--gold-premium)">${fmt(Math.round(total))}</td></tr>`;
+      }).join('')}</tbody></table></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:6px;font-style:italic">Plus la couleur est foncée, plus le CA est élevé. Identifiez vos meilleurs et pires mois pour planifier saisonnalité, stocks, et marketing.</div>`;
+    seasEl.innerHTML=heatmap;
+  }
+
+  // ─── 7. PARETO CHARGES (top 10) ───────────────────────────────
+  const parEl=document.getElementById('fin-cockpit-charges-pareto');
+  if(parEl){
+    const top=_finTopChargesPareto(socs,months,10);
+    const totalCh=top.reduce((s,r)=>s+r[1],0)||1;
+    let cum=0;
+    parEl.innerHTML=top.length===0?'<div style="color:var(--muted);padding:14px;font-size:13px">Aucune dépense sur cette période</div>':top.map(r=>{
+      const pct=r[1]/totalCh*100;cum+=pct;
+      return`<div class="prog-row"><span class="prog-label" style="font-size:12px">${esc(r[0])}</span><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:var(--yellow-dark)"></div></div><span class="prog-val">${pct.toFixed(1)}% · ${fmt(Math.round(r[1]))}</span></div><div style="font-size:10px;color:var(--muted);margin:-4px 0 4px 144px">Cumul : ${cum.toFixed(1)}%</div>`;
+    }).join('');
+  }
+
+  // ─── 8. STRUCTURE DE COÛTS (% du CA HT) ───────────────────────
+  const csEl=document.getElementById('fin-cockpit-cost-structure');
+  if(csEl){
+    const items=[
+      {label:'🔄 Achats / Coût des ventes',key:'achats',col:'#FFB347',type:'variable'},
+      {label:'🏢 Charges externes',key:'externes',col:'#5B9BD5',type:'fixe'},
+      {label:'👥 Personnel',key:'personnel',col:'#F72585',type:'fixe'},
+      {label:'🏛️ Impôts & taxes',key:'impots',col:'#A78BFA',type:'fixe'},
+      {label:'📉 Amortissements',key:'amortissements',col:'#10B981',type:'fixe'},
+      {label:'💳 Charges financières',key:'financieres',col:'#EF4444',type:'fixe'}
+    ];
+    const variables=agg.achats;
+    const fixes=agg.externes+agg.personnel+agg.impots+agg.amortissements+agg.financieres;
+    const totalCh=variables+fixes;
+    const pctVar=totalCh>0?Math.round(variables/totalCh*100):0;
+    const pctFix=100-pctVar;
+    csEl.innerHTML=`
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div style="flex:1;text-align:center;padding:8px;background:#FFB34715;border-radius:8px;border:1px solid #FFB34740"><div style="font-size:11px;color:var(--muted)">Variables</div><div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:#FFB347">${pctVar}%</div><div style="font-size:11px">${fmt(Math.round(variables))}</div></div>
+        <div style="flex:1;text-align:center;padding:8px;background:#5B9BD515;border-radius:8px;border:1px solid #5B9BD540"><div style="font-size:11px;color:var(--muted)">Fixes</div><div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:#5B9BD5">${pctFix}%</div><div style="font-size:11px">${fmt(Math.round(fixes))}</div></div>
+      </div>
+      ${items.map(i=>{
+        const v=agg[i.key]||0;const p=pct(v);
+        return`<div class="prog-row"><span class="prog-label" style="font-size:12px;color:${i.col}">${i.label}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(p*2,100)}%;background:${i.col}"></div></div><span class="prog-val">${p.toFixed(1)}% · ${fmt(Math.round(v))}</span></div>`;
+      }).join('')}`;
+  }
+
+  // ─── 9. ALERTES INTELLIGENTES FORWARD-LOOKING ─────────────────
+  const alertsEl=document.getElementById('fin-cockpit-alerts-pro');
+  if(alertsEl){
+    const alerts=[];
+    // Détection croissance négative
+    if(aggN1.caHT>0&&agg.caHT<aggN1.caHT*0.95)alerts.push({t:'red',ic:'📉',ttl:'Recul du CA',msg:'CA en baisse de '+Math.abs(Math.round((agg.caHT-aggN1.caHT)/aggN1.caHT*100))+'% vs même période N-1. Plan d\'action commercial nécessaire.'});
+    // Marge brute faible
+    if(agg.caHT>0&&agg.margeBrute/agg.caHT<0.30)alerts.push({t:'yellow',ic:'⚠️',ttl:'Marge brute sous-optimale',msg:'Marge brute groupe à '+Math.round(agg.margeBrute/agg.caHT*100)+'% (cible 35-50% selon secteur). Audit fournisseurs recommandé.'});
+    // EBE négatif
+    if(agg.ebe<0)alerts.push({t:'red',ic:'🚨',ttl:'EBE négatif',msg:'L\'exploitation perd '+fmt(Math.abs(Math.round(agg.ebe)))+' MAD. Charges fixes excessives ou pricing à revoir.'});
+    // Charges personnel > 40% CA
+    if(agg.caHT>0&&agg.personnel/agg.caHT>0.40)alerts.push({t:'yellow',ic:'👥',ttl:'Charges personnel élevées',msg:'Personnel = '+Math.round(agg.personnel/agg.caHT*100)+'% du CA HT (seuil critique : 40%). Productivité à monitorer.'});
+    // Dépendance forte (HHI > 2500)
+    const bySoc=_finAggBySoc(['cl','at','as','fc'],months);
+    const hhiCheck=_finHHI(Object.values(bySoc).map(a=>a.caHT));
+    if(hhiCheck>2500)alerts.push({t:'yellow',ic:'🥧',ttl:'Risque concentration',msg:'HHI = '+hhiCheck+'. Une société représente une part trop dominante du CA. Diversification recommandée.'});
+    // Croissance positive forte
+    if(aggN1.caHT>0&&agg.caHT>aggN1.caHT*1.20)alerts.push({t:'green',ic:'🚀',ttl:'Forte croissance',msg:'CA en progression de +'+Math.round((agg.caHT-aggN1.caHT)/aggN1.caHT*100)+'% vs N-1. Capitaliser sur la dynamique.'});
+    // Dépréciation marge brute vs N-1
+    if(aggN1.caHT>0&&aggN1.margeBrute>0){
+      const mbCur=agg.margeBrute/agg.caHT*100;const mbN1=aggN1.margeBrute/aggN1.caHT*100;
+      if(mbCur<mbN1-3)alerts.push({t:'yellow',ic:'📊',ttl:'Marge brute en dégradation',msg:'Marge brute = '+mbCur.toFixed(1)+'% vs '+mbN1.toFixed(1)+'% N-1 (-'+(mbN1-mbCur).toFixed(1)+' pts). Inflation des achats ?'});
+    }
+    // Cash positif fort
+    if(agg.cashOp>0&&agg.cashOp>agg.caHT*0.20)alerts.push({t:'green',ic:'💎',ttl:'Cash opérationnel solide',msg:'Cash op. = '+Math.round(agg.cashOp/agg.caHT*100)+'% du CA. Capacité d\'investissement confortable.'});
+
+    if(alerts.length===0)alerts.push({t:'green',ic:'✅',ttl:'Aucune alerte critique',msg:'Performance sous contrôle sur la période analysée. Continuez sur cette dynamique.'});
+    alertsEl.innerHTML=alerts.map(a=>`<div class="alert alert-${a.t}" style="margin-bottom:6px"><div><strong>${a.ic} ${a.ttl}</strong><br><span style="font-size:12px">${a.msg}</span></div></div>`).join('');
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────
 // MODULE PILOTAGE FINANCIER (vue groupe)
 // ─────────────────────────────────────────────────────────────────
@@ -6370,6 +7338,11 @@ function renderFinance(){
 
   // Sociétés à inclure
   const socs=soc==='all'?['cl','at','as','fc']:[soc];
+
+  // ⚡ Tableau de Bord Power BI-style (slicers indépendants)
+  try{renderTDB();}catch(e){App.log.error('tdb','render',e);}
+  // 🎯 Cockpit Exécutif analytique
+  try{renderFinCockpit(socs,month);}catch(e){App.log.error('cockpit','render',e);}
 
   // Agrégation
   let agg={caTTC:0,caHT:0,tvaCollectee:0,achats:0,externes:0,personnel:0,impots:0,amortissements:0,financieres:0,margeBrute:0,ebe:0,resExpl:0,resCourant:0,is:0,resNet:0,cashOp:0};
