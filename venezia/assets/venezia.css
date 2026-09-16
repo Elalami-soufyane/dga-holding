@@ -1,40 +1,42 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    VENEZIA ICE — feuille de style commune aux pages du dispositif
-   (page de liens · menu · avis). Identité : lagune vénitienne, or, crème.
+   (page de liens · menu · avis). Identité reprise de la carte imprimée :
+   carmin, or et crème — « Glacier · Café · Restaurant, depuis 1999 ».
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root{
-  /* ─── Identité ─── */
-  --lagune:#0E2A3A;
-  --lagune-2:#143C52;
-  --or:#D8A54A;
-  --or-clair:#EFC87C;
-  --creme:#FFF6E9;
+  /* ─── Identité Venezia Ice (relevée sur la carte imprimée) ─── */
+  --vin:#A8123A;          /* le carmin du logo */
+  --vin-2:#7C0C2A;        /* bordeaux profond */
+  --vin-3:#4E0819;        /* fond des dégradés */
+  --or:#C2A14D;           /* l'or des frises de couverture */
+  --or-clair:#E3C77F;
+  --creme:#FFF8F2;
   --fraise:#E4576B;
   --pistache:#6FB38A;
 
   /* ─── Surfaces (thème clair) ─── */
-  --bg:#FFFBF5;
+  --bg:#FFF9F5;
   --surface:#FFFFFF;
-  --surface-2:#F6F0E6;
-  --texte:#16242E;
-  --texte-2:#5A6A75;
-  --bord:#E8DFD1;
-  --ombre:0 1px 2px rgba(18,33,44,.06), 0 8px 24px rgba(18,33,44,.06);
+  --surface-2:#FBEFE9;
+  --texte:#23141A;
+  --texte-2:#7A6069;
+  --bord:#EFDFD6;
+  --ombre:0 1px 2px rgba(60,20,32,.06), 0 8px 24px rgba(60,20,32,.07);
   --rayon:16px;
   --max:620px;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#0B1B25; --surface:#122633; --surface-2:#16303F;
-    --texte:#F2E9DA; --texte-2:#A9BAC5; --bord:#1F3B4C;
-    --ombre:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --bg:#190A11; --surface:#231118; --surface-2:#2E1720;
+    --texte:#F7E9E4; --texte-2:#C3A9AF; --bord:#3A1F29;
+    --ombre:0 1px 2px rgba(0,0,0,.45), 0 8px 24px rgba(0,0,0,.4);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0B1B25; --surface:#122633; --surface-2:#16303F;
-  --texte:#F2E9DA; --texte-2:#A9BAC5; --bord:#1F3B4C;
-  --ombre:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  --bg:#190A11; --surface:#231118; --surface-2:#2E1720;
+  --texte:#F7E9E4; --texte-2:#C3A9AF; --bord:#3A1F29;
+  --ombre:0 1px 2px rgba(0,0,0,.45), 0 8px 24px rgba(0,0,0,.4);
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -42,29 +44,48 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 body{
   margin:0;background:var(--bg);color:var(--texte);
-  font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-family:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
   font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
   padding-bottom:env(safe-area-inset-bottom);
 }
-html[dir="rtl"] body{font-family:'Tajawal','DM Sans',system-ui,sans-serif}
+html[dir="rtl"] body{font-family:'Tajawal','Jost',system-ui,sans-serif}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
-h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:700;margin:0;line-height:1.15}
-html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] h3{font-family:'Tajawal',sans-serif}
+h1,h2,h3{font-family:'Jost',system-ui,sans-serif;font-weight:300;margin:0;line-height:1.15;letter-spacing:.005em}
+html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] h3{font-family:'Tajawal',sans-serif;font-weight:500}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--or);outline-offset:2px;border-radius:6px}
 
+/* ═══ Bloc-marque « VENEZIA ICE » ═══ */
+.marque{display:flex;flex-direction:column;align-items:center;line-height:1;color:var(--creme)}
+.marque .sur{font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--or-clair);margin-bottom:5px}
+.marque .nom{font-family:'Bebas Neue',Impact,sans-serif;font-size:27px;letter-spacing:.09em;
+  border-bottom:1.5px solid currentColor;padding-bottom:3px}
+.marque .filet{display:none}   /* le filet est le soulignement du mot « Venezia » */
+.marque .ice{font-family:'Bebas Neue',Impact,sans-serif;font-size:19px;letter-spacing:.2em;margin-top:3px}
+.marque .sous{font-family:'Parisienne',cursive;font-size:15px;color:var(--or-clair);margin-top:5px}
+.marque.petit{align-items:flex-start}
+.marque.petit .sur{font-size:7px;letter-spacing:.2em;margin-bottom:4px}
+.marque.petit .nom{font-size:22px}
+.marque.petit .ice{font-size:15px}
+.marque.xl .nom{font-size:52px}
+.marque.xl .ice{font-size:36px}
+.marque.xl .sur{font-size:10.5px;letter-spacing:.3em}
+.marque.xl .sous{font-size:26px;margin-top:8px}
+.marque.sombre{color:var(--vin)}
+.marque.sombre .sur,.marque.sombre .sous{color:var(--or)}
+
 /* ═══ En-tête / hero ═══ */
 .hero{
   position:relative;overflow:hidden;color:var(--creme);
-  background:radial-gradient(120% 90% at 20% 0%,var(--lagune-2) 0%,var(--lagune) 55%,#08161F 100%);
+  background:radial-gradient(120% 90% at 20% 0%,var(--vin) 0%,var(--vin-2) 55%,var(--vin-3) 100%);
   padding:calc(18px + env(safe-area-inset-top)) 0 26px;
 }
 .hero.centre{text-align:center;padding-bottom:30px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .logo{width:42px;height:42px;flex:0 0 auto}
-.brand-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;white-space:nowrap}
+.brand-name{font-family:'Bebas Neue',Impact,sans-serif;font-size:21px;letter-spacing:.07em;white-space:nowrap}
 .brand-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--or-clair)}
 .langs{display:flex;gap:4px;background:rgba(255,255,255,.08);padding:4px;border-radius:999px}
 .langs button{padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;
@@ -114,13 +135,13 @@ html[dir="rtl"] .lien .fleche{transform:scaleX(-1)}
 
 /* Variante mise en avant (le menu) */
 .lien.majeur{
-  background:linear-gradient(135deg,var(--lagune) 0%,var(--lagune-2) 100%);
+  background:linear-gradient(135deg,var(--vin) 0%,var(--vin-2) 100%);
   border-color:transparent;color:var(--creme);padding:18px 16px;
 }
 .lien.majeur .ico{background:rgba(216,165,74,.18)}
 .lien.majeur .ico svg{fill:var(--or-clair)}
-.lien.majeur .titre{font-family:'Playfair Display',Georgia,serif;font-size:21px}
-html[dir="rtl"] .lien.majeur .titre{font-family:'Tajawal',sans-serif}
+.lien.majeur .titre{font-family:'Bebas Neue',Impact,sans-serif;font-size:25px;letter-spacing:.05em}
+html[dir="rtl"] .lien.majeur .titre{font-family:'Tajawal',sans-serif;font-weight:700;font-size:20px}
 .lien.majeur .sous{color:rgba(255,246,233,.72)}
 .lien.majeur .fleche{color:var(--or-clair)}
 
@@ -139,7 +160,7 @@ html[dir="rtl"] .lien.majeur .titre{font-family:'Tajawal',sans-serif}
 .horaires li.today{color:var(--texte);font-weight:700}
 
 footer{text-align:center;padding:26px 16px 34px;color:var(--texte-2);font-size:12.5px}
-footer .f-brand{font-family:'Playfair Display',serif;font-size:15px;color:var(--texte);margin-bottom:4px}
+footer .f-brand{font-family:'Bebas Neue',Impact,sans-serif;font-size:17px;letter-spacing:.09em;color:var(--texte);margin-bottom:4px}
 .maj{opacity:.75;font-size:11.5px}
 
 /* ═══ Bouton flottant WhatsApp ═══ */
@@ -170,9 +191,9 @@ html[dir="rtl"] .haut{left:auto;right:16px}
   text-decoration:none;text-align:center;transition:transform .12s,filter .15s;
 }
 .btn:active{transform:scale(.985)}
-.btn-or{background:var(--or);color:#1B1206}
+.btn-or{background:var(--or);color:#2A1D05}
 .btn-or:hover{filter:brightness(1.05)}
-.btn-lagune{background:var(--lagune);color:var(--creme)}
+.btn-vin{background:var(--vin);color:var(--creme)}
 .btn-vert{background:#25D366;color:#06301A}
 .btn-ligne{background:transparent;border:1px solid var(--bord);color:var(--texte)}
 .btn svg{width:19px;height:19px;fill:currentColor;flex:0 0 auto}

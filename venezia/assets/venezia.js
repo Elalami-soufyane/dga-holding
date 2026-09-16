@@ -7,6 +7,8 @@
 
 const CONFIG = {
   nom:        'Venezia Ice',
+  metier:     'Glacier · Café · Restaurant',
+  depuis:     '1999',
   societe:    'Ste F Corner',
   ville:      'Larache',
   adresse:    'Avenue Mohammed V, Larache',            // À CONFIRMER
@@ -36,8 +38,8 @@ const CONFIG = {
 
 const I18N = {
   fr:{dir:'ltr',
-    tagline:'Glaces artisanales, crêpes & jus frais',
-    hero:'Le goût de <em>Venise</em>, à Larache',
+    tagline:'Petits déjeuners, cuisine, coupes glacées et pâtisseries',
+    hero:'La maison des <em>glaces</em> de Larache',
     appeler:'Appeler',whatsapp:'WhatsApp',itineraire:'Itinéraire',partager:'Partager',
     ouvert:'Ouvert maintenant',ferme:'Fermé actuellement',ferme_ouvre:'Ouvre à',jusqua:'jusqu’à',
     ferme_jour:'Fermé',jours:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
@@ -46,7 +48,7 @@ const I18N = {
     recherche:'Rechercher un produit…',aucun:'Aucun produit ne correspond à votre recherche.',
     star:'Best-seller',new:'Nouveau',veg:'Végétarien',haut:'Revenir en haut',
     // page de liens
-    voirMenu:'Voir le menu',voirMenuSous:'51 produits · 4 langues · prix à jour',
+    voirMenu:'Voir le menu',voirMenuSous:'{n} produits · 4 langues · prix à jour',
     suivez:'Suivez-nous',liensTitre:'Tout Venezia Ice',
     avisTitre:'Laisser un avis',avisSous:'Une étoile fait plaisir, cinq font vivre le quartier',
     souciTitre:'Un souci ? Dites-le nous',souciSous:'Message privé au responsable, réponse rapide',
@@ -68,8 +70,8 @@ const I18N = {
     retourMenu:'← Revenir au menu',manqueMessage:'Merci d’écrire quelques mots avant d’envoyer.'},
 
   ar:{dir:'rtl',
-    tagline:'مثلجات حرفية، كريب وعصائر طازجة',
-    hero:'نكهة <em>البندقية</em> في العرائش',
+    tagline:'فطور الصباح، مأكولات، كؤوس المثلجات وحلويات',
+    hero:'بيت <em>المثلجات</em> بالعرائش',
     appeler:'اتصل',whatsapp:'واتساب',itineraire:'الطريق',partager:'مشاركة',
     ouvert:'مفتوح الآن',ferme:'مغلق حاليا',ferme_ouvre:'يفتح على',jusqua:'حتى',
     ferme_jour:'مغلق',jours:['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
@@ -77,7 +79,7 @@ const I18N = {
     commander:'اطلب الآن',maj:'آخر تحديث للقائمة',prix:'الأسعار بالدرهم، الضرائب مضمّنة.',
     recherche:'ابحث عن منتج…',aucun:'لا يوجد منتج مطابق لبحثك.',
     star:'الأكثر طلبا',new:'جديد',veg:'نباتي',haut:'العودة إلى الأعلى',
-    voirMenu:'عرض القائمة',voirMenuSous:'51 منتجا · 4 لغات · أسعار محدّثة',
+    voirMenu:'عرض القائمة',voirMenuSous:'{n} منتجا · 4 لغات · أسعار محدّثة',
     suivez:'تابعونا',liensTitre:'كل روابط فينيسيا آيس',
     avisTitre:'اترك تقييما',avisSous:'تقييمك يساعدنا كثيرا',
     souciTitre:'واجهتك مشكلة؟ أخبرنا',souciSous:'رسالة خاصة إلى المسؤول، رد سريع',
@@ -98,8 +100,8 @@ const I18N = {
     retourMenu:'← العودة إلى القائمة',manqueMessage:'المرجو كتابة بضع كلمات قبل الإرسال.'},
 
   en:{dir:'ltr',
-    tagline:'Artisan ice cream, crêpes & fresh juices',
-    hero:'A taste of <em>Venice</em>, in Larache',
+    tagline:'Breakfast, food, ice cream sundaes and pastries',
+    hero:'Larache’s home of <em>ice cream</em>',
     appeler:'Call',whatsapp:'WhatsApp',itineraire:'Directions',partager:'Share',
     ouvert:'Open now',ferme:'Currently closed',ferme_ouvre:'Opens at',jusqua:'until',
     ferme_jour:'Closed',jours:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
@@ -107,7 +109,7 @@ const I18N = {
     commander:'Order',maj:'Menu updated on',prix:'Prices in dirhams, taxes included.',
     recherche:'Search the menu…',aucun:'No item matches your search.',
     star:'Best-seller',new:'New',veg:'Vegetarian',haut:'Back to top',
-    voirMenu:'See the menu',voirMenuSous:'51 items · 4 languages · live prices',
+    voirMenu:'See the menu',voirMenuSous:'{n} items · 4 languages · live prices',
     suivez:'Follow us',liensTitre:'All of Venezia Ice',
     avisTitre:'Leave a review',avisSous:'It takes 30 seconds and means a lot',
     souciTitre:'Something wrong? Tell us',souciSous:'Private message to the manager, quick reply',
@@ -128,8 +130,8 @@ const I18N = {
     retourMenu:'← Back to the menu',manqueMessage:'Please write a few words before sending.'},
 
   es:{dir:'ltr',
-    tagline:'Helados artesanales, crepes y zumos naturales',
-    hero:'El sabor de <em>Venecia</em>, en Larache',
+    tagline:'Desayunos, cocina, copas heladas y pastelería',
+    hero:'La casa de los <em>helados</em> de Larache',
     appeler:'Llamar',whatsapp:'WhatsApp',itineraire:'Cómo llegar',partager:'Compartir',
     ouvert:'Abierto ahora',ferme:'Cerrado ahora',ferme_ouvre:'Abre a las',jusqua:'hasta',
     ferme_jour:'Cerrado',jours:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
@@ -137,7 +139,7 @@ const I18N = {
     commander:'Pedir',maj:'Carta actualizada el',prix:'Precios en dírhams, impuestos incluidos.',
     recherche:'Buscar en la carta…',aucun:'Ningún producto coincide con la búsqueda.',
     star:'Más vendido',new:'Nuevo',veg:'Vegetariano',haut:'Volver arriba',
-    voirMenu:'Ver la carta',voirMenuSous:'51 productos · 4 idiomas · precios al día',
+    voirMenu:'Ver la carta',voirMenuSous:'{n} productos · 4 idiomas · precios al día',
     suivez:'Síguenos',liensTitre:'Todo Venezia Ice',
     avisTitre:'Dejar una reseña',avisSous:'30 segundos que nos ayudan mucho',
     souciTitre:'¿Algún problema? Dínoslo',souciSous:'Mensaje privado al responsable, respuesta rápida',
@@ -324,9 +326,15 @@ const V = (function(){
 
   function surChangement(fn){ ecouteurs.push(fn); }
 
+  /** Nombre de produits réellement proposés (hors ruptures), pour les textes. */
+  function nbProduits(){
+    if (typeof MENU === 'undefined') return 0;
+    return MENU.reduce((n,c) => n + c.items.filter(i => !i.off).length, 0);
+  }
+
   return {
     get lang(){ return lang; }, LANGS, setLang, t, tr, esc, $, ICONES, MARQUES,
-    ouverture, waLink, partager, langs, statut, actions, horaires, retourHaut,
+    ouverture, waLink, partager, langs, statut, actions, horaires, retourHaut, nbProduits,
     boutonLien, surChangement, appliquer
   };
 })();

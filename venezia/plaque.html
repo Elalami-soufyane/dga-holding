@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0E2A3A">
+<meta name="theme-color" content="#A8123A">
 <title>Venezia Ice — Studio plaque QR</title>
 <meta name="description" content="Générateur des supports QR Venezia Ice : chevalet de table, plaque murale, affiche vitrine et carte NFC. Aperçu au millimètre, export SVG et PNG 300 dpi.">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Jost:wght@300;400;500;700&family=Parisienne&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --lagune:#0E2A3A;--lagune-2:#143C52;--or:#D8A54A;--or-clair:#EFC87C;--creme:#FFF6E9;
-  --bg:#F4EFE6;--surface:#FFFFFF;--texte:#16242E;--texte-2:#5D6C77;--bord:#E2D8C8;--rayon:14px;
+  --vin:#A8123A;--vin-2:#7C0C2A;--or:#C2A14D;--or-clair:#E3C77F;--creme:#FFF8F2;
+  --bg:#F6EFEA;--surface:#FFFFFF;--texte:#23141A;--texte-2:#7A6069;--bord:#E7D8CF;--rayon:14px;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--texte);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}
-h1,h2{font-family:'Playfair Display',Georgia,serif;margin:0}
+body{margin:0;background:var(--bg);color:var(--texte);font-family:'Jost',system-ui,sans-serif;font-size:15px;line-height:1.5}
+h1,h2{font-family:'Jost',system-ui,sans-serif;font-weight:300;margin:0}
 .app{display:grid;grid-template-columns:minmax(0,350px) minmax(0,1fr);gap:22px;max-width:1160px;margin:0 auto;padding:22px 18px 60px}
 @media (max-width:860px){.app{grid-template-columns:1fr;padding:16px}}
-header.top{background:var(--lagune);color:var(--creme);padding:18px 0}
+header.top{background:var(--vin);color:var(--creme);padding:18px 0}
 header.top .in{max-width:1160px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 header.top h1{font-size:20px}
 header.top p{margin:2px 0 0;font-size:13px;color:rgba(255,246,233,.72)}
-.lien-menu{font-size:13px;color:var(--or-clair);text-decoration:none;border:1px solid rgba(216,165,74,.4);padding:7px 13px;border-radius:999px}
+.lien-menu{font-size:13px;color:var(--or-clair);text-decoration:none;border:1px solid rgba(227,199,127,.45);padding:7px 13px;border-radius:999px}
 
 .panneau{background:var(--surface);border:1px solid var(--bord);border-radius:var(--rayon);padding:16px;margin-bottom:14px}
 .panneau h2{font-size:15px;margin-bottom:12px}
@@ -33,17 +33,17 @@ input:focus,select:focus{outline:2px solid var(--or);outline-offset:1px}
 .radios{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:6px}
 .radios label{display:flex;align-items:center;gap:7px;margin:0;padding:9px 10px;border:1px solid var(--bord);
   border-radius:9px;cursor:pointer;font-size:13px;color:var(--texte);background:#FCFAF6}
-.radios label:has(input:checked){border-color:var(--or);background:rgba(216,165,74,.1);font-weight:600}
+.radios label:has(input:checked){border-color:var(--or);background:rgba(194,161,77,.12);font-weight:600}
 .radios input{accent-color:var(--or)}
 .bascule{display:flex;align-items:flex-start;gap:9px;margin-top:12px;padding:10px 11px;border:1px solid var(--bord);
   border-radius:9px;background:#FCFAF6;cursor:pointer;font-size:13px;color:var(--texte)}
-.bascule:has(input:checked){border-color:var(--or);background:rgba(216,165,74,.1)}
+.bascule:has(input:checked){border-color:var(--or);background:rgba(194,161,77,.12)}
 .bascule input{accent-color:var(--or);margin-top:2px}
 .bascule small{display:block;color:var(--texte-2);font-size:12px;font-weight:400;margin-top:2px}
 .boutons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-button.act{flex:1 1 auto;padding:11px 14px;border-radius:10px;border:1px solid var(--lagune);background:var(--lagune);
+button.act{flex:1 1 auto;padding:11px 14px;border-radius:10px;border:1px solid var(--vin);background:var(--vin);
   color:var(--creme);font:inherit;font-weight:600;font-size:13.5px;cursor:pointer}
-button.act.sec{background:transparent;color:var(--lagune)}
+button.act.sec{background:transparent;color:var(--vin)}
 button.act:active{transform:translateY(1px)}
 .note{font-size:12px;color:var(--texte-2);margin:10px 0 0}
 .diag{font-size:12.5px;background:#FBF7F0;border:1px dashed var(--bord);border-radius:10px;padding:11px;margin-top:12px}
@@ -53,9 +53,9 @@ button.act:active{transform:translateY(1px)}
 .usage{font-size:12.5px;color:var(--texte-2);margin:8px 0 0;padding-left:16px}
 .usage li{margin-bottom:3px}
 
-.scene{background:repeating-conic-gradient(#EDE6DA 0% 25%,#F6F1E8 0% 50%) 0 0/22px 22px;
+.scene{background:repeating-conic-gradient(#EFE3DC 0% 25%,#F8F1ED 0% 50%) 0 0/22px 22px;
   border:1px solid var(--bord);border-radius:var(--rayon);padding:22px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}
-#apercu{filter:drop-shadow(0 12px 30px rgba(14,42,58,.25));max-width:100%;height:auto}
+#apercu{filter:drop-shadow(0 12px 30px rgba(80,20,40,.25));max-width:100%;height:auto}
 
 @media print{
   header.top,.panneau,.note,.app>div:first-child{display:none!important}
@@ -124,8 +124,8 @@ button.act:active{transform:translateY(1px)}
       </select>
       <label>Style</label>
       <div class="radios">
-        <label><input type="radio" name="style" value="sombre" checked> Lagune &amp; or</label>
-        <label><input type="radio" name="style" value="clair"> Crème &amp; lagune</label>
+        <label><input type="radio" name="style" value="sombre" checked> Carmin &amp; or</label>
+        <label><input type="radio" name="style" value="clair"> Crème &amp; carmin</label>
       </div>
       <label>Correction d'erreur du QR</label>
       <div class="radios">
@@ -178,12 +178,12 @@ button.act:active{transform:translateY(1px)}
   };
 
   const STYLES = {
-    sombre:{fond:'#0E2A3A', fond2:'#143C52', texte:'#FFF6E9', accent:'#D8A54A',
-            accentDoux:'#EFC87C', carte:'#FFFFFF', qr:'#0E2A3A', secondaire:'rgba(255,246,233,.72)',
-            bandeTexte:'#1B1206'},
-    clair: {fond:'#FFF6E9', fond2:'#FBEFD9', texte:'#0E2A3A', accent:'#B4832C',
-            accentDoux:'#8A6412', carte:'#FFFFFF', qr:'#0E2A3A', secondaire:'rgba(14,42,58,.68)',
-            bandeTexte:'#FFF6E9'}
+    sombre:{fond:'#7C0C2A', fond2:'#A8123A', texte:'#FFF8F2', accent:'#E3C77F',
+            accentDoux:'#E3C77F', carte:'#FFFFFF', qr:'#4E0819', secondaire:'rgba(255,248,242,.78)',
+            bandeTexte:'#3A0512'},
+    clair: {fond:'#FFF8F2', fond2:'#FBEFE9', texte:'#A8123A', accent:'#B08A33',
+            accentDoux:'#8A6412', carte:'#FFFFFF', qr:'#7C0C2A', secondaire:'rgba(35,20,26,.72)',
+            bandeTexte:'#FFF8F2'}
   };
 
   const ICONES = {
@@ -198,9 +198,9 @@ button.act:active{transform:translateY(1px)}
   };
 
   const APPELS = [
-    {txt:'SCANNEZ POUR VOIR LE MENU', fam:"'DM Sans', sans-serif"},
+    {txt:'SCANNEZ POUR VOIR LE MENU', fam:"'Jost', sans-serif"},
     {txt:'امسح الرمز لعرض القائمة',    fam:"'Tajawal', sans-serif", rtl:true},
-    {txt:'SCAN FOR THE MENU  ·  ESCANEA LA CARTA', fam:"'DM Sans', sans-serif"}
+    {txt:'SCAN FOR THE MENU  ·  ESCANEA LA CARTA', fam:"'Jost', sans-serif"}
   ];
 
   const esc = s => String(s).replace(/[&<>"']/g, c =>
@@ -222,19 +222,6 @@ button.act:active{transform:translateY(1px)}
     });
   }
 
-  /** Le petit cornet de glace, dans un repère 24 × 24 mis à l'échelle. */
-  function marque(cx, cy, taille, c){
-    const k = taille / 24, x = cx - taille/2, y = cy - taille/2;
-    const P = (a,b) => (x + a*k).toFixed(2) + ' ' + (y + b*k).toFixed(2);
-    return [
-      {type:'path', d:`M${P(4.2,11)}A7.8 7.8 0 0 1 ${P(19.8,11)}`, stroke:c.accentDoux, sw:1.6*k, fill:'none', cap:'round'},
-      {type:'circle', cx:x+8.2*k, cy:y+9*k, r:4.1*k, fill:c.texte},
-      {type:'circle', cx:x+15.6*k, cy:y+8.6*k, r:4.5*k, fill:c.accent},
-      {type:'path', d:`M${P(3.6,13)}L${P(20.4,13)}L${P(12,23.4)}Z`, stroke:c.texte, sw:1.5*k, fill:'none', join:'round'},
-      {type:'path', d:`M${P(7.4,16.4)}L${P(16.6,16.4)}M${P(9.2,19.2)}L${P(14.8,19.2)}`, stroke:c.accent, sw:1.1*k, fill:'none', cap:'round'}
-    ];
-  }
-
   /**
    * Construit le support. Toute la composition est mise à l'échelle par `s`,
    * pour qu'un chevalet de 60 mm et une affiche de 280 mm restent équilibrés.
@@ -254,18 +241,21 @@ button.act:active{transform:translateY(1px)}
     p.push({type:'rect', x:marge+1.4*s, y:marge+1.4*s, w:W-2*marge-2.8*s, h:H-2*marge-2.8*s,
             r:4*s, fill:'none', stroke:c.accent, sw:Math.max(.14,.22*s), opacity:.55});
 
-    let y = marge + px(11, 5.5);
+    let y = marge + px(13, 7);
 
-    // Marque + nom
-    const tailleMarque = px(17, 8.5);
-    p.push(...marque(W/2, y + tailleMarque/2, tailleMarque, c));
-    y += tailleMarque + px(9, 4.5);
+    // Bandeau d'identité, repris de la couverture de la carte
+    p.push({type:'text', x:W/2, y:y, txt:'GLACIER · CAFÉ · RESTAURANT', size:px(3.6, 2.3), weight:500,
+            fam:"'Jost', sans-serif", fill:c.accent, anchor:'middle', spacing:px(1.1, .4)});
+    y += px(6, 3.6);
+    p.push({type:'text', x:W/2, y:y, txt:'DEPUIS 1999', size:px(3.1, 2.1), weight:400,
+            fam:"'Jost', sans-serif", fill:c.secondaire, anchor:'middle', spacing:px(.9, .35)});
+    y += px(9.5, 5.6);
 
-    p.push({type:'text', x:W/2, y:y, txt:opt.nom, size:px(12.5, 5.2), weight:700,
-            fam:"'Playfair Display', Georgia, serif", fill:c.texte, anchor:'middle', spacing:px(.7,.25)});
-    y += px(7, 4.4);
+    p.push({type:'text', x:W/2, y:y, txt:opt.nom, size:px(15, 6.4), weight:400,
+            fam:"'Bebas Neue', Impact, sans-serif", fill:c.texte, anchor:'middle', spacing:px(1, .4)});
+    y += px(8.5, 5);
     p.push({type:'text', x:W/2, y:y, txt:opt.sous, size:px(4.2, 2.2), weight:500,
-            fam:"'DM Sans', sans-serif", fill:c.accent, anchor:'middle', spacing:px(.9,.35)});
+            fam:"'Jost', sans-serif", fill:c.accent, anchor:'middle', spacing:px(.9,.35)});
     y += px(8, 4.8);
 
     if (!mini){                                   // filet décoratif
@@ -317,12 +307,12 @@ button.act:active{transform:translateY(1px)}
       const ic = bh*0.62, cy2 = by + bh*0.42;
       p.push({type:'icone', nom:'tap',  x:cx + carte*0.24, y:cy2, taille:ic, fill:c.bandeTexte});
       p.push({type:'text', x:cx + carte*0.24 + ic*0.75, y:cy2, txt:'TAP', size:px(3.2,2.3), weight:700,
-              fam:"'DM Sans', sans-serif", fill:c.bandeTexte, anchor:'start', spacing:px(.3,.12)});
+              fam:"'Jost', sans-serif", fill:c.bandeTexte, anchor:'start', spacing:px(.3,.12)});
       p.push({type:'text', x:cx + carte*0.5, y:cy2, txt:'|', size:px(3.4,2.4), weight:400,
-              fam:"'DM Sans', sans-serif", fill:c.bandeTexte, anchor:'middle', opacity:.5});
+              fam:"'Jost', sans-serif", fill:c.bandeTexte, anchor:'middle', opacity:.5});
       p.push({type:'icone', nom:'scan', x:cx + carte*0.66, y:cy2, taille:ic, fill:c.bandeTexte});
       p.push({type:'text', x:cx + carte*0.66 + ic*0.75, y:cy2, txt:'SCAN', size:px(3.2,2.3), weight:700,
-              fam:"'DM Sans', sans-serif", fill:c.bandeTexte, anchor:'start', spacing:px(.3,.12)});
+              fam:"'Jost', sans-serif", fill:c.bandeTexte, anchor:'start', spacing:px(.3,.12)});
     }
     y += carte + bande + (montrerUrl ? px(8,5) : px(3,2));
 
@@ -330,7 +320,7 @@ button.act:active{transform:translateY(1px)}
     if (montrerUrl){
       const lisible = opt.url.replace(/^https?:\/\//,'').replace(/\/$/,'');
       p.push({type:'text', x:W/2, y:y, txt:lisible, size:px(3.4,2.4), weight:500,
-              fam:"'DM Sans', sans-serif", fill:c.secondaire, anchor:'middle', spacing:.2});
+              fam:"'Jost', sans-serif", fill:c.secondaire, anchor:'middle', spacing:.2});
       y += px(8, 5);
     }
 
@@ -342,14 +332,14 @@ button.act:active{transform:translateY(1px)}
       reseaux.forEach((r,i) => {
         p.push({type:'icone', nom:ordre[i] || 'maps', x:x0 + i*pas, y:y, taille:px(5.4,3.6), fill:c.accent});
         p.push({type:'text', x:x0 + i*pas, y:y + px(5.2,3.4), txt:r, size:px(3.1,2.2), weight:500,
-                fam:"'DM Sans', sans-serif", fill:c.secondaire, anchor:'middle'});
+                fam:"'Jost', sans-serif", fill:c.secondaire, anchor:'middle'});
       });
       y += px(11, 7);
     }
 
     if (montrerTel)
       p.push({type:'text', x:W/2, y:H - marge - px(6,3.2), txt:opt.tel, size:px(3.7,2.5), weight:500,
-              fam:"'DM Sans', sans-serif", fill:c.secondaire, anchor:'middle', spacing:.3});
+              fam:"'Jost', sans-serif", fill:c.secondaire, anchor:'middle', spacing:.3});
 
     ajusterTextes(p, W - 2*marge - px(7, 3));
 

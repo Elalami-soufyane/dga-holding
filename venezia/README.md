@@ -18,7 +18,8 @@ dans **[REUNION-TECHNIQUE.md](REUNION-TECHNIQUE.md)**.
 
 | Fichier | Rôle |
 |---|---|
-| `index.html` | **Le menu digital.** 4 langues, recherche, fonctionne hors-ligne. Contient les produits et les prix |
+| `index.html` | **Le menu digital.** 4 langues, recherche, fonctionne hors-ligne |
+| `assets/menu.js` | **La carte** — 16 catégories, 153 produits et leurs prix, repris du menu imprimé 2026 |
 | `liens.html` | **La page de liens.** Menu, réseaux, avis, itinéraire — pour la vitrine et la bio Instagram |
 | `avis.html` | **Avis et réclamation.** 4–5 ★ → avis Google · 1–3 ★ → message privé au responsable |
 | `plaque.html` | **Le studio des supports QR.** Aperçu, impression, export PNG 300 dpi et SVG |
@@ -52,20 +53,25 @@ GitHub Pages — le QR contiendra alors le domaine propre.
 
 Deux fichiers, deux rôles :
 
-- **`index.html`** → les produits et les prix (bloc `MENU`) ;
+- **`assets/menu.js`** → les catégories, les produits et les prix ;
 - **`assets/venezia.js`** → le téléphone, le WhatsApp, l'adresse, les horaires et
   les liens des réseaux (bloc `CONFIG`), utilisés par les trois pages.
 
-**Changer un prix** — chercher le produit, modifier la valeur `p` :
+La carte reprend fidèlement le menu imprimé « MENU 2026 » : 16 catégories,
+153 produits. Les intitulés et les descriptions sont traduits en français et en
+arabe ; l'anglais et l'espagnol reprennent le français là où la traduction
+n'apporte rien (un nom propre comme *Margherita* ou *Carbonara*).
+
+**Changer un prix** — chercher le produit dans `assets/menu.js`, modifier `"p"` :
 
 ```js
-{n:{fr:'Cornet 2 boules',ar:'كورنيه كرتان',en:'2-scoop cone',es:'Cucurucho 2 bolas'},p:18,t:['star']},
+{ "n": { "fr": "Tacos poulet", "ar": "طاكوس بالدجاج", … }, "p": 58 }
 ```
 
-**Signaler une rupture** sans supprimer la ligne — ajouter `off:true` :
+**Signaler une rupture** sans supprimer la ligne — ajouter `"off": true` :
 
 ```js
-{n:{fr:'Milkshake Oreo', …},p:35,off:true},
+{ "n": { "fr": "Soupe de poisson", … }, "p": 70, "off": true }
 ```
 
 **Badges disponibles** dans `t` : `'star'` (best-seller), `'new'` (nouveauté),
@@ -190,9 +196,10 @@ Les données suivantes sont des valeurs de travail, à remplacer par les vraies
 - adresse postale exacte et lien Google Maps ;
 - comptes Instagram, Facebook, TikTok, et présence sur Glovo ;
 - identifiant de la fiche Google pour le lien « laisser un avis » ;
-- intitulés et prix de la carte ;
+- relecture des 153 prix saisis depuis le menu imprimé ;
 - horaires, y compris ceux du Ramadan.
 
-Les photos de l'établissement et des plaques existantes n'ayant pas été
-transmises, l'identité visuelle proposée (bleu lagune, or vénitien, crème) est à
-recaler sur l'enseigne réelle dès réception du logo.
+L'identité visuelle (carmin, or et crème, « Glacier · Café · Restaurant,
+depuis 1999 ») est reprise de la carte imprimée 2026. Le logo n'ayant pas été
+fourni en fichier vectoriel, le bloc-marque « Venezia / Ice » est reconstitué en
+typographie : fournir le logo original permettra de le remplacer à l'identique.

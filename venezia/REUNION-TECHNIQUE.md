@@ -2,7 +2,8 @@
 
 **Projet :** plaque QR + menu digital · **Établissement :** Venezia Ice (Larache)
 **Entité :** Ste F Corner — Holding Benthami (DGA) · **Date :** 16 septembre 2026
-**Version du document :** 1.1 — cadrage, conception, puis revue comparative (§ 11)
+**Version du document :** 1.2 — cadrage, conception, revue comparative (§ 11),
+intégration de la carte réelle (§ 12)
 
 ---
 
@@ -165,6 +166,7 @@ consultés) — prévu en v2, pas en v1, pour ne pas retarder la mise en service
 | Élément | Fichier | État |
 |---|---|---|
 | Menu digital 4 langues, hors-ligne, installable | `venezia/index.html` | Livré, testé sur mobile |
+| Carte réelle — 16 catégories, 153 produits | `venezia/assets/menu.js` | Livré (§ 12) |
 | Page de liens (menu, réseaux, avis, itinéraire) | `venezia/liens.html` | Livré (§ 11) |
 | Parcours d'avis et de réclamation | `venezia/avis.html` | Livré (§ 11) |
 | Studio de la plaque QR (aperçu, impression, PNG 300 dpi, SVG vectoriel) | `venezia/plaque.html` | Livré, 4 formats × 2 styles |
@@ -305,9 +307,59 @@ réseaux sociaux, l'avis Google et un bouton « Réclamation ».
 5. **Coût récurrent nul** — le concurrent paie un abonnement pour retirer la publicité.
 6. **Parcours d'avis** qui protège la note Google au lieu de subir les mécontents.
 
+
 ---
 
-## 12. Points à confirmer avant impression
+## 12. Troisième séance — intégration de la carte réelle
+
+La direction a transmis le menu imprimé **« MENU 2026 »** (13 pages, scan).
+La carte de travail provisoire est remplacée par la carte réelle et l'identité
+visuelle est recalée sur l'imprimé.
+
+### 12.1 Ce qui a été intégré
+
+| Élément | Avant | Après |
+|---|---|---|
+| Produits | 51 (carte de travail) | **153**, repris ligne à ligne du menu imprimé |
+| Catégories | 8 | **16** — des petits déjeuners aux coupes glacées |
+| Identité | proposition bleu lagune | **carmin, or et crème** de la couverture |
+| Signature | « Glaces artisanales » | **« Glacier · Café · Restaurant — depuis 1999 »** |
+| Typographie | Playfair / DM Sans | **Bebas Neue** (bloc-marque), **Jost** (titres fins, comme l'imprimé) |
+
+### 12.2 Décisions complémentaires
+
+| # | Décision | Motif |
+|---|---|---|
+| **D19** | Identité reprise de la carte imprimée, pas réinventée | Le client reconnaît la maison avant même de lire ; la cohérence salle / écran est un actif de marque |
+| **D20** | La carte est isolée dans `assets/menu.js` | 153 produits dans le fichier de la page rendaient la mise à jour risquée pour un non-technicien |
+| **D21** | Traductions complètes en français et en arabe ; anglais et espagnol sur les intitulés | Les descriptions sont des listes d'ingrédients largement transparentes entre langues latines ; l'arabe, lui, est indispensable à Larache |
+| **D22** | Le bloc-marque est reconstitué en typographie, faute de logo vectoriel | Permet de livrer maintenant ; le logo original le remplacera à l'identique |
+
+### 12.3 Ce que la carte imprimée apporte au dispositif
+
+1. **Des prix réels** : le ticket moyen suivi dans le module F Corner peut enfin
+   être rapproché du mix produit consulté en ligne.
+2. **Des photos professionnelles** déjà réalisées : elles alimenteront la v2
+   (fiches des dix produits phares), sans nouveau shooting.
+3. **Des formules à forte marge** (petits déjeuners de 35 à 135 DHS, coupes à 65)
+   que le menu digital met en avant par les badges *best-seller*.
+
+### 12.4 Points de vigilance
+
+- **Double source de vérité.** À partir d'aujourd'hui, un prix existe à deux
+  endroits : la carte imprimée et `assets/menu.js`. Toute modification de prix
+  doit passer par les deux, sous peine de litige en caisse. La procédure est au
+  § 2 du `README`.
+- **La carte imprimée date de 2026** : les deux nouveautés signalées
+  (*Chamali*, *Laraychi*, *Bœuf mongole*, *Layer cake*, *Carotte cake*,
+  poutines) sont déjà marquées « nouveau » dans le menu digital ; ce badge devra
+  être retiré quand elles ne seront plus des nouveautés.
+- **Les QR de la 4e de couverture** (Instagram et Facebook) n'ont pas pu être
+  relus sur le scan : les adresses des comptes restent à confirmer.
+
+---
+
+## 13. Points à confirmer avant impression
 
 1. **Photos non reçues.** Les photos mentionnées dans la demande ne sont pas
    parvenues ; le design est une proposition et sera recalé sur l'enseigne réelle.
