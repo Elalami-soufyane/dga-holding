@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E2A3A">
+<title>Venezia Ice — Menu digital · Larache</title>
+<meta name="description" content="Menu digital de Venezia Ice, Larache — glaces artisanales, crêpes, jus, café et snacks. Commande WhatsApp, itinéraire et réseaux sociaux.">
+<meta property="og:title" content="Venezia Ice — Menu digital">
+<meta property="og:description" content="Glaces artisanales, crêpes, jus frais et snacks · Larache">
+<meta property="og:type" content="restaurant.menu">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     VENEZIA ICE — MENU DIGITAL
+     Ste F Corner · Larache — Holding Benthami (DGA)
+
+     ⚙️  TOUT CE QUI SE MODIFIE AU QUOTIDIEN SE TROUVE DANS LES BLOCS
+         « CONFIG » ET « MENU » PLUS BAS. Aucune autre partie du fichier
+         n'a besoin d'être touchée pour changer un prix, un plat ou un lien.
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<style>
+:root{
+  /* ─── Identité Venezia Ice ─── */
+  --lagune:#0E2A3A;        /* bleu lagune vénitienne — fond principal */
+  --lagune-2:#143C52;      /* dégradé */
+  --or:#D8A54A;            /* or vénitien — accent premium */
+  --or-clair:#EFC87C;
+  --creme:#FFF6E9;         /* crème glacée — texte sur fond sombre */
+  --fraise:#E4576B;        /* badge nouveauté */
+  --pistache:#6FB38A;      /* badge végétarien / dispo */
+  --encre:#12212C;
+  --gris:#7C8A94;
+
+  --bg:#FFFBF5;
+  --surface:#FFFFFF;
+  --surface-2:#F6F0E6;
+  --texte:#16242E;
+  --texte-2:#5A6A75;
+  --bord:#E8DFD1;
+  --ombre:0 1px 2px rgba(18,33,44,.06), 0 8px 24px rgba(18,33,44,.06);
+  --rayon:16px;
+  --max:720px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1B25; --surface:#122633; --surface-2:#16303F;
+    --texte:#F2E9DA; --texte-2:#A9BAC5; --bord:#1F3B4C;
+    --ombre:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1B25; --surface:#122633; --surface-2:#16303F;
+  --texte:#F2E9DA; --texte-2:#A9BAC5; --bord:#1F3B4C;
+  --ombre:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{
+  margin:0;background:var(--bg);color:var(--texte);
+  font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+html[dir="rtl"] body{font-family:'Tajawal','DM Sans',system-ui,sans-serif}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:700;margin:0;line-height:1.15}
+html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] h3{font-family:'Tajawal',sans-serif}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit}
+
+/* ─── En-tête / hero ─── */
+.hero{
+  position:relative;overflow:hidden;color:var(--creme);
+  background:radial-gradient(120% 90% at 20% 0%,var(--lagune-2) 0%,var(--lagune) 55%,#08161F 100%);
+  padding:calc(18px + env(safe-area-inset-top)) 0 26px;
+}
+.hero::after{
+  content:"";position:absolute;inset:auto -10% -60px -10%;height:120px;
+  background:radial-gradient(60% 100% at 50% 0%,rgba(216,165,74,.22),transparent 70%);
+}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:42px;height:42px;flex:0 0 auto}
+.brand-txt{min-width:0}
+.brand-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+.brand-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--or-clair);opacity:.95}
+.langs{display:flex;gap:4px;background:rgba(255,255,255,.08);padding:4px;border-radius:999px}
+.langs button{
+  padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.04em;
+  color:rgba(255,246,233,.72);transition:background .15s,color .15s;
+}
+.langs button[aria-pressed="true"]{background:var(--or);color:#1B1206}
+.hero-title{margin:22px 0 6px;font-size:clamp(28px,8vw,40px);color:var(--creme)}
+.hero-title em{font-style:normal;color:var(--or-clair)}
+.hero-sub{margin:0;color:rgba(255,246,233,.78);font-size:14.5px;max-width:34ch}
+.statut{
+  display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:6px 12px;
+  border-radius:999px;background:rgba(255,255,255,.1);font-size:12.5px;font-weight:500;
+}
+.pastille{width:8px;height:8px;border-radius:50%;background:var(--pistache);box-shadow:0 0 0 3px rgba(111,179,138,.25)}
+.statut.ferme .pastille{background:var(--fraise);box-shadow:0 0 0 3px rgba(228,87,107,.25)}
+
+/* ─── Actions rapides ─── */
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0 2px}
+.action{
+  display:flex;flex-direction:column;align-items:center;gap:6px;padding:11px 4px;
+  border-radius:14px;background:rgba(255,255,255,.1);color:var(--creme);
+  font-size:11.5px;font-weight:500;text-decoration:none;text-align:center;
+  border:1px solid rgba(255,255,255,.06);transition:background .15s,transform .15s;
+}
+.action:active{transform:scale(.97)}
+.action svg{width:21px;height:21px;stroke:var(--or-clair);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* ─── Recherche + navigation catégories ─── */
+.sticky{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--bord)}
+.search{position:relative;padding:12px 16px 8px;max-width:var(--max);margin:0 auto}
+.search input{
+  width:100%;padding:11px 14px 11px 40px;border-radius:12px;border:1px solid var(--bord);
+  background:var(--surface);color:var(--texte);font-size:15px;
+}
+html[dir="rtl"] .search input{padding:11px 40px 11px 14px}
+.search input:focus{outline:2px solid var(--or);outline-offset:1px}
+.search svg{position:absolute;left:28px;top:23px;width:18px;height:18px;stroke:var(--texte-2);fill:none;stroke-width:2}
+html[dir="rtl"] .search svg{left:auto;right:28px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 12px;max-width:var(--max);margin:0 auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--bord);
+  background:var(--surface);color:var(--texte-2);font-size:13.5px;font-weight:500;white-space:nowrap;
+}
+.chip[aria-current="true"]{background:var(--lagune);border-color:var(--lagune);color:var(--creme)}
+
+/* ─── Sections & cartes produits ─── */
+main{padding:18px 0 40px}
+.section{margin-bottom:30px;scroll-margin-top:118px}
+.section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.section-head h2{font-size:23px}
+.section-head .ico{font-size:19px}
+.section-note{margin:0 0 14px;color:var(--texte-2);font-size:13.5px}
+.item{
+  display:flex;gap:12px;align-items:flex-start;padding:13px 14px;margin-bottom:9px;
+  background:var(--surface);border:1px solid var(--bord);border-radius:var(--rayon);box-shadow:var(--ombre);
+}
+.item-main{flex:1;min-width:0}
+.item-name{font-weight:700;font-size:15.5px;letter-spacing:-.01em}
+.item-desc{margin:3px 0 0;color:var(--texte-2);font-size:13.5px}
+.item-price{
+  flex:0 0 auto;font-weight:700;font-size:15.5px;color:var(--texte);
+  background:var(--surface-2);padding:6px 10px;border-radius:10px;white-space:nowrap;
+}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.badge{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:6px}
+.b-star{background:rgba(216,165,74,.16);color:#8A6412}
+.b-new{background:rgba(228,87,107,.14);color:#B3283E}
+.b-veg{background:rgba(111,179,138,.16);color:#2F7A55}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .b-star{color:var(--or-clair)}
+  :root:not([data-theme="light"]) .b-new{color:#FF93A4}
+  :root:not([data-theme="light"]) .b-veg{color:#8FD9B0}
+}
+:root[data-theme="dark"] .b-star{color:var(--or-clair)}
+:root[data-theme="dark"] .b-new{color:#FF93A4}
+:root[data-theme="dark"] .b-veg{color:#8FD9B0}
+.vide{text-align:center;color:var(--texte-2);padding:30px 0;font-size:14.5px}
+
+/* ─── Réseaux sociaux ─── */
+.social-card{
+  background:linear-gradient(160deg,var(--lagune) 0%,var(--lagune-2) 100%);
+  color:var(--creme);border-radius:22px;padding:24px 18px;margin:8px 0 26px;text-align:center;
+}
+.social-card h2{font-size:22px;color:var(--creme)}
+.social-card p{margin:6px auto 18px;font-size:14px;color:rgba(255,246,233,.75);max-width:30ch}
+.socials{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px}
+.soc{
+  display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:15px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.07);
+  text-decoration:none;color:var(--creme);font-size:12px;font-weight:500;transition:background .15s,transform .15s;
+}
+.soc:active{transform:scale(.97)}
+.soc svg{width:24px;height:24px;fill:currentColor}
+.soc .handle{font-size:10.5px;color:rgba(255,246,233,.6);word-break:break-all}
+
+/* ─── Infos pratiques ─── */
+.infos{background:var(--surface);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px;box-shadow:var(--ombre)}
+.infos h2{font-size:20px;margin-bottom:12px}
+.info-row{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--bord);font-size:14px}
+.info-row:first-of-type{border-top:none}
+.info-row .k{flex:0 0 96px;color:var(--texte-2);font-size:13px}
+.info-row .v{flex:1;font-weight:500}
+.horaires{margin:0;padding:0;list-style:none;font-size:13.5px}
+.horaires li{display:flex;justify-content:space-between;padding:3px 0;color:var(--texte-2)}
+.horaires li.today{color:var(--texte);font-weight:700}
+footer{text-align:center;padding:26px 16px 34px;color:var(--texte-2);font-size:12.5px}
+footer .f-brand{font-family:'Playfair Display',serif;font-size:15px;color:var(--texte);margin-bottom:4px}
+.maj{opacity:.75;font-size:11.5px}
+
+/* ─── Bouton flottant WhatsApp ─── */
+.fab{
+  position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:30;
+  display:flex;align-items:center;gap:8px;padding:13px 17px;border-radius:999px;
+  background:#25D366;color:#06301A;font-weight:700;font-size:14px;text-decoration:none;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+}
+html[dir="rtl"] .fab{right:auto;left:16px}
+.fab svg{width:20px;height:20px;fill:currentColor}
+
+@media print{
+  .hero{background:none;color:#000;padding:0}
+  .sticky,.fab,.actions,.langs,.social-card{display:none}
+  .item{break-inside:avoid;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   1) CONFIG — coordonnées, liens, horaires.
+   ⚠️ Remplacer les valeurs marquées « À CONFIRMER » par les vraies données.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const CONFIG = {
+  nom:        'Venezia Ice',
+  societe:    'Ste F Corner',
+  ville:      'Larache',
+  adresse:    'Avenue Mohammed V, Larache',            // À CONFIRMER
+  telephone:  '+212 5 39 00 00 00',                    // À CONFIRMER
+  whatsapp:   '212600000000',                          // À CONFIRMER — format international sans +
+  maps:       'https://maps.google.com/?q=Venezia+Ice+Larache',
+  avisGoogle: 'https://search.google.com/local/writereview?placeid=VOTRE_PLACE_ID', // À CONFIRMER
+  devise:     'MAD',
+  // Horaires : 0 = dimanche … 6 = samedi. null = fermé.
+  horaires: {
+    0:['09:00','23:30'], 1:['09:00','23:30'], 2:['09:00','23:30'], 3:['09:00','23:30'],
+    4:['09:00','00:30'], 5:['09:00','00:30'], 6:['09:00','00:30']
+  },
+  reseaux: [
+    {id:'instagram', nom:'Instagram', handle:'@venezia.ice',        url:'https://instagram.com/venezia.ice'},
+    {id:'facebook',  nom:'Facebook',  handle:'Venezia Ice Larache', url:'https://facebook.com/veneziaice'},
+    {id:'tiktok',    nom:'TikTok',    handle:'@venezia.ice',        url:'https://tiktok.com/@venezia.ice'},
+    {id:'glovo',     nom:'Glovo',     handle:'Livraison',           url:'https://glovoapp.com'},
+    {id:'maps',      nom:'Google',    handle:'Laissez un avis',     url:'https://maps.google.com/?q=Venezia+Ice+Larache'}
+  ],
+  majLe: '2026-09-16'
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2) MENU — catégories et produits.
+   n = nom, d = description (facultative), p = prix en MAD,
+   t = badges : 'star' (best-seller) · 'new' (nouveauté) · 'veg' (végétarien)
+   Chaque texte existe en 4 langues : fr (français) · ar (arabe) · en · es.
+   Pour retirer un produit : supprimer son bloc { … }. Pour le masquer
+   temporairement (rupture) : ajouter  off:true
+   ═══════════════════════════════════════════════════════════════════════════ */
+const MENU = [
+{
+  id:'glaces', ico:'🍦',
+  nom:{fr:'Glaces artisanales',ar:'مثلجات حرفية',en:'Artisan ice cream',es:'Helados artesanales'},
+  note:{fr:'Préparées chaque matin sur place · 16 parfums',ar:'تُحضّر كل صباح في المحل · 16 نكهة',en:'Made fresh every morning · 16 flavours',es:'Elaborados cada mañana · 16 sabores'},
+  items:[
+    {n:{fr:'Boule au choix',ar:'كرة حسب الاختيار',en:'Single scoop',es:'Bola a elegir'},
+     d:{fr:'Vanille, chocolat, fraise, citron, pistache, moka…',ar:'فانيلا، شوكولاتة، فراولة، ليمون، فستق، موكا…',en:'Vanilla, chocolate, strawberry, lemon, pistachio, mocha…',es:'Vainilla, chocolate, fresa, limón, pistacho, moka…'},p:10},
+    {n:{fr:'Cornet 2 boules',ar:'كورنيه كرتان',en:'2-scoop cone',es:'Cucurucho 2 bolas'},p:18,t:['star']},
+    {n:{fr:'Cornet 3 boules',ar:'كورنيه 3 كرات',en:'3-scoop cone',es:'Cucurucho 3 bolas'},p:25},
+    {n:{fr:'Pot à emporter 500 ml',ar:'علبة 500 مل',en:'500 ml tub to go',es:'Tarrina 500 ml'},
+     d:{fr:'2 parfums au choix',ar:'نكهتان حسب الاختيار',en:'Choice of 2 flavours',es:'2 sabores a elegir'},p:45},
+    {n:{fr:'Pot familial 1 L',ar:'علبة عائلية 1 لتر',en:'1 L family tub',es:'Tarrina familiar 1 L'},
+     d:{fr:'3 parfums au choix',ar:'3 نكهات حسب الاختيار',en:'Choice of 3 flavours',es:'3 sabores a elegir'},p:80},
+    {n:{fr:'Glace italienne',ar:'مثلجات إيطالية',en:'Soft serve',es:'Helado italiano'},
+     d:{fr:'Vanille ou chocolat, avec topping',ar:'فانيلا أو شوكولاتة مع الإضافات',en:'Vanilla or chocolate, with topping',es:'Vainilla o chocolate, con topping'},p:15,t:['veg']}
+  ]
+},
+{
+  id:'coupes', ico:'🍨',
+  nom:{fr:'Coupes glacées',ar:'كؤوس المثلجات',en:'Ice cream sundaes',es:'Copas heladas'},
+  note:{fr:'Servies avec chantilly maison',ar:'تُقدّم مع كريمة شانتيي منزلية',en:'Served with house whipped cream',es:'Servidas con nata casera'},
+  items:[
+    {n:{fr:'Coupe Venezia',ar:'كأس فينيسيا',en:'Venezia sundae',es:'Copa Venezia'},
+     d:{fr:'5 boules, fruits frais, chantilly, amandes',ar:'5 كرات، فواكه طازجة، شانتيي، لوز',en:'5 scoops, fresh fruit, whipped cream, almonds',es:'5 bolas, fruta fresca, nata, almendras'},p:48,t:['star']},
+    {n:{fr:'Banana Split',ar:'بانانا سبليت',en:'Banana Split',es:'Banana Split'},
+     d:{fr:'Banane, 3 boules, chocolat chaud, chantilly',ar:'موز، 3 كرات، شوكولاتة ساخنة، شانتيي',en:'Banana, 3 scoops, hot chocolate, whipped cream',es:'Plátano, 3 bolas, chocolate caliente, nata'},p:45},
+    {n:{fr:'Dame Blanche',ar:'دام بلانش',en:'Dame Blanche',es:'Dama Blanca'},
+     d:{fr:'Vanille, sauce chocolat chaude, chantilly',ar:'فانيلا، صلصة شوكولاتة ساخنة، شانتيي',en:'Vanilla, warm chocolate sauce, whipped cream',es:'Vainilla, salsa de chocolate caliente, nata'},p:38},
+    {n:{fr:'Coupe Brownie',ar:'كأس براوني',en:'Brownie sundae',es:'Copa Brownie'},
+     d:{fr:'Brownie tiède, glace vanille, noix',ar:'براوني دافئ، مثلجات فانيلا، جوز',en:'Warm brownie, vanilla ice cream, walnuts',es:'Brownie templado, helado de vainilla, nueces'},p:42,t:['new']},
+    {n:{fr:'Coupe fruits frais',ar:'كأس فواكه طازجة',en:'Fresh fruit sundae',es:'Copa de fruta fresca'},
+     d:{fr:'Fruits de saison, sorbet citron',ar:'فواكه الموسم، سوربي ليمون',en:'Seasonal fruit, lemon sorbet',es:'Fruta de temporada, sorbete de limón'},p:42,t:['veg']},
+    {n:{fr:'Tiramisu glacé',ar:'تيراميسو مثلج',en:'Frozen tiramisu',es:'Tiramisú helado'},p:40}
+  ]
+},
+{
+  id:'crepes', ico:'🧇',
+  nom:{fr:'Crêpes & gaufres',ar:'كريب وغوفر',en:'Crêpes & waffles',es:'Crepes y gofres'},
+  note:{fr:'Préparées à la commande',ar:'تُحضّر عند الطلب',en:'Made to order',es:'Preparados al momento'},
+  items:[
+    {n:{fr:'Crêpe sucre-citron',ar:'كريب سكر وليمون',en:'Sugar & lemon crêpe',es:'Crepe azúcar y limón'},p:20,t:['veg']},
+    {n:{fr:'Crêpe Nutella',ar:'كريب نوتيلا',en:'Nutella crêpe',es:'Crepe de Nutella'},p:30,t:['star']},
+    {n:{fr:'Crêpe Nutella-banane',ar:'كريب نوتيلا وموز',en:'Nutella & banana crêpe',es:'Crepe Nutella y plátano'},p:35},
+    {n:{fr:'Gaufre chocolat',ar:'غوفر بالشوكولاتة',en:'Chocolate waffle',es:'Gofre de chocolate'},p:35},
+    {n:{fr:'Gaufre fruits rouges',ar:'غوفر بالفواكه الحمراء',en:'Red berry waffle',es:'Gofre de frutos rojos'},
+     d:{fr:'Fruits rouges, chantilly, coulis',ar:'فواكه حمراء، شانتيي، صلصة',en:'Red berries, whipped cream, coulis',es:'Frutos rojos, nata, coulis'},p:42,t:['new']},
+    {n:{fr:'Pancakes (3 pièces)',ar:'بانكيك (3 قطع)',en:'Pancakes (3 pcs)',es:'Tortitas (3 uds)'},
+     d:{fr:'Miel, sirop d’érable ou chocolat',ar:'عسل، شراب القيقب أو شوكولاتة',en:'Honey, maple syrup or chocolate',es:'Miel, sirope de arce o chocolate'},p:35}
+  ]
+},
+{
+  id:'jus', ico:'🥤',
+  nom:{fr:'Jus & milkshakes',ar:'عصائر وميلك شيك',en:'Juices & milkshakes',es:'Zumos y batidos'},
+  note:{fr:'100 % fruits frais pressés à la minute',ar:'100% فواكه طازجة تُعصر في الحين',en:'100% fruit, pressed to order',es:'100% fruta, exprimido al momento'},
+  items:[
+    {n:{fr:'Jus d’avocat',ar:'عصير الأفوكادو',en:'Avocado juice',es:'Zumo de aguacate'},
+     d:{fr:'Lait, amandes, miel',ar:'حليب، لوز، عسل',en:'Milk, almonds, honey',es:'Leche, almendras, miel'},p:22,t:['star','veg']},
+    {n:{fr:'Panaché',ar:'عصير مشكل',en:'Mixed juice',es:'Zumo mixto'},
+     d:{fr:'Avocat, banane, fraise, amandes',ar:'أفوكادو، موز، فراولة، لوز',en:'Avocado, banana, strawberry, almonds',es:'Aguacate, plátano, fresa, almendras'},p:25},
+    {n:{fr:'Orange pressée',ar:'عصير برتقال',en:'Fresh orange',es:'Naranja natural'},p:18,t:['veg']},
+    {n:{fr:'Jus de fraise',ar:'عصير الفراولة',en:'Strawberry juice',es:'Zumo de fresa'},p:22,t:['veg']},
+    {n:{fr:'Smoothie mangue',ar:'سموذي المانجو',en:'Mango smoothie',es:'Smoothie de mango'},p:28},
+    {n:{fr:'Milkshake vanille / chocolat',ar:'ميلك شيك فانيلا / شوكولاتة',en:'Vanilla / chocolate milkshake',es:'Batido vainilla / chocolate'},p:30},
+    {n:{fr:'Milkshake Oreo',ar:'ميلك شيك أوريو',en:'Oreo milkshake',es:'Batido de Oreo'},p:35,t:['new']}
+  ]
+},
+{
+  id:'cafe', ico:'☕',
+  nom:{fr:'Café & boissons chaudes',ar:'قهوة ومشروبات ساخنة',en:'Coffee & hot drinks',es:'Café y bebidas calientes'},
+  items:[
+    {n:{fr:'Espresso',ar:'إسبريسو',en:'Espresso',es:'Espresso'},p:12},
+    {n:{fr:'Nous-nous',ar:'نص نص',en:'Half-half coffee',es:'Café mitad y mitad'},p:14,t:['star']},
+    {n:{fr:'Café crème',ar:'قهوة بالحليب',en:'Café crème',es:'Café con leche'},p:16},
+    {n:{fr:'Cappuccino',ar:'كابوتشينو',en:'Cappuccino',es:'Capuchino'},p:20},
+    {n:{fr:'Chocolat chaud',ar:'شوكولاتة ساخنة',en:'Hot chocolate',es:'Chocolate caliente'},p:22},
+    {n:{fr:'Thé à la menthe',ar:'أتاي بالنعناع',en:'Mint tea',es:'Té con hierbabuena'},p:15,t:['veg']},
+    {n:{fr:'Thé aux fruits',ar:'شاي بالفواكه',en:'Fruit tea',es:'Té de frutas'},p:18}
+  ]
+},
+{
+  id:'snacks', ico:'🥪',
+  nom:{fr:'Snacks & salés',ar:'وجبات خفيفة ومالحة',en:'Snacks & savoury',es:'Snacks y salados'},
+  note:{fr:'Servis avec frites et sauce maison',ar:'تُقدّم مع البطاطس وصلصة البيت',en:'Served with fries and house sauce',es:'Servidos con patatas y salsa de la casa'},
+  items:[
+    {n:{fr:'Panini poulet',ar:'بانيني بالدجاج',en:'Chicken panini',es:'Panini de pollo'},p:35},
+    {n:{fr:'Panini thon',ar:'بانيني بالتونة',en:'Tuna panini',es:'Panini de atún'},p:32},
+    {n:{fr:'Croque-monsieur',ar:'كروك مسيو',en:'Croque-monsieur',es:'Croque-monsieur'},p:35},
+    {n:{fr:'Tacos poulet',ar:'طاكوس بالدجاج',en:'Chicken tacos',es:'Tacos de pollo'},p:45,t:['star']},
+    {n:{fr:'Burger Venezia',ar:'برغر فينيسيا',en:'Venezia burger',es:'Hamburguesa Venezia'},
+     d:{fr:'Steak 150 g, cheddar, oignons confits',ar:'لحم 150غ، شيدر، بصل مكرمل',en:'150 g beef, cheddar, caramelised onions',es:'Carne 150 g, cheddar, cebolla caramelizada'},p:55,t:['new']},
+    {n:{fr:'Cheeseburger',ar:'تشيز برغر',en:'Cheeseburger',es:'Hamburguesa con queso'},p:45},
+    {n:{fr:'Pizza Margherita',ar:'بيتزا مارغريتا',en:'Margherita pizza',es:'Pizza Margarita'},p:45,t:['veg']},
+    {n:{fr:'Pizza 4 fromages',ar:'بيتزا 4 أجبان',en:'Four cheese pizza',es:'Pizza cuatro quesos'},p:60,t:['veg']},
+    {n:{fr:'Frites maison',ar:'بطاطس البيت',en:'House fries',es:'Patatas de la casa'},p:20,t:['veg']}
+  ]
+},
+{
+  id:'patisserie', ico:'🍰',
+  nom:{fr:'Pâtisserie',ar:'حلويات',en:'Pastries',es:'Pastelería'},
+  note:{fr:'Fait maison, en quantité limitée chaque jour',ar:'صناعة منزلية بكمية محدودة يوميا',en:'Homemade, limited daily quantity',es:'Casero, cantidad limitada cada día'},
+  items:[
+    {n:{fr:'Tiramisu',ar:'تيراميسو',en:'Tiramisu',es:'Tiramisú'},p:30,t:['star']},
+    {n:{fr:'Cheesecake fruits rouges',ar:'تشيز كيك بالفواكه الحمراء',en:'Red berry cheesecake',es:'Tarta de queso y frutos rojos'},p:32},
+    {n:{fr:'Brownie',ar:'براوني',en:'Brownie',es:'Brownie'},p:28},
+    {n:{fr:'Fondant au chocolat',ar:'فوندان بالشوكولاتة',en:'Chocolate fondant',es:'Coulant de chocolate'},p:30},
+    {n:{fr:'Tarte au citron',ar:'تارت بالليمون',en:'Lemon tart',es:'Tarta de limón'},p:28,t:['veg']}
+  ]
+},
+{
+  id:'boissons', ico:'🧊',
+  nom:{fr:'Boissons fraîches',ar:'مشروبات باردة',en:'Cold drinks',es:'Bebidas frías'},
+  items:[
+    {n:{fr:'Eau minérale 50 cl',ar:'ماء معدني 50 سل',en:'Mineral water 50 cl',es:'Agua mineral 50 cl'},p:6},
+    {n:{fr:'Soda (33 cl)',ar:'مشروب غازي (33 سل)',en:'Soda (33 cl)',es:'Refresco (33 cl)'},p:12},
+    {n:{fr:'Ice tea',ar:'آيس تي',en:'Iced tea',es:'Té helado'},p:15},
+    {n:{fr:'Citronnade maison',ar:'ليموناضة البيت',en:'House lemonade',es:'Limonada de la casa'},p:20,t:['veg','new']},
+    {n:{fr:'Eau pétillante',ar:'ماء غازي',en:'Sparkling water',es:'Agua con gas'},p:18}
+  ]
+}
+];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3) TEXTES DE L'INTERFACE (4 langues)
+   ═══════════════════════════════════════════════════════════════════════════ */
+const I18N = {
+  fr:{dir:'ltr',tagline:'Glaces artisanales, crêpes & jus frais',hero:'Le goût de <em>Venise</em>, à Larache',
+      appeler:'Appeler',whatsapp:'WhatsApp',itineraire:'Itinéraire',partager:'Partager',
+      recherche:'Rechercher un produit…',aucun:'Aucun produit ne correspond à votre recherche.',
+      ouvert:'Ouvert maintenant',ferme:'Fermé actuellement',ferme_ouvre:'Ouvre à',jusqua:'jusqu’à',
+      suivez:'Suivez-nous',suivez_txt:'Nouveautés, parfums du jour et offres en avant-première.',
+      infos:'Informations pratiques',adresse:'Adresse',tel:'Téléphone',horaires:'Horaires',
+      commander:'Commander',maj:'Menu mis à jour le',prix:'Prix en dirhams, taxes comprises.',
+      jours:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+      star:'Best-seller',new:'Nouveau',veg:'Végétarien',ferme_jour:'Fermé'},
+  ar:{dir:'rtl',tagline:'مثلجات حرفية، كريب وعصائر طازجة',hero:'نكهة <em>البندقية</em> في العرائش',
+      appeler:'اتصل',whatsapp:'واتساب',itineraire:'الطريق',partager:'مشاركة',
+      recherche:'ابحث عن منتج…',aucun:'لا يوجد منتج مطابق لبحثك.',
+      ouvert:'مفتوح الآن',ferme:'مغلق حاليا',ferme_ouvre:'يفتح على',jusqua:'حتى',
+      suivez:'تابعونا',suivez_txt:'الجديد، نكهات اليوم والعروض الحصرية.',
+      infos:'معلومات عملية',adresse:'العنوان',tel:'الهاتف',horaires:'أوقات العمل',
+      commander:'اطلب الآن',maj:'آخر تحديث للقائمة',prix:'الأسعار بالدرهم، الضرائب مضمّنة.',
+      jours:['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
+      star:'الأكثر طلبا',new:'جديد',veg:'نباتي',ferme_jour:'مغلق'},
+  en:{dir:'ltr',tagline:'Artisan ice cream, crêpes & fresh juices',hero:'A taste of <em>Venice</em>, in Larache',
+      appeler:'Call',whatsapp:'WhatsApp',itineraire:'Directions',partager:'Share',
+      recherche:'Search the menu…',aucun:'No item matches your search.',
+      ouvert:'Open now',ferme:'Currently closed',ferme_ouvre:'Opens at',jusqua:'until',
+      suivez:'Follow us',suivez_txt:'New flavours, daily specials and early offers.',
+      infos:'Useful information',adresse:'Address',tel:'Phone',horaires:'Opening hours',
+      commander:'Order',maj:'Menu updated on',prix:'Prices in dirhams, taxes included.',
+      jours:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+      star:'Best-seller',new:'New',veg:'Vegetarian',ferme_jour:'Closed'},
+  es:{dir:'ltr',tagline:'Helados artesanales, crepes y zumos naturales',hero:'El sabor de <em>Venecia</em>, en Larache',
+      appeler:'Llamar',whatsapp:'WhatsApp',itineraire:'Cómo llegar',partager:'Compartir',
+      recherche:'Buscar en la carta…',aucun:'Ningún producto coincide con la búsqueda.',
+      ouvert:'Abierto ahora',ferme:'Cerrado ahora',ferme_ouvre:'Abre a las',jusqua:'hasta',
+      suivez:'Síguenos',suivez_txt:'Novedades, sabores del día y ofertas en primicia.',
+      infos:'Información práctica',adresse:'Dirección',tel:'Teléfono',horaires:'Horario',
+      commander:'Pedir',maj:'Carta actualizada el',prix:'Precios en dírhams, impuestos incluidos.',
+      jours:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+      star:'Más vendido',new:'Nuevo',veg:'Vegetariano',ferme_jour:'Cerrado'}
+};
+</script>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="23" fill="#D8A54A" opacity=".14"/>
+          <path d="M16 20a8 8 0 0 1 16 0" fill="none" stroke="#EFC87C" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="19" cy="18.5" r="4.2" fill="#FFF6E9"/>
+          <circle cx="28.4" cy="18.2" r="4.6" fill="#EFC87C"/>
+          <path d="M15.5 23h17L24 41z" fill="none" stroke="#FFF6E9" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M19 27.5h10M21 32h6" stroke="#D8A54A" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-txt">
+          <div class="brand-name" id="brandName">Venezia Ice</div>
+          <div class="brand-sub" id="brandSub">Larache</div>
+        </div>
+      </div>
+      <nav class="langs" id="langs" aria-label="Langue"></nav>
+    </div>
+
+    <h1 class="hero-title" id="heroTitle"></h1>
+    <p class="hero-sub" id="heroSub"></p>
+    <div class="statut" id="statut"></div>
+
+    <div class="actions" id="actions"></div>
+  </div>
+</header>
+
+<div class="sticky">
+  <div class="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" autocomplete="off" aria-label="Rechercher">
+  </div>
+  <nav class="chips" id="chips" aria-label="Catégories"></nav>
+</div>
+
+<main class="wrap">
+  <div id="menu"></div>
+
+  <section class="social-card">
+    <h2 id="socTitre"></h2>
+    <p id="socTxt"></p>
+    <div class="socials" id="socials"></div>
+  </section>
+
+  <section class="infos">
+    <h2 id="infosTitre"></h2>
+    <div class="info-row"><div class="k" id="kAdresse"></div><div class="v" id="vAdresse"></div></div>
+    <div class="info-row"><div class="k" id="kTel"></div><div class="v"><a id="vTel" href="#"></a></div></div>
+    <div class="info-row"><div class="k" id="kHoraires"></div><div class="v"><ul class="horaires" id="vHoraires"></ul></div></div>
+  </section>
+</main>
+
+<footer>
+  <div class="f-brand">Venezia Ice · Ste F Corner</div>
+  <div id="fPrix"></div>
+  <div class="maj" id="fMaj"></div>
+</footer>
+
+<a class="fab" id="fab" href="#" rel="noopener">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2m5.8 14.3c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2 1.2.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.1.1.6-.1 1.3"/></svg>
+  <span id="fabTxt"></span>
+</a>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   4) MOTEUR D'AFFICHAGE — rien à modifier ici au quotidien.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+  const LANGS = ['fr','ar','en','es'];
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  let lang = 'fr';
+  try {
+    const saved = localStorage.getItem('venezia.lang');
+    if (saved && LANGS.includes(saved)) lang = saved;
+    else {
+      const nav = (navigator.language || 'fr').slice(0,2);
+      if (LANGS.includes(nav)) lang = nav;
+    }
+  } catch (e) { /* navigation privée : on garde le français */ }
+
+  const t = () => I18N[lang];
+  const tr = obj => (obj && (obj[lang] || obj.fr)) || '';
+
+  const ICONES = {
+    appeler:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16 16 0 0 1 3 6.2 2 2 0 0 1 5 4z"/>',
+    whatsapp:'<path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z"/><path d="M8.5 8.5c.4 2.6 2.4 4.6 5 5"/>',
+    itineraire:'<path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/>',
+    partager:'<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 15V3m0 0 4 4m-4-4-4 4"/>'
+  };
+
+  const SOCIAL_SVG = {
+    instagram:'<path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9s.7.8.9 1.4c.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4s-.8.7-1.4.9c-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4s.8-.7 1.4-.9c.4-.2 1-.4 2.2-.4 1.3-.1 1.7-.1 4.8-.1zm0 3.4a6.4 6.4 0 1 0 0 12.8 6.4 6.4 0 0 0 0-12.8zm0 2.2a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4zm6.6-2.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>',
+    facebook:'<path d="M14 9V7.3c0-.8.2-1.3 1.4-1.3H17V3.1A20 20 0 0 0 14.8 3C12.3 3 10.6 4.5 10.6 7v2H8v3.3h2.6V21H14v-8.7h2.6l.4-3.3z"/>',
+    tiktok:'<path d="M16.5 3c.4 2.2 1.7 3.6 3.9 3.8v2.6c-1.4.1-2.7-.3-4-1v5.9c0 5-4.1 7.4-8 5.6-2.4-1.1-3.4-4.2-2.5-6.8.8-2.2 3-3.5 5.6-3.2v2.9c-.4-.1-.8-.2-1.2-.2-1.3.1-2.3 1.1-2.3 2.4 0 1.4 1.2 2.5 2.6 2.4 1.4-.1 2.3-1.2 2.3-2.7V3h3.6z"/>',
+    glovo:'<path d="M12 2a7 7 0 0 0-7 7c0 4.5 5.4 11.6 6.3 12.7.4.5 1 .5 1.4 0C13.6 20.6 19 13.5 19 9a7 7 0 0 0-7-7zm0 4.3a2.7 2.7 0 1 1 0 5.4 2.7 2.7 0 0 1 0-5.4z"/>',
+    maps:'<path d="M12 2a7.5 7.5 0 0 0-7.5 7.5c0 5.3 6.6 11.9 6.9 12.2.3.3.9.3 1.2 0 .3-.3 6.9-6.9 6.9-12.2A7.5 7.5 0 0 0 12 2zm0 4a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7z"/>'
+  };
+
+  const minutes = hm => { const [h,m] = hm.split(':').map(Number); return h*60+m; };
+
+  /** État d'ouverture (gère les fermetures après minuit). */
+  function ouverture(now){
+    const j = now.getDay(), min = now.getHours()*60 + now.getMinutes();
+    const veille = CONFIG.horaires[(j+6)%7];
+    if (veille){
+      const [o,f] = veille.map(minutes);
+      if (f < o && min < f) return {ouvert:true, ferme:veille[1]};   // service de la veille
+    }
+    const jour = CONFIG.horaires[j];
+    if (!jour) return {ouvert:false, ouvre:null};
+    const [o,f] = jour.map(minutes);
+    const fin = f < o ? f + 1440 : f;
+    if (min >= o && min < fin) return {ouvert:true, ferme:jour[1]};
+    return {ouvert:false, ouvre:min < o ? jour[0] : null};
+  }
+
+  function waLink(){
+    const txt = encodeURIComponent(
+      lang === 'ar' ? 'السلام عليكم، بغيت نطلب من فينيسيا آيس' :
+      lang === 'en' ? 'Hello Venezia Ice, I would like to order:' :
+      lang === 'es' ? 'Hola Venezia Ice, quisiera pedir:' :
+      'Bonjour Venezia Ice, je souhaite commander :');
+    return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + txt;
+  }
+
+  function partager(){
+    const data = {title:CONFIG.nom + ' — ' + CONFIG.ville, text:t().tagline, url:location.href};
+    if (navigator.share) { navigator.share(data).catch(()=>{}); return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(
+      ()=>alert(location.href), ()=>{});
+  }
+
+  function renderChrome(){
+    const T = t();
+    document.documentElement.lang = lang;
+    document.documentElement.dir = T.dir;
+
+    $('langs').innerHTML = LANGS.map(l =>
+      `<button type="button" data-l="${l}" aria-pressed="${l===lang}">${l.toUpperCase()}</button>`).join('');
+    $('langs').querySelectorAll('button').forEach(b =>
+      b.addEventListener('click', () => { setLang(b.dataset.l); }));
+
+    $('brandName').textContent = CONFIG.nom;
+    $('brandSub').textContent  = CONFIG.ville;
+    $('heroTitle').innerHTML   = T.hero;
+    $('heroSub').textContent   = T.tagline;
+    $('q').placeholder         = T.recherche;
+    $('socTitre').textContent  = T.suivez;
+    $('socTxt').textContent    = T.suivez_txt;
+    $('infosTitre').textContent= T.infos;
+    $('kAdresse').textContent  = T.adresse;
+    $('vAdresse').textContent  = CONFIG.adresse;
+    $('kTel').textContent      = T.tel;
+    $('vTel').textContent      = CONFIG.telephone;
+    $('vTel').href             = 'tel:' + CONFIG.telephone.replace(/\s/g,'');
+    $('kHoraires').textContent = T.horaires;
+    $('fPrix').textContent     = T.prix;
+    $('fMaj').textContent      = T.maj + ' ' + new Date(CONFIG.majLe).toLocaleDateString(lang === 'ar' ? 'ar-MA' : lang + '-MA');
+    $('fabTxt').textContent    = T.commander;
+    $('fab').href              = waLink();
+
+    // Statut d'ouverture
+    const st = ouverture(new Date()), el = $('statut');
+    el.className = 'statut' + (st.ouvert ? '' : ' ferme');
+    el.innerHTML = '<span class="pastille"></span><span>' +
+      (st.ouvert ? esc(T.ouvert + ' · ' + T.jusqua + ' ' + st.ferme)
+                 : esc(st.ouvre ? T.ferme + ' · ' + T.ferme_ouvre + ' ' + st.ouvre : T.ferme)) + '</span>';
+
+    // Actions rapides
+    const acts = [
+      {k:'appeler',    href:'tel:' + CONFIG.telephone.replace(/\s/g,'')},
+      {k:'whatsapp',   href:waLink()},
+      {k:'itineraire', href:CONFIG.maps},
+      {k:'partager',   href:'#', share:true}
+    ];
+    $('actions').innerHTML = acts.map(a =>
+      `<a class="action" href="${esc(a.href)}"${a.share ? ' data-share="1"' : ' target="_blank" rel="noopener"'}>
+         <svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[a.k]}</svg><span>${esc(T[a.k])}</span></a>`).join('');
+    const sh = $('actions').querySelector('[data-share]');
+    if (sh) sh.addEventListener('click', e => { e.preventDefault(); partager(); });
+
+    // Réseaux sociaux
+    $('socials').innerHTML = CONFIG.reseaux.map(r =>
+      `<a class="soc" href="${esc(r.url)}" target="_blank" rel="noopener">
+         <svg viewBox="0 0 24 24" aria-hidden="true">${SOCIAL_SVG[r.id] || SOCIAL_SVG.maps}</svg>
+         <span>${esc(r.nom)}</span><span class="handle">${esc(r.handle)}</span></a>`).join('');
+
+    // Horaires
+    const jourAuj = new Date().getDay();
+    $('vHoraires').innerHTML = [1,2,3,4,5,6,0].map(j => {
+      const h = CONFIG.horaires[j];
+      return `<li class="${j === jourAuj ? 'today' : ''}"><span>${esc(T.jours[j])}</span><span>${
+        h ? esc(h[0] + ' – ' + h[1]) : esc(T.ferme_jour)}</span></li>`;
+    }).join('');
+
+    // Chips de catégories
+    $('chips').innerHTML = MENU.map((c,i) =>
+      `<button type="button" class="chip" data-c="${c.id}" aria-current="${i===0}">${c.ico} ${esc(tr(c.nom))}</button>`).join('');
+    $('chips').querySelectorAll('.chip').forEach(b =>
+      b.addEventListener('click', () => {
+        const el = document.getElementById('sec-' + b.dataset.c);
+        if (el) el.scrollIntoView({block:'start'});
+      }));
+  }
+
+  function renderMenu(filtre){
+    const T = t(), f = (filtre || '').trim().toLowerCase();
+    const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+    let html = '', total = 0;
+
+    MENU.forEach(cat => {
+      const items = cat.items.filter(it => {
+        if (it.off) return false;
+        if (!f) return true;
+        // la recherche fonctionne dans les 4 langues, quelle que soit celle affichée
+        const hay = norm(Object.values(it.n).concat(Object.values(it.d || {}),
+                                                    Object.values(cat.nom)).join(' '));
+        return hay.includes(norm(f));
+      });
+      if (!items.length) return;
+      total += items.length;
+      html += `<section class="section" id="sec-${cat.id}">
+        <div class="section-head"><span class="ico">${cat.ico}</span><h2>${esc(tr(cat.nom))}</h2></div>
+        ${cat.note ? `<p class="section-note">${esc(tr(cat.note))}</p>` : ''}
+        ${items.map(it => `
+          <article class="item">
+            <div class="item-main">
+              <div class="item-name">${esc(tr(it.n))}</div>
+              ${it.d ? `<p class="item-desc">${esc(tr(it.d))}</p>` : ''}
+              ${it.t ? `<div class="badges">${it.t.map(b =>
+                  `<span class="badge b-${b}">${esc(T[b] || b)}</span>`).join('')}</div>` : ''}
+            </div>
+            <div class="item-price">${it.p} <span style="font-size:11px;opacity:.7">${esc(CONFIG.devise)}</span></div>
+          </article>`).join('')}
+      </section>`;
+    });
+
+    $('menu').innerHTML = total ? html : `<p class="vide">${esc(T.aucun)}</p>`;
+    observeSections();
+  }
+
+  // Mise en évidence de la catégorie visible
+  let observer = null;
+  function observeSections(){
+    if (observer) observer.disconnect();
+    if (!('IntersectionObserver' in window)) return;
+    observer = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const id = en.target.id.replace('sec-','');
+        $('chips').querySelectorAll('.chip').forEach(c => {
+          const actif = c.dataset.c === id;
+          c.setAttribute('aria-current', actif);
+          if (actif) c.scrollIntoView({block:'nearest', inline:'center'});
+        });
+      });
+    }, {rootMargin:'-120px 0px -70% 0px'});
+    document.querySelectorAll('.section').forEach(s => observer.observe(s));
+  }
+
+  function setLang(l){
+    lang = l;
+    try { localStorage.setItem('venezia.lang', l); } catch (e) { /* stockage indisponible */ }
+    renderChrome();
+    renderMenu($('q').value);
+  }
+
+  let tmr = null;
+  $('q').addEventListener('input', e => {
+    clearTimeout(tmr);
+    tmr = setTimeout(() => renderMenu(e.target.value), 120);
+  });
+
+  renderChrome();
+  renderMenu('');
+  setInterval(() => {                     // le statut ouvert/fermé reste juste
+    const st = ouverture(new Date()), el = $('statut'), T = t();
+    el.className = 'statut' + (st.ouvert ? '' : ' ferme');
+    el.innerHTML = '<span class="pastille"></span><span>' +
+      (st.ouvert ? esc(T.ouvert + ' · ' + T.jusqua + ' ' + st.ferme)
+                 : esc(st.ouvre ? T.ferme + ' · ' + T.ferme_ouvre + ' ' + st.ouvre : T.ferme)) + '</span>';
+  }, 60000);
+
+  if ('serviceWorker' in navigator)
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+})();
+</script>
+</body>
+</html>

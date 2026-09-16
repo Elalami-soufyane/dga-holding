@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E2A3A">
+<title>Venezia Ice — Studio plaque QR</title>
+<meta name="description" content="Générateur de la plaque QR Venezia Ice : aperçu, export SVG vectoriel, PNG 300 dpi et impression aux formats A5, A6, chevalet et vitrine.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lagune:#0E2A3A;--lagune-2:#143C52;--or:#D8A54A;--or-clair:#EFC87C;--creme:#FFF6E9;
+  --bg:#F4EFE6;--surface:#FFFFFF;--texte:#16242E;--texte-2:#5D6C77;--bord:#E2D8C8;--rayon:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--texte);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}
+h1,h2{font-family:'Playfair Display',Georgia,serif;margin:0}
+.app{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:22px;max-width:1160px;margin:0 auto;padding:22px 18px 60px}
+@media (max-width:860px){.app{grid-template-columns:1fr;padding:16px}}
+header.top{background:var(--lagune);color:var(--creme);padding:18px 0}
+header.top .in{max-width:1160px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header.top h1{font-size:20px}
+header.top p{margin:2px 0 0;font-size:13px;color:rgba(255,246,233,.72)}
+.lien-menu{font-size:13px;color:var(--or-clair);text-decoration:none;border:1px solid rgba(216,165,74,.4);padding:7px 13px;border-radius:999px}
+
+.panneau{background:var(--surface);border:1px solid var(--bord);border-radius:var(--rayon);padding:16px;margin-bottom:14px}
+.panneau h2{font-size:15px;margin-bottom:12px;letter-spacing:.01em}
+label{display:block;font-size:12.5px;color:var(--texte-2);margin:10px 0 4px;font-weight:500}
+input[type=text],input[type=url],select{
+  width:100%;padding:9px 11px;border:1px solid var(--bord);border-radius:9px;
+  background:#FCFAF6;color:var(--texte);font:inherit;font-size:14px}
+input:focus,select:focus{outline:2px solid var(--or);outline-offset:1px}
+.radios{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:6px}
+.radios label{display:flex;align-items:center;gap:7px;margin:0;padding:9px 10px;border:1px solid var(--bord);
+  border-radius:9px;cursor:pointer;font-size:13px;color:var(--texte);background:#FCFAF6}
+.radios label:has(input:checked){border-color:var(--or);background:rgba(216,165,74,.1);font-weight:600}
+.radios input{accent-color:var(--or)}
+.boutons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+button.act{
+  flex:1 1 auto;padding:11px 14px;border-radius:10px;border:1px solid var(--lagune);background:var(--lagune);
+  color:var(--creme);font:inherit;font-weight:600;font-size:13.5px;cursor:pointer}
+button.act.sec{background:transparent;color:var(--lagune)}
+button.act:active{transform:translateY(1px)}
+.note{font-size:12px;color:var(--texte-2);margin:10px 0 0}
+.diag{font-size:12.5px;background:#FBF7F0;border:1px dashed var(--bord);border-radius:10px;padding:11px;margin-top:12px}
+.diag b{color:var(--texte)}
+.diag .ko{color:#B3283E;font-weight:600}
+.diag .ok{color:#2F7A55;font-weight:600}
+
+.scene{background:repeating-conic-gradient(#EDE6DA 0% 25%,#F6F1E8 0% 50%) 0 0/22px 22px;
+  border:1px solid var(--bord);border-radius:var(--rayon);padding:22px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}
+#apercu{filter:drop-shadow(0 12px 30px rgba(14,42,58,.25));max-width:100%;height:auto}
+
+@media print{
+  header.top,.panneau,.note,.scene,.app>div:first-child{display:none!important}
+  body{background:#fff}
+  .app{display:block;padding:0;margin:0}
+  .scene{display:block;border:none;background:none;padding:0;overflow:visible}
+  #apercu{filter:none;width:100%;height:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="in">
+    <div>
+      <h1>Studio plaque QR — Venezia Ice</h1>
+      <p>Aperçu, impression et export haute définition de la plaque à poser en salle et en vitrine.</p>
+    </div>
+    <a class="lien-menu" href="index.html">← Voir le menu digital</a>
+  </div>
+</header>
+
+<div class="app">
+  <div>
+    <section class="panneau">
+      <h2>1 · Contenu</h2>
+      <label for="url">Adresse du menu (ce que le QR ouvre)</label>
+      <input type="url" id="url" value="https://elalami-soufyane.github.io/dga-holding/venezia/" spellcheck="false">
+      <label for="nom">Nom affiché</label>
+      <input type="text" id="nom" value="VENEZIA ICE">
+      <label for="sous">Ligne secondaire</label>
+      <input type="text" id="sous" value="LARACHE · STE F CORNER">
+      <label for="reseaux">Réseaux (séparés par des virgules)</label>
+      <input type="text" id="reseaux" value="@venezia.ice, Venezia Ice Larache, @venezia.ice">
+      <label for="tel">Téléphone en bas de plaque</label>
+      <input type="text" id="tel" value="+212 5 39 00 00 00">
+    </section>
+
+    <section class="panneau">
+      <h2>2 · Format & style</h2>
+      <label for="format">Format d'impression</label>
+      <select id="format">
+        <option value="a5">Plaque murale — A5 (148 × 210 mm)</option>
+        <option value="chevalet">Chevalet de table (100 × 150 mm)</option>
+        <option value="vitrine">Affiche vitrine (200 × 280 mm)</option>
+        <option value="a6">Sticker / flyer — A6 (105 × 148 mm)</option>
+      </select>
+      <label>Style</label>
+      <div class="radios">
+        <label><input type="radio" name="style" value="sombre" checked> Lagune &amp; or</label>
+        <label><input type="radio" name="style" value="clair"> Crème &amp; lagune</label>
+      </div>
+      <label>Correction d'erreur du QR</label>
+      <div class="radios">
+        <label><input type="radio" name="ecl" value="Q" checked> Q — 25 % (standard)</label>
+        <label><input type="radio" name="ecl" value="H"> H — 30 % (vitrine)</label>
+      </div>
+      <p class="note">Le niveau H reste lisible même si le QR est sali ou partiellement masqué, au prix d'un motif plus dense.</p>
+    </section>
+
+    <section class="panneau">
+      <h2>3 · Export</h2>
+      <div class="boutons">
+        <button class="act" id="bImprimer" type="button">Imprimer / PDF</button>
+        <button class="act sec" id="bPng" type="button">PNG 300 dpi</button>
+        <button class="act sec" id="bSvg" type="button">SVG vectoriel</button>
+      </div>
+      <p class="note">Pour l'imprimeur : le SVG est vectoriel (qualité infinie) ; le PNG 300 dpi convient à tous les tirages. Prévoir 3 mm de fond perdu si la plaque est rognée.</p>
+      <div class="diag" id="diag"></div>
+    </section>
+  </div>
+
+  <div class="scene"><div id="apercu"></div></div>
+</div>
+
+<script src="assets/qr.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   STUDIO PLAQUE — la plaque est décrite une seule fois sous forme de
+   primitives (rectangles, textes, chemins) puis rendue :
+     • en SVG   → aperçu écran, impression et export vectoriel
+     • en Canvas → export PNG 300 dpi avec les polices réellement chargées
+   Toutes les coordonnées sont en millimètres : ce qui est à l'écran est
+   exactement ce qui sort de l'imprimante.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+
+  const FORMATS = {
+    a5:       {w:148, h:210, nom:'A5 (148 × 210 mm)'},
+    chevalet: {w:100, h:150, nom:'Chevalet (100 × 150 mm)'},
+    vitrine:  {w:200, h:280, nom:'Affiche vitrine (200 × 280 mm)'},
+    a6:       {w:105, h:148, nom:'A6 (105 × 148 mm)'}
+  };
+
+  const STYLES = {
+    sombre:{fond:'#0E2A3A', fond2:'#143C52', texte:'#FFF6E9', accent:'#D8A54A',
+            accentDoux:'#EFC87C', carte:'#FFFFFF', qr:'#0E2A3A', secondaire:'rgba(255,246,233,.72)'},
+    clair: {fond:'#FFF6E9', fond2:'#FBEFD9', texte:'#0E2A3A', accent:'#B4832C',
+            accentDoux:'#8A6412', carte:'#FFFFFF', qr:'#0E2A3A', secondaire:'rgba(14,42,58,.68)'}
+  };
+
+  const APPELS = [
+    {txt:'SCANNEZ POUR VOIR LE MENU', fam:"'DM Sans', sans-serif"},
+    {txt:'امسح الرمز لعرض القائمة',    fam:"'Tajawal', sans-serif"},
+    {txt:'SCAN FOR THE MENU  ·  ESCANEA LA CARTA', fam:"'DM Sans', sans-serif"}
+  ];
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  /** Chemin SVG du petit cornet de glace (repère 0-24, à l'échelle demandée). */
+  function marque(cx, cy, taille, c){
+    const k = taille / 24, x = cx - taille/2, y = cy - taille/2;
+    const P = (a,b) => (x + a*k).toFixed(2) + ' ' + (y + b*k).toFixed(2);
+    return [
+      {type:'path', d:`M${P(4.2,11)}A7.8 7.8 0 0 1 ${P(19.8,11)}`, stroke:c.accentDoux, w:1.6*k, fill:'none', cap:'round'},
+      {type:'circle', cx:x+8.2*k, cy:y+9*k, r:4.1*k, fill:c.texte},
+      {type:'circle', cx:x+15.6*k, cy:y+8.6*k, r:4.5*k, fill:c.accent},
+      {type:'path', d:`M${P(3.6,13)}L${P(20.4,13)}L${P(12,23.4)}Z`, stroke:c.texte, w:1.5*k, fill:'none', join:'round'},
+      {type:'path', d:`M${P(7.4,16.4)}L${P(16.6,16.4)}M${P(9.2,19.2)}L${P(14.8,19.2)}`, stroke:c.accent, w:1.1*k, fill:'none', cap:'round'}
+    ];
+  }
+
+  /** Réduit la taille des textes qui dépasseraient du cadre (mesure réelle,
+   *  polices chargées comprises) : aucune ligne ne peut déborder de la plaque. */
+  const mesureur = document.createElement('canvas').getContext('2d');
+  function ajusterTextes(prims, maxLargeur){
+    prims.forEach(o => {
+      if (o.type !== 'text') return;
+      let taille = o.size;
+      for (let k = 0; k < 14; k++){
+        mesureur.font = `${o.weight||400} ${taille}px ${o.fam}`;
+        if ('letterSpacing' in mesureur) mesureur.letterSpacing = (o.spacing || 0) + 'px';
+        if (mesureur.measureText(o.txt).width <= maxLargeur) break;
+        taille *= 0.94;
+      }
+      o.size = taille;
+    });
+  }
+
+  /** Construit la plaque : renvoie {w,h,prims,infos}. */
+  function plaque(opt){
+    const F = FORMATS[opt.format], c = STYLES[opt.style];
+    const W = F.w, H = F.h, p = [];
+    const petit = W < 120;                       // A6 / chevalet : typo resserrée
+    const marge = petit ? 6 : 8;
+
+    p.push({type:'rect', x:0, y:0, w:W, h:H, r:0, fill:c.fond});
+    p.push({type:'degrade', x:0, y:0, w:W, h:H, de:c.fond2, vers:c.fond});
+    p.push({type:'rect', x:marge, y:marge, w:W-2*marge, h:H-2*marge, r:petit?4:5,
+            fill:'none', stroke:c.accent, sw:0.7});
+    p.push({type:'rect', x:marge+1.4, y:marge+1.4, w:W-2*marge-2.8, h:H-2*marge-2.8, r:petit?3:4,
+            fill:'none', stroke:c.accent, sw:0.22, opacity:.55});
+
+    let y = marge + (petit ? 8 : 11);
+
+    // Marque + nom
+    const tailleMarque = petit ? 13 : 17;
+    p.push(...marque(W/2, y + tailleMarque/2, tailleMarque, c));
+    y += tailleMarque + (petit ? 7 : 9);
+
+    p.push({type:'text', x:W/2, y:y, txt:opt.nom, size:petit?9.5:12.5, weight:700,
+            fam:"'Playfair Display', Georgia, serif", fill:c.texte, anchor:'middle', spacing:petit?0.5:0.7});
+    y += petit ? 5.5 : 7;
+    p.push({type:'text', x:W/2, y:y, txt:opt.sous, size:petit?3.4:4.2, weight:500,
+            fam:"'DM Sans', sans-serif", fill:c.accent, anchor:'middle', spacing:petit?0.7:0.9});
+    y += petit ? 6 : 8;
+
+    // Filet décoratif
+    p.push({type:'path', d:`M${(W/2-14).toFixed(2)} ${y.toFixed(2)}L${(W/2-3).toFixed(2)} ${y.toFixed(2)}`,
+            stroke:c.accent, w:0.4, fill:'none', cap:'round'});
+    p.push({type:'circle', cx:W/2, cy:y, r:0.9, fill:c.accent});
+    p.push({type:'path', d:`M${(W/2+3).toFixed(2)} ${y.toFixed(2)}L${(W/2+14).toFixed(2)} ${y.toFixed(2)}`,
+            stroke:c.accent, w:0.4, fill:'none', cap:'round'});
+    y += petit ? 7 : 9;
+
+    // Appels à l'action multilingues
+    APPELS.forEach((a,i) => {
+      p.push({type:'text', x:W/2, y:y, txt:a.txt, size:i===1 ? (petit?4.2:5.2) : (petit?3.8:4.6),
+              weight:i===0?700:500, fam:a.fam, fill:i===0?c.texte:c.secondaire,
+              anchor:'middle', spacing:i===1?0:(petit?0.4:0.55), rtl:i===1});
+      y += (petit ? 5.4 : 6.6);
+    });
+    y += petit ? 1.5 : 2.5;
+
+    // Carte blanche + QR : on lui donne tout l'espace restant, pour un QR
+    // aussi grand que le format le permet (donc lisible de plus loin).
+    const basHauteur = petit ? 27 : 34;                 // adresse + réseaux + téléphone
+    const carte = Math.min(W - 2*marge - (petit?10:14), H - y - marge - basHauteur);
+    const cx = (W - carte)/2;
+    p.push({type:'rect', x:cx, y:y, w:carte, h:carte, r:petit?4:5, fill:c.carte});
+
+    const qr = QR.encode(opt.url, {ecl:opt.ecl});
+    const quiet = 4, total = qr.size + 2*quiet;
+    const zone = carte - (petit ? 8 : 10);
+    const module = zone / total;
+    const ox = cx + (carte - zone)/2, oy = y + (carte - zone)/2;
+    p.push({type:'qr', qr:qr, x:ox, y:oy, module:module, quiet:quiet, fill:c.qr});
+    y += carte + (petit ? 6 : 8);
+
+    // Adresse en clair (secours si le client ne peut pas scanner)
+    const lisible = opt.url.replace(/^https?:\/\//,'').replace(/\/$/,'');
+    p.push({type:'text', x:W/2, y:y, txt:lisible, size:petit?2.9:3.4, weight:500,
+            fam:"'DM Sans', sans-serif", fill:c.secondaire, anchor:'middle', spacing:0.2});
+    y += petit ? 6 : 8;
+
+    // Réseaux sociaux
+    const reseaux = opt.reseaux.split(',').map(s => s.trim()).filter(Boolean);
+    const ordre = ['instagram','facebook','tiktok','maps','glovo'];
+    if (reseaux.length){
+      const largeur = W - 2*marge - (petit?6:10);
+      const pas = largeur / reseaux.length;
+      const x0 = marge + (petit?3:5) + pas/2;
+      reseaux.forEach((r,i) => {
+        p.push({type:'icone', nom:ordre[i] || 'maps', x:x0 + i*pas, y:y,
+                taille:petit?4.4:5.4, fill:c.accent});
+        p.push({type:'text', x:x0 + i*pas, y:y + (petit?4.4:5.2), txt:r, size:petit?2.6:3.1, weight:500,
+                fam:"'DM Sans', sans-serif", fill:c.secondaire, anchor:'middle'});
+      });
+      y += petit ? 9 : 11;
+    }
+
+    // Pied de plaque
+    if (opt.tel)
+      p.push({type:'text', x:W/2, y:H - marge - (petit?4.5:6), txt:opt.tel, size:petit?3.1:3.7, weight:500,
+              fam:"'DM Sans', sans-serif", fill:c.secondaire, anchor:'middle', spacing:0.3});
+
+    ajusterTextes(p, W - 2*marge - (petit ? 5 : 7));
+
+    return {w:W, h:H, prims:p, qr:qr, module:module, formatNom:F.nom,
+            degrade:{de:c.fond2, vers:c.fond}};
+  }
+
+  // Pictogrammes des réseaux, dans un repère 24 × 24
+  const ICONES = {
+    instagram:'M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9s.7.8.9 1.4c.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4s-.8.7-1.4.9c-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4s.8-.7 1.4-.9c.4-.2 1-.4 2.2-.4 1.3-.1 1.7-.1 4.8-.1zm0 3.4a6.4 6.4 0 1 0 0 12.8 6.4 6.4 0 0 0 0-12.8zm0 2.2a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4zm6.6-2.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z',
+    facebook:'M14 9V7.3c0-.8.2-1.3 1.4-1.3H17V3.1A20 20 0 0 0 14.8 3C12.3 3 10.6 4.5 10.6 7v2H8v3.3h2.6V21H14v-8.7h2.6l.4-3.3z',
+    tiktok:'M16.5 3c.4 2.2 1.7 3.6 3.9 3.8v2.6c-1.4.1-2.7-.3-4-1v5.9c0 5-4.1 7.4-8 5.6-2.4-1.1-3.4-4.2-2.5-6.8.8-2.2 3-3.5 5.6-3.2v2.9c-.4-.1-.8-.2-1.2-.2-1.3.1-2.3 1.1-2.3 2.4 0 1.4 1.2 2.5 2.6 2.4 1.4-.1 2.3-1.2 2.3-2.7V3h3.6z',
+    maps:'M12 2a7.5 7.5 0 0 0-7.5 7.5c0 5.3 6.6 11.9 6.9 12.2.3.3.9.3 1.2 0 .3-.3 6.9-6.9 6.9-12.2A7.5 7.5 0 0 0 12 2zm0 4a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7z',
+    glovo:'M12 2a7 7 0 0 0-7 7c0 4.5 5.4 11.6 6.3 12.7.4.5 1 .5 1.4 0C13.6 20.6 19 13.5 19 9a7 7 0 0 0-7-7zm0 4.3a2.7 2.7 0 1 1 0 5.4 2.7 2.7 0 0 1 0-5.4z'
+  };
+
+  /* ─── Rendu SVG ─── */
+  function versSVG(pl){
+    const t = [];
+    pl.prims.forEach(o => {
+      if (o.type === 'degrade')
+        t.push(`<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="url(#fondVenezia)"/>`);
+      else if (o.type === 'icone')
+        t.push(`<g transform="translate(${(o.x - o.taille/2).toFixed(2)} ${(o.y - o.taille/2).toFixed(2)})
+                 scale(${(o.taille/24).toFixed(4)})"><path d="${ICONES[o.nom] || ICONES.maps}" fill="${o.fill}"/></g>`);
+      else if (o.type === 'rect')
+        t.push(`<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" rx="${o.r||0}"
+                 fill="${o.fill}" ${o.stroke?`stroke="${o.stroke}" stroke-width="${o.sw}"`:''}
+                 ${o.opacity!==undefined?`opacity="${o.opacity}"`:''}/>`);
+      else if (o.type === 'circle')
+        t.push(`<circle cx="${o.cx}" cy="${o.cy}" r="${o.r}" fill="${o.fill}"/>`);
+      else if (o.type === 'path')
+        t.push(`<path d="${o.d}" fill="${o.fill||'none'}" ${o.stroke?`stroke="${o.stroke}" stroke-width="${o.w}"`:''}
+                 stroke-linecap="${o.cap||'butt'}" stroke-linejoin="${o.join||'miter'}"/>`);
+      else if (o.type === 'qr')
+        t.push(`<g transform="translate(${o.x - o.quiet*o.module} ${o.y - o.quiet*o.module})">
+                  <path d="${QR.toPath(o.qr, o.module, o.quiet)}" fill="${o.fill}" shape-rendering="crispEdges"/></g>`);
+      else if (o.type === 'text')
+        t.push(`<text x="${o.x}" y="${o.y}" font-family="${o.fam}" font-size="${o.size}"
+                 font-weight="${o.weight||400}" fill="${o.fill}" text-anchor="${o.anchor||'start'}"
+                 ${o.spacing?`letter-spacing="${o.spacing}"`:''} ${o.rtl?'direction="rtl"':''}
+                 dominant-baseline="middle" xml:space="preserve">${esc(o.txt)}</text>`);
+    });
+    const g = pl.degrade;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${pl.w}mm" height="${pl.h}mm"
+      viewBox="0 0 ${pl.w} ${pl.h}" role="img" aria-label="Plaque QR Venezia Ice"><defs>
+      <linearGradient id="fondVenezia" x1="0" y1="0" x2="0.35" y2="1">
+        <stop offset="0" stop-color="${g.de}"/><stop offset="1" stop-color="${g.vers}"/>
+      </linearGradient></defs>${t.join('')}</svg>`;
+  }
+
+  /* ─── Rendu Canvas (export PNG haute définition) ─── */
+  function versCanvas(pl, dpi){
+    const pxParMm = dpi / 25.4;
+    const cv = document.createElement('canvas');
+    cv.width  = Math.round(pl.w * pxParMm);
+    cv.height = Math.round(pl.h * pxParMm);
+    const g = cv.getContext('2d');
+    g.scale(pxParMm, pxParMm);
+    g.textBaseline = 'middle';
+
+    const rr = (x,y,w,h,r) => {
+      g.beginPath();
+      if (g.roundRect) g.roundRect(x,y,w,h,r); else g.rect(x,y,w,h);
+    };
+    pl.prims.forEach(o => {
+      if (o.type === 'degrade'){
+        const lg = g.createLinearGradient(0, 0, pl.w*0.35, pl.h);
+        lg.addColorStop(0, o.de); lg.addColorStop(1, o.vers);
+        g.fillStyle = lg; g.fillRect(o.x, o.y, o.w, o.h);
+      } else if (o.type === 'icone'){
+        g.save(); g.translate(o.x - o.taille/2, o.y - o.taille/2); g.scale(o.taille/24, o.taille/24);
+        g.fillStyle = o.fill; g.fill(new Path2D(ICONES[o.nom] || ICONES.maps)); g.restore();
+      } else if (o.type === 'rect'){
+        g.globalAlpha = o.opacity !== undefined ? o.opacity : 1;
+        rr(o.x,o.y,o.w,o.h,o.r||0);
+        if (o.fill && o.fill !== 'none'){ g.fillStyle = o.fill; g.fill(); }
+        if (o.stroke){ g.strokeStyle = o.stroke; g.lineWidth = o.sw; g.stroke(); }
+        g.globalAlpha = 1;
+      } else if (o.type === 'circle'){
+        g.beginPath(); g.arc(o.cx,o.cy,o.r,0,Math.PI*2); g.fillStyle = o.fill; g.fill();
+      } else if (o.type === 'path'){
+        const p2 = new Path2D(o.d);
+        if (o.fill && o.fill !== 'none'){ g.fillStyle = o.fill; g.fill(p2); }
+        if (o.stroke){ g.strokeStyle = o.stroke; g.lineWidth = o.w;
+          g.lineCap = o.cap || 'butt'; g.lineJoin = o.join || 'miter'; g.stroke(p2); }
+      } else if (o.type === 'qr'){
+        g.fillStyle = o.fill;
+        for (let r = 0; r < o.qr.size; r++)
+          for (let cc = 0; cc < o.qr.size; cc++)
+            if (o.qr.modules[r][cc])
+              g.fillRect(o.x + cc*o.module, o.y + r*o.module, o.module + 0.01, o.module + 0.01);
+      } else if (o.type === 'text'){
+        g.font = `${o.weight||400} ${o.size}px ${o.fam}`;
+        g.fillStyle = o.fill;
+        g.textAlign = o.anchor === 'middle' ? 'center' : 'left';
+        if ('letterSpacing' in g) g.letterSpacing = (o.spacing || 0) + 'px';
+        g.direction = o.rtl ? 'rtl' : 'ltr';
+        g.fillText(o.txt, o.x, o.y);
+        if ('letterSpacing' in g) g.letterSpacing = '0px';
+      }
+    });
+    return cv;
+  }
+
+  /* ─── Diagnostic imprimeur ─── */
+  function diagnostic(pl, opt){
+    const modMm = pl.module;
+    // Règle métier : distance de lecture ≈ 10 × la largeur du QR ; un module
+    // doit mesurer au moins 0,4 mm pour rester lisible par un téléphone.
+    const largeurQR = pl.qr.size * modMm;
+    const distanceCm = largeurQR;                  // 10 × largeur, exprimé en cm
+    const distance = distanceCm >= 100
+      ? (distanceCm/100).toFixed(1).replace('.',',') + ' m'
+      : Math.round(distanceCm) + ' cm';
+    const okModule = modMm >= 0.4;
+    return `
+      <b>Format</b> ${pl.formatNom}<br>
+      <b>QR</b> version ${pl.qr.version} · ${pl.qr.size} × ${pl.qr.size} modules ·
+      correction ${opt.ecl} (${opt.ecl === 'H' ? '30' : '25'} %)<br>
+      <b>Module</b> ${modMm.toFixed(2)} mm —
+      <span class="${okModule ? 'ok' : 'ko'}">${okModule ? 'lisible' : 'trop petit, agrandir le format'}</span><br>
+      <b>QR imprimé</b> ${largeurQR.toFixed(0)} mm de côté (zone blanche comprise :
+      ${(largeurQR + 8*modMm).toFixed(0)} mm)<br>
+      <b>Lecture confortable</b> jusqu'à ≈ ${distance}<br>
+      <b>Longueur de l'adresse</b> ${opt.url.length} caractères`;
+  }
+
+  /* ─── Cycle de rendu ─── */
+  let courant = null;
+  function rendre(){
+    const opt = {
+      url:     $('url').value.trim() || 'https://elalami-soufyane.github.io/dga-holding/venezia/',
+      nom:     $('nom').value.trim(),
+      sous:    $('sous').value.trim(),
+      reseaux: $('reseaux').value,
+      tel:     $('tel').value.trim(),
+      format:  $('format').value,
+      style:   document.querySelector('input[name=style]:checked').value,
+      ecl:     document.querySelector('input[name=ecl]:checked').value
+    };
+    try {
+      courant = plaque(opt);
+      $('apercu').innerHTML = versSVG(courant);
+      const svg = $('apercu').querySelector('svg');
+      svg.removeAttribute('width'); svg.removeAttribute('height');
+      svg.style.width = Math.min(courant.w * 2.6, 420) + 'px';
+      svg.style.height = 'auto';
+      $('diag').innerHTML = diagnostic(courant, opt);
+      courant.opt = opt;
+    } catch (e) {
+      $('diag').innerHTML = '<span class="ko">' + esc(e.message) + '</span>';
+    }
+  }
+
+  function telecharger(nom, blob){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nom;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+
+  $('bSvg').addEventListener('click', () => {
+    if (!courant) return;
+    telecharger(`plaque-venezia-${courant.opt.format}.svg`,
+      new Blob([versSVG(courant)], {type:'image/svg+xml'}));
+  });
+
+  $('bPng').addEventListener('click', () => {
+    if (!courant) return;
+    versCanvas(courant, 300).toBlob(b =>
+      telecharger(`plaque-venezia-${courant.opt.format}-300dpi.png`, b), 'image/png');
+  });
+
+  $('bImprimer').addEventListener('click', () => {
+    const st = document.getElementById('pageSize') || document.createElement('style');
+    st.id = 'pageSize';
+    st.textContent = `@page{size:${courant.w}mm ${courant.h}mm;margin:0}`;
+    document.head.appendChild(st);
+    window.print();
+  });
+
+  ['url','nom','sous','reseaux','tel'].forEach(id => $(id).addEventListener('input', rendre));
+  $('format').addEventListener('change', rendre);
+  document.querySelectorAll('input[name=style],input[name=ecl]')
+          .forEach(r => r.addEventListener('change', rendre));
+
+  // Les polices modifient le rendu : on redessine une fois chargées.
+  rendre();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(rendre);
+
+  window.__plaque = () => courant;   // utilisé par les tests automatisés
+})();
+</script>
+</body>
+</html>
