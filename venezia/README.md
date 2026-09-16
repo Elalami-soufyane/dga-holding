@@ -58,9 +58,10 @@ Deux fichiers, deux rôles :
   les liens des réseaux (bloc `CONFIG`), utilisés par les trois pages.
 
 La carte reprend fidèlement le menu imprimé « MENU 2026 » : 16 catégories,
-153 produits. Les intitulés et les descriptions sont traduits en français et en
-arabe ; l'anglais et l'espagnol reprennent le français là où la traduction
-n'apporte rien (un nom propre comme *Margherita* ou *Carbonara*).
+153 produits. **Tout est traduit dans les quatre langues** — intitulés,
+descriptions et notes de catégorie — en français, arabe, anglais et espagnol.
+Les noms propres de recettes (*Margherita*, *Carbonara*, *Frutti di mare*)
+restent évidemment identiques.
 
 **Changer un prix** — chercher le produit dans `assets/menu.js`, modifier `"p"` :
 

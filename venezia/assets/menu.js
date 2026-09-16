@@ -8,8 +8,7 @@
        sans être supprimé).
        n = nom · d = description · p = prix · t = badges
        t : 'star' (best-seller) · 'new' (nouveauté) · 'veg' (sans viande ni poisson)
-       Les textes existent en français et en arabe ; l'anglais et l'espagnol
-       reprennent le français quand la traduction n'apporte rien.
+       Chaque texte existe dans les quatre langues : fr · ar · en · es.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const MENU = [
@@ -34,7 +33,8 @@ const MENU = [
         "d": {
           "fr": "Viennoiserie au choix, pain toasté beurre-confiture, boisson chaude au choix (hors spécialités), eau 33 cl",
           "ar": "معجنات حسب الاختيار، خبز محمص بالزبدة والمربى، مشروب ساخن (ما عدا التخصصات)، ماء 33 سل",
-          "en": "Pastry of your choice, toast with butter and jam, hot drink (specialities excluded), 33 cl water"
+          "en": "Pastry of your choice, toast with butter and jam, hot drink (specialities excluded), 33 cl water",
+          "es": "Bollería a elegir, tostada con mantequilla y mermelada, bebida caliente a elegir (especialidades excluidas), agua 33 cl"
         }
       },
       {
@@ -48,7 +48,8 @@ const MENU = [
         "d": {
           "fr": "Viennoiserie, croque-monsieur parisien, yaourt compote de pomme et granola, boisson chaude (hors spécialités), jus d'orange pressé ou jus de carottes, eau 33 cl",
           "ar": "معجنات، كروك موسيو باريزيان، زبادي بكومبوت التفاح والغرانولا، مشروب ساخن (ما عدا التخصصات)، عصير برتقال أو جزر، ماء 33 سل",
-          "en": "Pastry, Parisian croque-monsieur, apple compote yoghurt with granola, hot drink (specialities excluded), fresh orange or carrot juice, 33 cl water"
+          "en": "Pastry, Parisian croque-monsieur, apple compote yoghurt with granola, hot drink (specialities excluded), fresh orange or carrot juice, 33 cl water",
+          "es": "Bollería, croque-monsieur parisino, yogur con compota de manzana y granola, bebida caliente (especialidades excluidas), zumo de naranja natural o de zanahoria, agua 33 cl"
         }
       },
       {
@@ -62,7 +63,8 @@ const MENU = [
         "d": {
           "fr": "Viennoiserie, œufs au choix, omelette (nature, fromage ou western), poêlée de champignons et tomates, panier du boulanger, jben, olives noires, huile d'olive, yaourt compote et granola, boisson chaude, jus pressé, eau 33 cl",
           "ar": "معجنات، بيض حسب الاختيار، أومليت (عادية، بالجبن أو ويسترن، فطر وطماطم مقلية، سلة الخباز، جبن بلدي، زيتون أسود، زيت الزيتون، زبادي بالكومبوت والغرانولا، مشروب ساخن، عصير طازج، ماء 33 سل",
-          "en": "Pastry, eggs your way, omelette (plain, cheese or western), sautéed mushrooms and tomatoes, baker's basket, jben, black olives, olive oil, compote yoghurt with granola, hot drink, fresh juice, 33 cl water"
+          "en": "Pastry, eggs your way, omelette (plain, cheese or western), sautéed mushrooms and tomatoes, baker's basket, jben, black olives, olive oil, compote yoghurt with granola, hot drink, fresh juice, 33 cl water",
+          "es": "Bollería, huevos a elegir, tortilla (natural, con queso o western), salteado de champiñones y tomate, cesta del panadero, jben, aceitunas negras, aceite de oliva, yogur con compota y granola, bebida caliente, zumo natural, agua 33 cl"
         },
         "t": [
           "star"
@@ -79,7 +81,8 @@ const MENU = [
         "d": {
           "fr": "Moins de 12 ans : chocolat chaud, bol de corn flakes au yaourt, salade de fruits, deux pancakes nutella",
           "ar": "أقل من 12 سنة: شوكولاتة ساخنة، كورن فليكس بالزبادي، سلطة فواكه، بانكيكان بالنوتيلا",
-          "en": "Under 12s: hot chocolate, corn flakes with yoghurt, fruit salad, two Nutella pancakes"
+          "en": "Under 12s: hot chocolate, corn flakes with yoghurt, fruit salad, two Nutella pancakes",
+          "es": "Menores de 12 años: chocolate caliente, bol de corn flakes con yogur, ensalada de frutas, dos tortitas con Nutella"
         }
       },
       {
@@ -93,7 +96,8 @@ const MENU = [
         "d": {
           "fr": "Deux œufs au plat, saucisses de bœuf, jambon de bœuf, haricots blancs sauce tomate, poêlée de champignons et tomates, panier du boulanger, boisson chaude (hors spécialités), eau 33 cl",
           "ar": "بيضتان مقليتان، نقانق البقر، لحم بقري مقدد، فاصوليا بيضاء بصلصة الطماطم، فطر وطماطم مقلية، سلة الخباز، مشروب ساخن، ماء 33 سل",
-          "en": "Two fried eggs, beef sausages, beef ham, baked beans, sautéed mushrooms and tomatoes, baker's basket, hot drink, 33 cl water"
+          "en": "Two fried eggs, beef sausages, beef ham, baked beans, sautéed mushrooms and tomatoes, baker's basket, hot drink, 33 cl water",
+          "es": "Dos huevos fritos, salchichas de ternera, jamón de ternera, alubias blancas con salsa de tomate, salteado de champiñones y tomate, cesta del panadero, bebida caliente (especialidades excluidas), agua 33 cl"
         }
       },
       {
@@ -107,7 +111,8 @@ const MENU = [
         "d": {
           "fr": "Tajine au khlie, msemen, harcha et pain, jben, miel, olives noires, salade d'orange à la cannelle, yaourt aux amandes grillées, boisson chaude, eau 33 cl",
           "ar": "طاجين بالخليع، مسمن، حرشة وخبز، جبن بلدي، عسل، زيتون أسود، سلطة البرتقال بالقرفة، زبادي باللوز المحمص، مشروب ساخن، ماء 33 سل",
-          "en": "Khlie tagine, msemen, harcha and bread, jben, honey, black olives, orange and cinnamon salad, yoghurt with roasted almonds, hot drink, 33 cl water"
+          "en": "Khlie tagine, msemen, harcha and bread, jben, honey, black olives, orange and cinnamon salad, yoghurt with roasted almonds, hot drink, 33 cl water",
+          "es": "Tajín de khlie, msemen, harcha y pan, jben, miel, aceitunas negras, ensalada de naranja con canela, yogur con almendras tostadas, bebida caliente, agua 33 cl"
         }
       },
       {
@@ -121,7 +126,8 @@ const MENU = [
         "d": {
           "fr": "Viennoiserie, chakchouka aux œufs au choix, fromage edam, dinde fumée, salade de fruits, yaourt et granola, boisson chaude, jus pressé, eau 33 cl",
           "ar": "معجنات، شكشوكة بالبيض حسب الاختيار، جبن إيدام، ديك رومي مدخن، سلطة فواكه، زبادي وغرانولا، مشروب ساخن، عصير طازج، ماء 33 سل",
-          "en": "Pastry, shakshuka with eggs your way, edam cheese, smoked turkey, fruit salad, yoghurt and granola, hot drink, fresh juice, 33 cl water"
+          "en": "Pastry, shakshuka with eggs your way, edam cheese, smoked turkey, fruit salad, yoghurt and granola, hot drink, fresh juice, 33 cl water",
+          "es": "Bollería, shakshuka con huevos a elegir, queso edam, pavo ahumado, ensalada de frutas, yogur y granola, bebida caliente, zumo natural, agua 33 cl"
         }
       },
       {
@@ -135,7 +141,8 @@ const MENU = [
         "d": {
           "fr": "Tartine œuf poché, avocat et crème cheese ; salade fitness (mesclun, mangue, saumon fumé, tomates cerises, concombre) ; salade d'orange à la cannelle, yaourt nature, granola et fruits de saison, tea time Tchaba, jus d'orange ou jus détox, eau 33 cl",
           "ar": "توست ببيض مسلوق، أفوكادو وجبن كريمي؛ سلطة فيتنس (خضر ورقية، مانجو، سلمون مدخن، طماطم كرزية، خيار)؛ سلطة البرتقال بالقرفة، زبادي طبيعي، غرانولا وفواكه الموسم، شاي تشابا، عصير برتقال أو ديتوكس، ماء 33 سل",
-          "en": "Poached egg toast with avocado and cream cheese; fitness salad (mesclun, mango, smoked salmon, cherry tomatoes, cucumber); orange and cinnamon salad, plain yoghurt, granola and seasonal fruit, Tchaba tea, orange or detox juice, 33 cl water"
+          "en": "Poached egg toast with avocado and cream cheese; fitness salad (mesclun, mango, smoked salmon, cherry tomatoes, cucumber); orange and cinnamon salad, plain yoghurt, granola and seasonal fruit, Tchaba tea, orange or detox juice, 33 cl water",
+          "es": "Tostada con huevo poché, aguacate y queso crema; ensalada fitness (mezclum, mango, salmón ahumado, tomates cherry, pepino); ensalada de naranja con canela, yogur natural, granola y fruta de temporada, té Tchaba, zumo de naranja o zumo detox, agua 33 cl"
         },
         "t": [
           "veg"
@@ -152,7 +159,8 @@ const MENU = [
         "d": {
           "fr": "Croque-monsieur, viennoiserie au choix, salade de fruits, boisson chaude (hors spécialités), jus d'orange pressé ou jus de carotte, eau 33 cl",
           "ar": "كروك موسيو، معجنات حسب الاختيار، سلطة فواكه، مشروب ساخن، عصير برتقال أو جزر، ماء 33 سل",
-          "en": "Croque-monsieur, pastry of your choice, fruit salad, hot drink, fresh orange or carrot juice, 33 cl water"
+          "en": "Croque-monsieur, pastry of your choice, fruit salad, hot drink, fresh orange or carrot juice, 33 cl water",
+          "es": "Croque-monsieur, bollería a elegir, ensalada de frutas, bebida caliente (especialidades excluidas), zumo de naranja natural o de zanahoria, agua 33 cl"
         },
         "t": [
           "new"
@@ -169,7 +177,8 @@ const MENU = [
         "d": {
           "fr": "Rghifa zraae, mortadelle du chef, fromage edam, yaourt granola, viennoiserie au choix, boisson chaude (hors spécialités), jus d'orange pressé ou jus de carotte, eau 33 cl",
           "ar": "رغيفة زرع، مرتديلا الشيف، جبن إيدام، زبادي بالغرانولا، معجنات حسب الاختيار، مشروب ساخن، عصير برتقال أو جزر، ماء 33 سل",
-          "en": "Rghifa zraae, chef's mortadella, edam cheese, granola yoghurt, pastry of your choice, hot drink, fresh orange or carrot juice, 33 cl water"
+          "en": "Rghifa zraae, chef's mortadella, edam cheese, granola yoghurt, pastry of your choice, hot drink, fresh orange or carrot juice, 33 cl water",
+          "es": "Rghifa zraae, mortadela del chef, queso edam, yogur con granola, bollería a elegir, bebida caliente (especialidades excluidas), zumo de naranja natural o de zanahoria, agua 33 cl"
         },
         "t": [
           "new"
@@ -186,7 +195,8 @@ const MENU = [
         "d": {
           "fr": "Pour deux : trois œufs au khlie, panier du boulanger, msemen et harcha, toast au fromage, jben, huile d'olive, miel, deux viennoiseries, deux yaourts compote et granola, deux boissons chaudes, deux jus d'orange, deux eaux 33 cl",
           "ar": "لشخصين: ثلاث بيضات بالخليع، سلة الخباز، مسمن وحرشة، توست بالجبن، جبن بلدي، زيت الزيتون، عسل، معجنتان، زباديان بالكومبوت والغرانولا، مشروبان ساخنان، كأسا عصير برتقال، قنينتا ماء 33 سل",
-          "en": "For two: three eggs with khlie, baker's basket, msemen and harcha, cheese toast, jben, olive oil, honey, two pastries, two compote yoghurts with granola, two hot drinks, two orange juices, two 33 cl waters"
+          "en": "For two: three eggs with khlie, baker's basket, msemen and harcha, cheese toast, jben, olive oil, honey, two pastries, two compote yoghurts with granola, two hot drinks, two orange juices, two 33 cl waters",
+          "es": "Para dos: tres huevos con khlie, cesta del panadero, msemen y harcha, tostada con queso, jben, aceite de oliva, miel, dos bollerías, dos yogures con compota y granola, dos bebidas calientes, dos zumos de naranja, dos aguas de 33 cl"
         }
       }
     ]
@@ -221,7 +231,8 @@ const MENU = [
         "d": {
           "fr": "À l'unité",
           "ar": "للوحدة",
-          "en": "Per portion"
+          "en": "Per portion",
+          "es": "Por unidad"
         }
       },
       {
@@ -244,7 +255,8 @@ const MENU = [
         "d": {
           "fr": "Au plat, brouillés ou omelette nature",
           "ar": "مقلي، مخفوق أو أومليت عادية",
-          "en": "Fried, scrambled or plain omelette"
+          "en": "Fried, scrambled or plain omelette",
+          "es": "Fritos, revueltos o tortilla natural"
         }
       },
       {
@@ -258,7 +270,8 @@ const MENU = [
         "d": {
           "fr": "Champignons, fromage ou western",
           "ar": "بالفطر، بالجبن أو ويسترن",
-          "en": "Mushroom, cheese or western"
+          "en": "Mushroom, cheese or western",
+          "es": "Champiñones, queso o western"
         }
       },
       {
@@ -326,7 +339,8 @@ const MENU = [
         "d": {
           "fr": "Cœur de laitue, thon, œuf mollet, haricots verts, tomates fraîches, oignons, pommes grenailles, olives noires, concombre, poivrons, vinaigrette maison",
           "ar": "قلب الخس، تونة، بيضة مسلوقة، فاصوليا خضراء، طماطم، بصل، بطاطس صغيرة، زيتون أسود، خيار، فلفل، صلصة البيت",
-          "en": "Lettuce heart, tuna, soft-boiled egg, green beans, tomatoes, onions, baby potatoes, black olives, cucumber, peppers, house vinaigrette"
+          "en": "Lettuce heart, tuna, soft-boiled egg, green beans, tomatoes, onions, baby potatoes, black olives, cucumber, peppers, house vinaigrette",
+          "es": "Cogollo de lechuga, atún, huevo mollet, judías verdes, tomate fresco, cebolla, patatas pequeñas, aceitunas negras, pepino, pimientos, vinagreta de la casa"
         }
       },
       {
@@ -340,7 +354,8 @@ const MENU = [
         "d": {
           "fr": "Salade romaine, poulet croustillant au panko, œuf de caille, tomates cerises, croûtons, copeaux de parmesan, sauce césar maison",
           "ar": "خس روماني، دجاج مقرمش بالبانكو، بيض السمان، طماطم كرزية، خبز محمص، رقائق البارميزان، صلصة سيزار",
-          "en": "Romaine lettuce, panko crispy chicken, quail egg, cherry tomatoes, croutons, parmesan shavings, house Caesar dressing"
+          "en": "Romaine lettuce, panko crispy chicken, quail egg, cherry tomatoes, croutons, parmesan shavings, house Caesar dressing",
+          "es": "Lechuga romana, pollo crujiente al panko, huevo de codorniz, tomates cherry, picatostes, virutas de parmesano, salsa césar de la casa"
         },
         "t": [
           "star"
@@ -357,7 +372,8 @@ const MENU = [
         "d": {
           "fr": "Mesclun de salade, saumon fumé, crevettes marinées, mangue, tomates cerises, avocat, noix, vinaigrette maison",
           "ar": "خضر ورقية، سلمون مدخن، قمرون متبل، مانجو، طماطم كرزية، أفوكادو، جوز، صلصة البيت",
-          "en": "Mixed leaves, smoked salmon, marinated prawns, mango, cherry tomatoes, avocado, walnuts, house vinaigrette"
+          "en": "Mixed leaves, smoked salmon, marinated prawns, mango, cherry tomatoes, avocado, walnuts, house vinaigrette",
+          "es": "Mezclum de ensalada, salmón ahumado, gambas marinadas, mango, tomates cherry, aguacate, nueces, vinagreta de la casa"
         }
       },
       {
@@ -371,7 +387,8 @@ const MENU = [
         "d": {
           "fr": "Salade verte, gambas, ananas, avocat, radis, pomme, tomates cerises, concombre, vinaigrette maison",
           "ar": "سلطة خضراء، قمرون، أناناس، أفوكادو، فجل، تفاح، طماطم كرزية، خيار، صلصة البيت",
-          "en": "Green salad, king prawns, pineapple, avocado, radish, apple, cherry tomatoes, cucumber, house vinaigrette"
+          "en": "Green salad, king prawns, pineapple, avocado, radish, apple, cherry tomatoes, cucumber, house vinaigrette",
+          "es": "Ensalada verde, gambas, piña, aguacate, rábano, manzana, tomates cherry, pepino, vinagreta de la casa"
         }
       }
     ],
@@ -403,7 +420,8 @@ const MENU = [
         "d": {
           "fr": "Au choix kefta, poulet ou saucisses — baguette à l'ancienne, oignons, tomates et poivrons sautés, sauce légèrement poivrée",
           "ar": "حسب الاختيار: كفتة، دجاج أو نقانق — خبز تقليدي، بصل، طماطم وفلفل مقلي، صلصة بالفلفل الأسود",
-          "en": "Kefta, chicken or sausages — country baguette, sautéed onions, tomatoes and peppers, lightly peppered sauce"
+          "en": "Kefta, chicken or sausages — country baguette, sautéed onions, tomatoes and peppers, lightly peppered sauce",
+          "es": "A elegir kefta, pollo o salchichas — baguette tradicional, cebolla, tomate y pimientos salteados, salsa ligeramente pimentada"
         },
         "t": [
           "star"
@@ -420,7 +438,8 @@ const MENU = [
         "d": {
           "fr": "Baguette à l'ancienne, thon, œuf dur, salade, olives noires, edam, poivrons, mayonnaise maison",
           "ar": "خبز تقليدي، تونة، بيض مسلوق، سلطة، زيتون أسود، جبن إيدام، فلفل، مايونيز البيت",
-          "en": "Country baguette, tuna, hard-boiled egg, salad, black olives, edam, peppers, house mayonnaise"
+          "en": "Country baguette, tuna, hard-boiled egg, salad, black olives, edam, peppers, house mayonnaise",
+          "es": "Baguette tradicional, atún, huevo duro, lechuga, aceitunas negras, edam, pimientos, mayonesa de la casa"
         }
       },
       {
@@ -434,7 +453,8 @@ const MENU = [
         "d": {
           "fr": "Baguette pavot, pastrami de bœuf, laitue, cornichons, edam, sauce au beurre",
           "ar": "خبز بالخشخاش، بسطرمة البقر، خس، مخلل الخيار، جبن إيدام، صلصة الزبدة",
-          "en": "Poppy seed baguette, beef pastrami, lettuce, gherkins, edam, butter sauce"
+          "en": "Poppy seed baguette, beef pastrami, lettuce, gherkins, edam, butter sauce",
+          "es": "Baguette de amapola, pastrami de ternera, lechuga, pepinillos, edam, salsa de mantequilla"
         }
       },
       {
@@ -448,7 +468,8 @@ const MENU = [
         "d": {
           "fr": "Baguette sésame, blanc de poulet mariné, edam, tomates, laitue, cornichons",
           "ar": "خبز بالسمسم، صدر دجاج متبل، جبن إيدام، طماطم، خس، مخلل الخيار",
-          "en": "Sesame baguette, marinated chicken breast, edam, tomatoes, lettuce, gherkins"
+          "en": "Sesame baguette, marinated chicken breast, edam, tomatoes, lettuce, gherkins",
+          "es": "Baguette de sésamo, pechuga de pollo marinada, edam, tomate, lechuga, pepinillos"
         }
       },
       {
@@ -528,7 +549,8 @@ const MENU = [
         "d": {
           "fr": "Pain burger, 140 g de steak haché, oignons caramélisés, salade, tomates, gouda, champignons, cornichons, sauce cocktail",
           "ar": "خبز البرغر، 140 غ لحم مفروم، بصل مكرمل، سلطة، طماطم، جبن غودا، فطر، مخلل، صلصة كوكتيل",
-          "en": "Burger bun, 140 g beef patty, caramelised onions, salad, tomatoes, gouda, mushrooms, gherkins, cocktail sauce"
+          "en": "Burger bun, 140 g beef patty, caramelised onions, salad, tomatoes, gouda, mushrooms, gherkins, cocktail sauce",
+          "es": "Pan de hamburguesa, 140 g de carne picada, cebolla caramelizada, lechuga, tomate, gouda, champiñones, pepinillos, salsa cóctel"
         }
       },
       {
@@ -542,7 +564,8 @@ const MENU = [
         "d": {
           "fr": "Pain burger, poulet croustillant, oignons, salade, tomates, cheddar, sauce césar maison",
           "ar": "خبز البرغر، دجاج مقرمش، بصل، سلطة، طماطم، شيدر، صلصة سيزار",
-          "en": "Burger bun, crispy chicken, onions, salad, tomatoes, cheddar, house Caesar sauce"
+          "en": "Burger bun, crispy chicken, onions, salad, tomatoes, cheddar, house Caesar sauce",
+          "es": "Pan de hamburguesa, pollo crujiente, cebolla, lechuga, tomate, cheddar, salsa césar de la casa"
         }
       },
       {
@@ -556,7 +579,8 @@ const MENU = [
         "d": {
           "fr": "Pain burger, double steak haché, oignons caramélisés, jambon de bœuf, salade, tomates, cheddar, cornichons, sauce cocktail",
           "ar": "خبز البرغر، قطعتا لحم مفروم، بصل مكرمل، لحم بقري مقدد، سلطة، طماطم، شيدر، مخلل، صلصة كوكتيل",
-          "en": "Burger bun, double beef patty, caramelised onions, beef ham, salad, tomatoes, cheddar, gherkins, cocktail sauce"
+          "en": "Burger bun, double beef patty, caramelised onions, beef ham, salad, tomatoes, cheddar, gherkins, cocktail sauce",
+          "es": "Pan de hamburguesa, doble carne picada, cebolla caramelizada, jamón de ternera, lechuga, tomate, cheddar, pepinillos, salsa cóctel"
         },
         "t": [
           "star"
@@ -573,7 +597,8 @@ const MENU = [
         "d": {
           "fr": "Sauce poutine, poulet, dinde fumée, mozzarella, potatoes",
           "ar": "صلصة البوتين، دجاج، ديك رومي مدخن، موزاريلا، بطاطس",
-          "en": "Poutine sauce, chicken, smoked turkey, mozzarella, potatoes"
+          "en": "Poutine sauce, chicken, smoked turkey, mozzarella, potatoes",
+          "es": "Salsa poutine, pollo, pavo ahumado, mozzarella, patatas"
         },
         "t": [
           "new"
@@ -590,7 +615,8 @@ const MENU = [
         "d": {
           "fr": "Sauce poutine cordon bleu, dinde fumée, mozzarella, potatoes",
           "ar": "صلصة كوردون بلو، ديك رومي مدخن، موزاريلا، بطاطس",
-          "en": "Cordon bleu poutine sauce, smoked turkey, mozzarella, potatoes"
+          "en": "Cordon bleu poutine sauce, smoked turkey, mozzarella, potatoes",
+          "es": "Salsa poutine cordon bleu, pavo ahumado, mozzarella, patatas"
         },
         "t": [
           "new"
@@ -607,7 +633,8 @@ const MENU = [
         "d": {
           "fr": "Mini burger, pizza viande hachée, spaghetti bolognaise ou nuggets + une portion de frites + un soda 33 cl + une boule de glace",
           "ar": "ميني برغر، بيتزا باللحم المفروم، سباغيتي بولونيز أو ناغتس + بطاطس مقلية + مشروب غازي 33 سل + كرة مثلجات",
-          "en": "Mini burger, minced beef pizza, spaghetti bolognese or nuggets + fries + 33 cl soda + one scoop of ice cream"
+          "en": "Mini burger, minced beef pizza, spaghetti bolognese or nuggets + fries + 33 cl soda + one scoop of ice cream",
+          "es": "Mini hamburguesa, pizza de carne picada, espaguetis boloñesa o nuggets + una ración de patatas + un refresco 33 cl + una bola de helado"
         }
       }
     ],
@@ -687,7 +714,8 @@ const MENU = [
         "d": {
           "fr": "Viande hachée, tomates fraîches, basilic",
           "ar": "لحم مفروم، طماطم طازجة، ريحان",
-          "en": "Minced beef, fresh tomatoes, basil"
+          "en": "Minced beef, fresh tomatoes, basil",
+          "es": "Carne picada, tomate fresco, albahaca"
         }
       },
       {
@@ -701,7 +729,8 @@ const MENU = [
         "d": {
           "fr": "Sauce tomate, olives noires, piments",
           "ar": "صلصة الطماطم، زيتون أسود، فلفل حار",
-          "en": "Tomato sauce, black olives, chilli"
+          "en": "Tomato sauce, black olives, chilli",
+          "es": "Salsa de tomate, aceitunas negras, guindilla"
         },
         "t": [
           "veg"
@@ -718,7 +747,8 @@ const MENU = [
         "d": {
           "fr": "Poulet, champignons de Paris, ciboulette, parmesan, sauce Alfredo",
           "ar": "دجاج، فطر، ثوم معمر، بارميزان، صلصة ألفريدو",
-          "en": "Chicken, button mushrooms, chives, parmesan, Alfredo sauce"
+          "en": "Chicken, button mushrooms, chives, parmesan, Alfredo sauce",
+          "es": "Pollo, champiñones, cebollino, parmesano, salsa Alfredo"
         }
       },
       {
@@ -732,7 +762,8 @@ const MENU = [
         "d": {
           "fr": "Jambon de dinde, parmesan, crème fraîche",
           "ar": "لحم الديك الرومي، بارميزان، كريمة طازجة",
-          "en": "Turkey ham, parmesan, cream"
+          "en": "Turkey ham, parmesan, cream",
+          "es": "Jamón de pavo, parmesano, nata"
         }
       },
       {
@@ -764,7 +795,8 @@ const MENU = [
         "d": {
           "fr": "Cocktail de fruits de mer en persillade juste saisis, sauce rose",
           "ar": "فواكه البحر بالبقدونس والثوم، صلصة وردية",
-          "en": "Seafood seared with parsley and garlic, rosé sauce"
+          "en": "Seafood seared with parsley and garlic, rosé sauce",
+          "es": "Cóctel de marisco salteado con perejil y ajo, salsa rosa"
         }
       },
       {
@@ -778,7 +810,8 @@ const MENU = [
         "d": {
           "fr": "Saumon fumé, épinards, crème fraîche, parmesan, aneth",
           "ar": "سلمون مدخن، سبانخ، كريمة، بارميزان، شبت",
-          "en": "Smoked salmon, spinach, cream, parmesan, dill"
+          "en": "Smoked salmon, spinach, cream, parmesan, dill",
+          "es": "Salmón ahumado, espinacas, nata, parmesano, eneldo"
         }
       }
     ],
@@ -810,7 +843,8 @@ const MENU = [
         "d": {
           "fr": "Sauce tomate, mozzarella, origan",
           "ar": "صلصة الطماطم، موزاريلا، أوريغانو",
-          "en": "Tomato sauce, mozzarella, oregano"
+          "en": "Tomato sauce, mozzarella, oregano",
+          "es": "Salsa de tomate, mozzarella, orégano"
         },
         "t": [
           "veg"
@@ -827,7 +861,8 @@ const MENU = [
         "d": {
           "fr": "Assortiment de légumes grillés, sauce tomate, mozzarella, origan",
           "ar": "تشكيلة خضر مشوية، صلصة الطماطم، موزاريلا، أوريغانو",
-          "en": "Grilled vegetables, tomato sauce, mozzarella, oregano"
+          "en": "Grilled vegetables, tomato sauce, mozzarella, oregano",
+          "es": "Surtido de verduras a la parrilla, salsa de tomate, mozzarella, orégano"
         },
         "t": [
           "veg"
@@ -844,7 +879,8 @@ const MENU = [
         "d": {
           "fr": "Fruits de mer en persillade juste saisis, sauce tomate, mozzarella, origan",
           "ar": "فواكه البحر بالبقدونس والثوم، صلصة الطماطم، موزاريلا، أوريغانو",
-          "en": "Seared seafood with parsley and garlic, tomato sauce, mozzarella, oregano"
+          "en": "Seared seafood with parsley and garlic, tomato sauce, mozzarella, oregano",
+          "es": "Marisco salteado con perejil y ajo, salsa de tomate, mozzarella, orégano"
         }
       },
       {
@@ -858,7 +894,8 @@ const MENU = [
         "d": {
           "fr": "Saumon fumé, mozzarella, crème fraîche, origan",
           "ar": "سلمون مدخن، موزاريلا، كريمة، أوريغانو",
-          "en": "Smoked salmon, mozzarella, cream, oregano"
+          "en": "Smoked salmon, mozzarella, cream, oregano",
+          "es": "Salmón ahumado, mozzarella, nata, orégano"
         }
       },
       {
@@ -872,7 +909,8 @@ const MENU = [
         "d": {
           "fr": "Viande hachée, champignons frais, oignons, sauce tomate, mozzarella, origan",
           "ar": "لحم مفروم، فطر طازج، بصل، صلصة الطماطم، موزاريلا، أوريغانو",
-          "en": "Minced beef, fresh mushrooms, onions, tomato sauce, mozzarella, oregano"
+          "en": "Minced beef, fresh mushrooms, onions, tomato sauce, mozzarella, oregano",
+          "es": "Carne picada, champiñones frescos, cebolla, salsa de tomate, mozzarella, orégano"
         }
       },
       {
@@ -886,7 +924,8 @@ const MENU = [
         "d": {
           "fr": "Thon, olives noires, oignons, sauce tomate, poivrons, mozzarella, origan",
           "ar": "تونة، زيتون أسود، بصل، صلصة الطماطم، فلفل، موزاريلا، أوريغانو",
-          "en": "Tuna, black olives, onions, tomato sauce, peppers, mozzarella, oregano"
+          "en": "Tuna, black olives, onions, tomato sauce, peppers, mozzarella, oregano",
+          "es": "Atún, aceitunas negras, cebolla, salsa de tomate, pimientos, mozzarella, orégano"
         }
       },
       {
@@ -900,7 +939,8 @@ const MENU = [
         "d": {
           "fr": "Poulet mariné, poivrons, champignons frais, sauce tomate, mozzarella, origan",
           "ar": "دجاج متبل، فلفل، فطر طازج، صلصة الطماطم، موزاريلا، أوريغانو",
-          "en": "Marinated chicken, peppers, fresh mushrooms, tomato sauce, mozzarella, oregano"
+          "en": "Marinated chicken, peppers, fresh mushrooms, tomato sauce, mozzarella, oregano",
+          "es": "Pollo marinado, pimientos, champiñones frescos, salsa de tomate, mozzarella, orégano"
         },
         "t": [
           "star"
@@ -917,7 +957,8 @@ const MENU = [
         "d": {
           "fr": "Chèvre, gorgonzola, parmesan, mozzarella, crème fraîche, origan",
           "ar": "جبن الماعز، غورغونزولا، بارميزان، موزاريلا، كريمة، أوريغانو",
-          "en": "Goat cheese, gorgonzola, parmesan, mozzarella, cream, oregano"
+          "en": "Goat cheese, gorgonzola, parmesan, mozzarella, cream, oregano",
+          "es": "Queso de cabra, gorgonzola, parmesano, mozzarella, nata, orégano"
         },
         "t": [
           "veg"
@@ -946,7 +987,8 @@ const MENU = [
         "d": {
           "fr": "Sauce au choix : fromage ou champignons",
           "ar": "صلصة حسب الاختيار: الجبن أو الفطر",
-          "en": "Choice of cheese or mushroom sauce"
+          "en": "Choice of cheese or mushroom sauce",
+          "es": "Salsa a elegir: queso o champiñones"
         }
       },
       {
@@ -1020,7 +1062,8 @@ const MENU = [
         "d": {
           "fr": "Plat du jour — couscous légumes et tfaya, servi avec un verre de lben",
           "ar": "طبق اليوم — كسكس بالخضر والتفاية، مع كأس لبن",
-          "en": "Dish of the day — vegetable and tfaya couscous, served with a glass of lben"
+          "en": "Dish of the day — vegetable and tfaya couscous, served with a glass of lben",
+          "es": "Plato del día — cuscús de verduras y tfaya, servido con un vaso de lben"
         }
       },
       {
@@ -1034,7 +1077,8 @@ const MENU = [
         "d": {
           "fr": "Plat du jour — couscous légumes et tfaya, servi avec un verre de lben",
           "ar": "طبق اليوم — كسكس بالخضر والتفاية، مع كأس لبن",
-          "en": "Dish of the day — vegetable and tfaya couscous, served with a glass of lben"
+          "en": "Dish of the day — vegetable and tfaya couscous, served with a glass of lben",
+          "es": "Plato del día — cuscús de verduras y tfaya, servido con un vaso de lben"
         }
       }
     ],
@@ -1066,7 +1110,8 @@ const MENU = [
         "d": {
           "fr": "Edam, mozzarella, cheddar, sauce béchamel",
           "ar": "إيدام، موزاريلا، شيدر، صلصة بشاميل",
-          "en": "Edam, mozzarella, cheddar, béchamel"
+          "en": "Edam, mozzarella, cheddar, béchamel",
+          "es": "Edam, mozzarella, cheddar, salsa bechamel"
         },
         "t": [
           "veg"
@@ -1083,7 +1128,8 @@ const MENU = [
         "d": {
           "fr": "Jambon de dinde, fromage, sauce béchamel",
           "ar": "لحم الديك الرومي، جبن، صلصة بشاميل",
-          "en": "Turkey ham, cheese, béchamel"
+          "en": "Turkey ham, cheese, béchamel",
+          "es": "Jamón de pavo, queso, salsa bechamel"
         }
       },
       {
@@ -1097,7 +1143,8 @@ const MENU = [
         "d": {
           "fr": "Poulet mariné, champignons de Paris, fromage, sauce béchamel",
           "ar": "دجاج متبل، فطر، جبن، صلصة بشاميل",
-          "en": "Marinated chicken, button mushrooms, cheese, béchamel"
+          "en": "Marinated chicken, button mushrooms, cheese, béchamel",
+          "es": "Pollo marinado, champiñones, queso, salsa bechamel"
         }
       },
       {
@@ -1111,7 +1158,8 @@ const MENU = [
         "d": {
           "fr": "Saumon fumé, aneth, fromage, sauce béchamel",
           "ar": "سلمون مدخن، شبت، جبن، صلصة بشاميل",
-          "en": "Smoked salmon, dill, cheese, béchamel"
+          "en": "Smoked salmon, dill, cheese, béchamel",
+          "es": "Salmón ahumado, eneldo, queso, salsa bechamel"
         }
       }
     ],
@@ -1143,7 +1191,8 @@ const MENU = [
         "d": {
           "fr": "Sucre, amandes grillées",
           "ar": "سكر، لوز محمص",
-          "en": "Sugar, roasted almonds"
+          "en": "Sugar, roasted almonds",
+          "es": "Azúcar, almendras tostadas"
         },
         "t": [
           "veg"
@@ -1197,7 +1246,8 @@ const MENU = [
         "d": {
           "fr": "Caramel, banane, chantilly",
           "ar": "كراميل، موز، شانتيي",
-          "en": "Caramel, banana, whipped cream"
+          "en": "Caramel, banana, whipped cream",
+          "es": "Caramelo, plátano, nata"
         },
         "t": [
           "veg"
@@ -1214,7 +1264,8 @@ const MENU = [
         "d": {
           "fr": "Nutella, banane, amandes grillées, fruits de saison",
           "ar": "نوتيلا، موز، لوز محمص، فواكه الموسم",
-          "en": "Nutella, banana, roasted almonds, seasonal fruit"
+          "en": "Nutella, banana, roasted almonds, seasonal fruit",
+          "es": "Nutella, plátano, almendras tostadas, fruta de temporada"
         },
         "t": [
           "veg"
@@ -1231,7 +1282,8 @@ const MENU = [
         "d": {
           "fr": "Une boule de glace vanille, coulis de chocolat noir, éclats de noix",
           "ar": "كرة مثلجات فانيلا، صلصة شوكولاتة داكنة، قطع الجوز",
-          "en": "A scoop of vanilla ice cream, dark chocolate coulis, walnut pieces"
+          "en": "A scoop of vanilla ice cream, dark chocolate coulis, walnut pieces",
+          "es": "Una bola de helado de vainilla, coulis de chocolate negro, trozos de nuez"
         },
         "t": [
           "veg"
@@ -1248,7 +1300,8 @@ const MENU = [
         "d": {
           "fr": "Une boule de glace yaourt fruits des bois, nutella, fruits rouges",
           "ar": "كرة مثلجات زبادي بفواكه الغابة، نوتيلا، فواكه حمراء",
-          "en": "A scoop of forest fruit yoghurt ice cream, Nutella, red berries"
+          "en": "A scoop of forest fruit yoghurt ice cream, Nutella, red berries",
+          "es": "Una bola de helado de yogur con frutos del bosque, Nutella, frutos rojos"
         },
         "t": [
           "veg"
@@ -1283,7 +1336,8 @@ const MENU = [
         "d": {
           "fr": "Trois boules : chocolat, vanille, variegato cookies · biscuit Oreo, sauce chocolat, chantilly",
           "ar": "ثلاث كرات: شوكولاتة، فانيلا، فاريغاتو كوكيز · بسكويت أوريو، صلصة شوكولاتة، شانتيي",
-          "en": "Three scoops: chocolate, vanilla, cookies variegato · Oreo biscuit, chocolate sauce, whipped cream"
+          "en": "Three scoops: chocolate, vanilla, cookies variegato · Oreo biscuit, chocolate sauce, whipped cream",
+          "es": "Tres bolas: chocolate, vainilla, variegato cookies · galleta Oreo, salsa de chocolate, nata"
         },
         "t": [
           "star"
@@ -1300,7 +1354,8 @@ const MENU = [
         "d": {
           "fr": "Trois boules : vanille, noisette, variegato cookies · coulis caramel, chantilly",
           "ar": "ثلاث كرات: فانيلا، بندق، فاريغاتو كوكيز · صلصة كراميل، شانتيي",
-          "en": "Three scoops: vanilla, hazelnut, cookies variegato · caramel coulis, whipped cream"
+          "en": "Three scoops: vanilla, hazelnut, cookies variegato · caramel coulis, whipped cream",
+          "es": "Tres bolas: vainilla, avellana, variegato cookies · coulis de caramelo, nata"
         }
       },
       {
@@ -1314,7 +1369,8 @@ const MENU = [
         "d": {
           "fr": "Trois boules : café, variegato dolce latte et Ferrero · sauce chocolat, chantilly au cacao",
           "ar": "ثلاث كرات: قهوة، فاريغاتو دولتشي لاتي وفيريرو · صلصة شوكولاتة، شانتيي بالكاكاو",
-          "en": "Three scoops: coffee, dolce latte and Ferrero variegato · chocolate sauce, cocoa-dusted whipped cream"
+          "en": "Three scoops: coffee, dolce latte and Ferrero variegato · chocolate sauce, cocoa-dusted whipped cream",
+          "es": "Tres bolas: café, variegato dolce latte y Ferrero · salsa de chocolate, nata espolvoreada con cacao"
         }
       },
       {
@@ -1328,7 +1384,8 @@ const MENU = [
         "d": {
           "fr": "Trois boules : vanille, noisette, nougat · coulis caramel, chantilly",
           "ar": "ثلاث كرات: فانيلا، بندق، نوغا · صلصة كراميل، شانتيي",
-          "en": "Three scoops: vanilla, hazelnut, nougat · caramel coulis, whipped cream"
+          "en": "Three scoops: vanilla, hazelnut, nougat · caramel coulis, whipped cream",
+          "es": "Tres bolas: vainilla, avellana, turrón · coulis de caramelo, nata"
         }
       },
       {
@@ -1342,7 +1399,8 @@ const MENU = [
         "d": {
           "fr": "Trois sorbets : fraise, ananas, mangue · tranches de fruits de saison, coulis fraise, chantilly",
           "ar": "ثلاثة سوربي: فراولة، أناناس، مانجو · شرائح فواكه الموسم، صلصة الفراولة، شانتيي",
-          "en": "Three sorbets: strawberry, pineapple, mango · seasonal fruit slices, strawberry coulis, whipped cream"
+          "en": "Three sorbets: strawberry, pineapple, mango · seasonal fruit slices, strawberry coulis, whipped cream",
+          "es": "Tres sorbetes: fresa, piña, mango · rodajas de fruta de temporada, coulis de fresa, nata"
         },
         "t": [
           "veg"
@@ -1359,7 +1417,8 @@ const MENU = [
         "d": {
           "fr": "Trois sorbets : ananas, mangue, fruits de la passion et une boule de crème glacée yaourt fruits des bois · fruits de saison, coulis fraise, chantilly",
           "ar": "ثلاثة سوربي: أناناس، مانجو، فاكهة العاطفة وكرة زبادي بفواكه الغابة · فواكه الموسم، صلصة الفراولة، شانتيي",
-          "en": "Three sorbets: pineapple, mango, passion fruit and a scoop of forest fruit yoghurt ice cream · seasonal fruit, strawberry coulis, whipped cream"
+          "en": "Three sorbets: pineapple, mango, passion fruit and a scoop of forest fruit yoghurt ice cream · seasonal fruit, strawberry coulis, whipped cream",
+          "es": "Tres sorbetes: piña, mango, maracuyá y una bola de helado de yogur con frutos del bosque · fruta de temporada, coulis de fresa, nata"
         }
       },
       {
@@ -1373,7 +1432,8 @@ const MENU = [
         "d": {
           "fr": "Six boules aux parfums de votre choix, pour un tête-à-tête des plus gourmands",
           "ar": "ست كرات بالنكهات التي تختارونها، لشخصين",
-          "en": "Six scoops of your chosen flavours, for a sweet tête-à-tête"
+          "en": "Six scoops of your chosen flavours, for a sweet tête-à-tête",
+          "es": "Seis bolas con los sabores que elijáis, para compartir entre dos"
         }
       },
       {
@@ -1387,7 +1447,8 @@ const MENU = [
         "d": {
           "fr": "Deux boules : bubble gum, vanille ou fraise · bonbons, coulis fraise, chantilly",
           "ar": "كرتان: علكة، فانيلا أو فراولة · حلويات، صلصة الفراولة، شانتيي",
-          "en": "Two scoops: bubble gum, vanilla or strawberry · sweets, strawberry coulis, whipped cream"
+          "en": "Two scoops: bubble gum, vanilla or strawberry · sweets, strawberry coulis, whipped cream",
+          "es": "Dos bolas: chicle, vainilla o fresa · caramelos, coulis de fresa, nata"
         }
       },
       {
@@ -1464,7 +1525,8 @@ const MENU = [
         "d": {
           "fr": "Cake moelleux, au choix : vanille, chocolat ou fruits rouges",
           "ar": "كيك هش، حسب الاختيار: فانيلا، شوكولاتة أو فواكه حمراء",
-          "en": "Soft cake, choice of vanilla, chocolate or red berries"
+          "en": "Soft cake, choice of vanilla, chocolate or red berries",
+          "es": "Bizcocho esponjoso, a elegir: vainilla, chocolate o frutos rojos"
         }
       },
       {
@@ -1478,7 +1540,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit croquant, au choix : vanille ou chocolat",
           "ar": "بسكويت مقرمش، حسب الاختيار: فانيلا أو شوكولاتة",
-          "en": "Crunchy biscuit, vanilla or chocolate"
+          "en": "Crunchy biscuit, vanilla or chocolate",
+          "es": "Galleta crujiente, a elegir: vainilla o chocolate"
         }
       },
       {
@@ -1492,7 +1555,8 @@ const MENU = [
         "d": {
           "fr": "Moelleux au chocolat et éclats de noix",
           "ar": "كيك الشوكولاتة بقطع الجوز",
-          "en": "Soft chocolate cake with walnut pieces"
+          "en": "Soft chocolate cake with walnut pieces",
+          "es": "Bizcocho de chocolate con trozos de nuez"
         }
       },
       {
@@ -1506,7 +1570,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit au chocolat, crème au beurre au chocolat noir",
           "ar": "بسكويت بالشوكولاتة، كريمة الزبدة بالشوكولاتة الداكنة",
-          "en": "Chocolate sponge, dark chocolate buttercream"
+          "en": "Chocolate sponge, dark chocolate buttercream",
+          "es": "Bizcocho de chocolate, crema de mantequilla al chocolate negro"
         }
       },
       {
@@ -1520,7 +1585,8 @@ const MENU = [
         "d": {
           "fr": "Citron, amandes, finger chocolat ou caramel beurre salé",
           "ar": "ليمون، لوز، فينغر شوكولاتة أو كراميل بالزبدة المملحة",
-          "en": "Lemon, almond, chocolate finger or salted caramel"
+          "en": "Lemon, almond, chocolate finger or salted caramel",
+          "es": "Limón, almendra, finger de chocolate o caramelo salado"
         }
       },
       {
@@ -1534,7 +1600,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit chiffon garni d'une ganache montée, au choix : praliné, fruits rouges ou chocolat",
           "ar": "بسكويت شيفون بغاناش مخفوق، حسب الاختيار: برالين، فواكه حمراء أو شوكولاتة",
-          "en": "Chiffon sponge with whipped ganache: praline, red berries or chocolate"
+          "en": "Chiffon sponge with whipped ganache: praline, red berries or chocolate",
+          "es": "Bizcocho chiffon con ganache montada, a elegir: praliné, frutos rojos o chocolate"
         },
         "t": [
           "new"
@@ -1551,7 +1618,8 @@ const MENU = [
         "d": {
           "fr": "Génoise aux carottes et fruits secs, fourrée d'une mousse au fromage blanc",
           "ar": "جينواز بالجزر والفواكه الجافة، محشوة بموس الجبن الأبيض",
-          "en": "Carrot and dried fruit sponge filled with cream cheese mousse"
+          "en": "Carrot and dried fruit sponge filled with cream cheese mousse",
+          "es": "Bizcocho de zanahoria y frutos secos, relleno de mousse de queso fresco"
         },
         "t": [
           "new"
@@ -1568,7 +1636,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit amande garni d'une crème au café",
           "ar": "بسكويت اللوز بكريمة القهوة",
-          "en": "Almond sponge with coffee cream"
+          "en": "Almond sponge with coffee cream",
+          "es": "Bizcocho de almendra con crema de café"
         }
       },
       {
@@ -1582,7 +1651,8 @@ const MENU = [
         "d": {
           "fr": "Génoise au chocolat garnie d'une crème montée vanille",
           "ar": "جينواز الشوكولاتة بكريمة الفانيلا المخفوقة",
-          "en": "Chocolate sponge with whipped vanilla cream"
+          "en": "Chocolate sponge with whipped vanilla cream",
+          "es": "Bizcocho de chocolate con crema montada de vainilla"
         }
       },
       {
@@ -1596,7 +1666,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit amande garni d'une ganache au chocolat café",
           "ar": "بسكويت اللوز بغاناش الشوكولاتة والقهوة",
-          "en": "Almond sponge with chocolate-coffee ganache"
+          "en": "Almond sponge with chocolate-coffee ganache",
+          "es": "Bizcocho de almendra con ganache de chocolate y café"
         }
       },
       {
@@ -1610,7 +1681,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit amande garni d'une crème noisette et caramel",
           "ar": "بسكويت اللوز بكريمة البندق والكراميل",
-          "en": "Almond sponge with hazelnut and caramel cream"
+          "en": "Almond sponge with hazelnut and caramel cream",
+          "es": "Bizcocho de almendra con crema de avellana y caramelo"
         }
       },
       {
@@ -1624,7 +1696,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit amande, crème caramel, glaçage au caramel et éclats d'amande",
           "ar": "بسكويت اللوز، كريمة الكراميل، طبقة كراميل وقطع اللوز",
-          "en": "Almond sponge, caramel cream, caramel glaze and almond pieces"
+          "en": "Almond sponge, caramel cream, caramel glaze and almond pieces",
+          "es": "Bizcocho de almendra, crema de caramelo, glaseado de caramelo y trozos de almendra"
         }
       },
       {
@@ -1638,7 +1711,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit au chocolat garni d'une ganache chocolatée, glaçage au chocolat",
           "ar": "بسكويت الشوكولاتة بغاناش الشوكولاتة وطبقة شوكولاتة",
-          "en": "Chocolate sponge with chocolate ganache and chocolate glaze"
+          "en": "Chocolate sponge with chocolate ganache and chocolate glaze",
+          "es": "Bizcocho de chocolate con ganache de chocolate y glaseado de chocolate"
         },
         "t": [
           "star"
@@ -1655,7 +1729,8 @@ const MENU = [
         "d": {
           "fr": "Fondant au chocolat accompagné d'une boule de glace vanille",
           "ar": "فوندان الشوكولاتة مع كرة مثلجات الفانيلا",
-          "en": "Chocolate fondant with a scoop of vanilla ice cream"
+          "en": "Chocolate fondant with a scoop of vanilla ice cream",
+          "es": "Coulant de chocolate acompañado de una bola de helado de vainilla"
         }
       },
       {
@@ -1669,7 +1744,8 @@ const MENU = [
         "d": {
           "fr": "Brownie accompagné d'une boule de glace vanille",
           "ar": "براوني مع كرة مثلجات الفانيلا",
-          "en": "Brownie with a scoop of vanilla ice cream"
+          "en": "Brownie with a scoop of vanilla ice cream",
+          "es": "Brownie acompañado de una bola de helado de vainilla"
         }
       },
       {
@@ -1683,7 +1759,8 @@ const MENU = [
         "d": {
           "fr": "Biscuit crumble recouvert d'une crème au fromage blanc",
           "ar": "بسكويت كرامبل بكريمة الجبن الأبيض",
-          "en": "Crumble base topped with cream cheese"
+          "en": "Crumble base topped with cream cheese",
+          "es": "Base de crumble cubierta con crema de queso fresco"
         }
       },
       {
@@ -1697,7 +1774,8 @@ const MENU = [
         "d": {
           "fr": "Une crème au fromage blanc servie avec nutella",
           "ar": "كريمة الجبن الأبيض تُقدّم مع النوتيلا",
-          "en": "Cream cheese cake served with Nutella"
+          "en": "Cream cheese cake served with Nutella",
+          "es": "Crema de queso fresco servida con Nutella"
         }
       },
       {
@@ -1711,7 +1789,8 @@ const MENU = [
         "d": {
           "fr": "Mousse mascarpone, sirop café et poudre de cacao",
           "ar": "موس المسكربوني، شراب القهوة ومسحوق الكاكاو",
-          "en": "Mascarpone mousse, coffee syrup and cocoa powder"
+          "en": "Mascarpone mousse, coffee syrup and cocoa powder",
+          "es": "Mousse de mascarpone, sirope de café y cacao en polvo"
         }
       },
       {
@@ -1725,7 +1804,8 @@ const MENU = [
         "d": {
           "fr": "Fruits variés découpés avec une boule de glace au choix",
           "ar": "فواكه متنوعة مع كرة مثلجات حسب الاختيار",
-          "en": "Assorted cut fruit with a scoop of ice cream"
+          "en": "Assorted cut fruit with a scoop of ice cream",
+          "es": "Frutas variadas troceadas con una bola de helado a elegir"
         },
         "t": [
           "veg"
@@ -1802,7 +1882,8 @@ const MENU = [
         "d": {
           "fr": "Un fruit mixé au lait ou à l'orange, selon disponibilité",
           "ar": "فاكهة مخلوطة بالحليب أو البرتقال، حسب التوفر",
-          "en": "One fruit blended with milk or orange, subject to availability"
+          "en": "One fruit blended with milk or orange, subject to availability",
+          "es": "Una fruta batida con leche o con naranja, según disponibilidad"
         }
       },
       {
@@ -1816,7 +1897,8 @@ const MENU = [
         "d": {
           "fr": "Pomme verte, concombre, menthe",
           "ar": "تفاح أخضر، خيار، نعناع",
-          "en": "Green apple, cucumber, mint"
+          "en": "Green apple, cucumber, mint",
+          "es": "Manzana verde, pepino, menta"
         },
         "t": [
           "veg"
@@ -1833,7 +1915,8 @@ const MENU = [
         "d": {
           "fr": "Jus d'orange, jus de citron et carotte",
           "ar": "عصير البرتقال، الليمون والجزر",
-          "en": "Orange, lemon and carrot juice"
+          "en": "Orange, lemon and carrot juice",
+          "es": "Zumo de naranja, zumo de limón y zanahoria"
         },
         "t": [
           "veg"
@@ -1850,7 +1933,8 @@ const MENU = [
         "d": {
           "fr": "Jus d'orange, carotte, gingembre",
           "ar": "عصير البرتقال، جزر، زنجبيل",
-          "en": "Orange juice, carrot, ginger"
+          "en": "Orange juice, carrot, ginger",
+          "es": "Zumo de naranja, zanahoria, jengibre"
         },
         "t": [
           "veg"
@@ -1867,7 +1951,8 @@ const MENU = [
         "d": {
           "fr": "Concombre, citron, gingembre, menthe",
           "ar": "خيار، ليمون، زنجبيل، نعناع",
-          "en": "Cucumber, lemon, ginger, mint"
+          "en": "Cucumber, lemon, ginger, mint",
+          "es": "Pepino, limón, jengibre, menta"
         },
         "t": [
           "veg"
@@ -1884,7 +1969,8 @@ const MENU = [
         "d": {
           "fr": "Virgin, fraise ou bleu curaçao — soda, jus de citron, sirop de canne, menthe fraîche",
           "ar": "فيرجن، فراولة أو كوراساو الأزرق — مشروب غازي، عصير الليمون، شراب القصب، نعناع طازج",
-          "en": "Virgin, strawberry or blue curaçao — soda, lemon juice, cane syrup, fresh mint"
+          "en": "Virgin, strawberry or blue curaçao — soda, lemon juice, cane syrup, fresh mint",
+          "es": "Virgin, fresa o curaçao azul — refresco, zumo de limón, sirope de caña, menta fresca"
         },
         "t": [
           "star"
@@ -1901,7 +1987,8 @@ const MENU = [
         "d": {
           "fr": "Banane, pomme, jus d'orange, sirop de fraise",
           "ar": "موز، تفاح، عصير البرتقال، شراب الفراولة",
-          "en": "Banana, apple, orange juice, strawberry syrup"
+          "en": "Banana, apple, orange juice, strawberry syrup",
+          "es": "Plátano, manzana, zumo de naranja, sirope de fresa"
         }
       },
       {
@@ -1915,7 +2002,8 @@ const MENU = [
         "d": {
           "fr": "Fraise, mangue, framboise, jus d'orange",
           "ar": "فراولة، مانجو، توت، عصير البرتقال",
-          "en": "Strawberry, mango, raspberry, orange juice"
+          "en": "Strawberry, mango, raspberry, orange juice",
+          "es": "Fresa, mango, frambuesa, zumo de naranja"
         }
       },
       {
@@ -1929,7 +2017,8 @@ const MENU = [
         "d": {
           "fr": "Ananas, mangue, banane, jus d'orange",
           "ar": "أناناس، مانجو، موز، عصير البرتقال",
-          "en": "Pineapple, mango, banana, orange juice"
+          "en": "Pineapple, mango, banana, orange juice",
+          "es": "Piña, mango, plátano, zumo de naranja"
         }
       },
       {
@@ -1943,7 +2032,8 @@ const MENU = [
         "d": {
           "fr": "Ananas, jus d'ananas, crème de noix de coco",
           "ar": "أناناس، عصير الأناناس، كريمة جوز الهند",
-          "en": "Pineapple, pineapple juice, coconut cream"
+          "en": "Pineapple, pineapple juice, coconut cream",
+          "es": "Piña, zumo de piña, crema de coco"
         }
       },
       {
@@ -1957,7 +2047,8 @@ const MENU = [
         "d": {
           "fr": "Ananas, kiwi, mangue, jus d'orange",
           "ar": "أناناس، كيوي، مانجو، عصير البرتقال",
-          "en": "Pineapple, kiwi, mango, orange juice"
+          "en": "Pineapple, kiwi, mango, orange juice",
+          "es": "Piña, kiwi, mango, zumo de naranja"
         }
       },
       {
@@ -1971,7 +2062,8 @@ const MENU = [
         "d": {
           "fr": "Lait, avocat, fruits secs, miel",
           "ar": "حليب، أفوكادو، فواكه جافة، عسل",
-          "en": "Milk, avocado, dried fruit, honey"
+          "en": "Milk, avocado, dried fruit, honey",
+          "es": "Leche, aguacate, frutos secos, miel"
         }
       },
       {
@@ -1985,7 +2077,8 @@ const MENU = [
         "d": {
           "fr": "Deux boules de glace au choix mixées au lait",
           "ar": "كرتا مثلجات حسب الاختيار مع الحليب",
-          "en": "Two scoops of your choice blended with milk"
+          "en": "Two scoops of your choice blended with milk",
+          "es": "Dos bolas de helado a elegir batidas con leche"
         }
       },
       {
@@ -1999,7 +2092,8 @@ const MENU = [
         "d": {
           "fr": "Deux boules de crème glacée cookies et vanille mixées aux biscuits Oreo, servies avec chantilly",
           "ar": "كرتا مثلجات كوكيز وفانيلا مع بسكويت أوريو والشانتيي",
-          "en": "Two scoops of cookies and vanilla ice cream blended with Oreo biscuits, served with whipped cream"
+          "en": "Two scoops of cookies and vanilla ice cream blended with Oreo biscuits, served with whipped cream",
+          "es": "Dos bolas de helado de cookies y vainilla batidas con galletas Oreo, servidas con nata"
         },
         "t": [
           "star"
@@ -2016,7 +2110,8 @@ const MENU = [
         "d": {
           "fr": "Deux boules de sorbets de votre choix mixées à l'orange",
           "ar": "كرتا سوربي حسب الاختيار مع البرتقال",
-          "en": "Two sorbet scoops of your choice blended with orange"
+          "en": "Two sorbet scoops of your choice blended with orange",
+          "es": "Dos bolas de sorbete a elegir batidas con naranja"
         }
       },
       {
@@ -2030,7 +2125,8 @@ const MENU = [
         "d": {
           "fr": "Deux boules de sorbets mixées à l'eau minérale",
           "ar": "كرتا سوربي مع الماء المعدني",
-          "en": "Two sorbet scoops blended with mineral water"
+          "en": "Two sorbet scoops blended with mineral water",
+          "es": "Dos bolas de sorbete batidas con agua mineral"
         },
         "t": [
           "veg"
@@ -2101,7 +2197,8 @@ const MENU = [
         "d": {
           "fr": "Avec mousse de lait",
           "ar": "مع رغوة الحليب",
-          "en": "With milk foam"
+          "en": "With milk foam",
+          "es": "Con espuma de leche"
         },
         "t": [
           "star"
@@ -2136,7 +2233,8 @@ const MENU = [
         "d": {
           "fr": "Chocolat chaud mélangé à un espresso, saupoudré de cacao",
           "ar": "شوكولاتة ساخنة مع إسبريسو ورشة كاكاو",
-          "en": "Hot chocolate with espresso, dusted with cocoa"
+          "en": "Hot chocolate with espresso, dusted with cocoa",
+          "es": "Chocolate caliente con un espresso, espolvoreado con cacao"
         }
       },
       {
@@ -2150,7 +2248,8 @@ const MENU = [
         "d": {
           "fr": "Chaud ou froid",
           "ar": "ساخن أو بارد",
-          "en": "Hot or cold"
+          "en": "Hot or cold",
+          "es": "Caliente o frío"
         }
       },
       {
@@ -2176,7 +2275,8 @@ const MENU = [
         "d": {
           "fr": "Recettes originales et exclusives de thés et infusions",
           "ar": "وصفات أصيلة وحصرية من الشاي والأعشاب",
-          "en": "Original and exclusive teas and infusions"
+          "en": "Original and exclusive teas and infusions",
+          "es": "Recetas originales y exclusivas de tés e infusiones"
         }
       },
       {
@@ -2208,7 +2308,8 @@ const MENU = [
         "d": {
           "fr": "Servi avec crème chantilly",
           "ar": "يُقدّم مع الشانتيي",
-          "en": "Served with whipped cream"
+          "en": "Served with whipped cream",
+          "es": "Servido con nata montada"
         }
       },
       {
@@ -2222,7 +2323,8 @@ const MENU = [
         "d": {
           "fr": "Chocolat chaud servi avec crème chantilly",
           "ar": "شوكولاتة ساخنة مع الشانتيي",
-          "en": "Hot chocolate served with whipped cream"
+          "en": "Hot chocolate served with whipped cream",
+          "es": "Chocolate caliente servido con nata montada"
         }
       },
       {
@@ -2236,7 +2338,8 @@ const MENU = [
         "d": {
           "fr": "Café moka servi avec crème chantilly",
           "ar": "قهوة موكا مع الشانتيي",
-          "en": "Mocha served with whipped cream"
+          "en": "Mocha served with whipped cream",
+          "es": "Café moca servido con nata montada"
         }
       },
       {
@@ -2250,7 +2353,8 @@ const MENU = [
         "d": {
           "fr": "Café espresso servi avec une boule de glace au choix",
           "ar": "إسبريسو مع كرة مثلجات حسب الاختيار",
-          "en": "Espresso served with a scoop of ice cream"
+          "en": "Espresso served with a scoop of ice cream",
+          "es": "Café espresso servido con una bola de helado a elegir"
         }
       },
       {
@@ -2264,7 +2368,8 @@ const MENU = [
         "d": {
           "fr": "Chocolat chaud servi avec une boule de glace et crème chantilly",
           "ar": "شوكولاتة ساخنة مع كرة مثلجات والشانتيي",
-          "en": "Hot chocolate with a scoop of ice cream and whipped cream"
+          "en": "Hot chocolate with a scoop of ice cream and whipped cream",
+          "es": "Chocolate caliente servido con una bola de helado y nata montada"
         }
       },
       {
@@ -2278,7 +2383,8 @@ const MENU = [
         "d": {
           "fr": "Une pâtisserie au choix + une boisson chaude au choix (hors spécialités et nouveautés)",
           "ar": "حلوى حسب الاختيار + مشروب ساخن (ما عدا التخصصات والجديد)",
-          "en": "A pastry of your choice + a hot drink (specialities and new items excluded)"
+          "en": "A pastry of your choice + a hot drink (specialities and new items excluded)",
+          "es": "Una pastelería a elegir + una bebida caliente a elegir (especialidades y novedades excluidas)"
         }
       },
       {
@@ -2292,7 +2398,8 @@ const MENU = [
         "d": {
           "fr": "Deux macarons + une boisson chaude au choix (hors spécialités)",
           "ar": "ماكارونان + مشروب ساخن (ما عدا التخصصات)",
-          "en": "Two macarons + a hot drink (specialities excluded)"
+          "en": "Two macarons + a hot drink (specialities excluded)",
+          "es": "Dos macarons + una bebida caliente a elegir (especialidades excluidas)"
         }
       }
     ],

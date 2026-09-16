@@ -332,7 +332,7 @@ visuelle est recalée sur l'imprimé.
 |---|---|---|
 | **D19** | Identité reprise de la carte imprimée, pas réinventée | Le client reconnaît la maison avant même de lire ; la cohérence salle / écran est un actif de marque |
 | **D20** | La carte est isolée dans `assets/menu.js` | 153 produits dans le fichier de la page rendaient la mise à jour risquée pour un non-technicien |
-| **D21** | Traductions complètes en français et en arabe ; anglais et espagnol sur les intitulés | Les descriptions sont des listes d'ingrédients largement transparentes entre langues latines ; l'arabe, lui, est indispensable à Larache |
+| **D21** | **Traduction intégrale dans les quatre langues** — intitulés, descriptions et notes de catégorie en français, arabe, anglais et espagnol | Arbitrage tranché par la direction : un client espagnol ou anglophone lit sa langue jusqu'au détail des ingrédients, pas seulement le nom du plat |
 | **D22** | Le bloc-marque est reconstitué en typographie, faute de logo vectoriel | Permet de livrer maintenant ; le logo original le remplacera à l'identique |
 
 ### 12.3 Ce que la carte imprimée apporte au dispositif
