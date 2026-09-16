@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E2A3A">
+<title>Venezia Ice — Votre avis</title>
+<meta name="description" content="Donnez votre avis sur votre passage chez Venezia Ice, Larache : avis public sur Google ou message privé au responsable.">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/venezia.css">
+<style>
+  main{padding:22px 0 46px}
+  .notes{display:flex;justify-content:center;gap:6px;margin:18px 0 8px}
+  .note{
+    width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+    background:var(--surface);border:1px solid var(--bord);box-shadow:var(--ombre);
+    transition:transform .12s,border-color .15s,background .15s;
+  }
+  .note svg{width:26px;height:26px;fill:var(--bord);transition:fill .15s}
+  .note:active{transform:scale(.94)}
+  .note[aria-pressed="true"] svg,.note.allumee svg{fill:var(--or)}
+  .note[aria-pressed="true"]{border-color:var(--or);background:rgba(216,165,74,.08)}
+  .note-label{text-align:center;font-size:13.5px;color:var(--texte-2);min-height:20px;font-weight:500}
+  .suite{margin-top:22px}
+  .suite h2{font-size:21px;margin-bottom:6px;text-wrap:balance}
+  .suite p.intro{margin:0 0 16px;color:var(--texte-2);font-size:14px}
+  label.champ{display:block;font-size:12.5px;color:var(--texte-2);margin:12px 0 5px;font-weight:500}
+  textarea,input[type=text]{
+    width:100%;padding:11px 13px;border:1px solid var(--bord);border-radius:11px;
+    background:var(--bg);color:var(--texte);font:inherit;font-size:15px;
+  }
+  textarea{min-height:110px;resize:vertical}
+  textarea:focus,input:focus{outline:2px solid var(--or);outline-offset:1px}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:420px){.duo{grid-template-columns:1fr}}
+  .alerte{color:var(--fraise);font-size:13px;margin:10px 0 0;font-weight:500}
+  .secondaire{margin-top:16px;text-align:center;font-size:13.5px;color:var(--texte-2)}
+  .secondaire a{color:var(--texte);font-weight:600}
+  .retour{display:inline-block;margin-top:24px;font-size:14px;color:var(--texte-2);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="hero centre" style="padding-bottom:22px">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="23" fill="#D8A54A" opacity=".14"/>
+          <circle cx="19" cy="18.5" r="4.2" fill="#FFF6E9"/>
+          <circle cx="28.4" cy="18.2" r="4.6" fill="#EFC87C"/>
+          <path d="M15.5 23h17L24 41z" fill="none" stroke="#FFF6E9" stroke-width="2.2" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <div class="brand-name">Venezia Ice</div>
+          <div class="brand-sub">Larache</div>
+        </div>
+      </div>
+      <nav class="langs" id="langs" aria-label="Langue"></nav>
+    </div>
+    <h1 class="hero-title" id="h1" style="font-size:clamp(25px,7vw,33px);margin-top:18px"></h1>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="bloc">
+    <p class="intro" id="intro" style="margin:0;text-align:center;font-size:15px;color:var(--texte-2)"></p>
+    <div class="notes" id="notes" role="group" aria-label="Note"></div>
+    <p class="note-label" id="noteLabel"></p>
+  </section>
+
+  <!-- Client satisfait : proposition d'avis public -->
+  <section class="bloc suite" id="blocHaut" hidden>
+    <h2 id="hautTitre"></h2>
+    <p class="intro" id="hautSous"></p>
+    <a class="btn btn-or" id="btnGoogle" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z"/></svg>
+      <span id="btnGoogleTxt"></span>
+    </a>
+  </section>
+
+  <!-- Client mécontent : message privé au responsable -->
+  <section class="bloc suite" id="blocBas" hidden>
+    <h2 id="basTitre"></h2>
+    <p class="intro" id="basSous"></p>
+    <label class="champ" for="msg" id="lblMsg"></label>
+    <textarea id="msg"></textarea>
+    <div class="duo">
+      <div><label class="champ" for="nom" id="lblNom"></label><input type="text" id="nom"></div>
+      <div><label class="champ" for="table" id="lblTable"></label><input type="text" id="table"></div>
+    </div>
+    <p class="alerte" id="alerte" hidden></p>
+    <a class="btn btn-vert" id="btnEnvoyer" href="#" style="margin-top:16px">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2m5.8 14.3c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2 1.2.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.1.1.6-.1 1.3"/></svg>
+      <span id="btnEnvoyerTxt"></span>
+    </a>
+  </section>
+
+  <!-- L'avis public reste accessible quelle que soit la note donnée. -->
+  <p class="secondaire"><a id="lienGoogle" href="#" target="_blank" rel="noopener"></a></p>
+  <p style="text-align:center"><a class="retour" href="index.html" id="retour"></a></p>
+</main>
+
+<script src="assets/venezia.js"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = V.$;
+  let note = 0;
+
+  const ETOILE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z"/></svg>';
+
+  function messageWhatsApp(){
+    const T = V.t();
+    const lignes = [
+      V.lang === 'ar' ? 'رسالة من صفحة الآراء — فينيسيا آيس' : 'Message depuis la page d’avis — Venezia Ice',
+      (T.notes[note] || '') + ' (' + note + '/5)',
+      $('nom').value.trim()   ? '👤 ' + $('nom').value.trim()   : '',
+      $('table').value.trim() ? '📍 ' + $('table').value.trim() : '',
+      '',
+      $('msg').value.trim()
+    ].filter(Boolean);
+    return lignes.join('\n');
+  }
+
+  function choisir(n){
+    note = n;
+    const T = V.t();
+    $('notes').querySelectorAll('.note').forEach((b,i) => {
+      b.setAttribute('aria-pressed', i < n);
+      b.classList.toggle('allumee', i < n);
+    });
+    $('noteLabel').textContent = T.notes[n] || '';
+    $('blocHaut').hidden = n < 4;
+    $('blocBas').hidden  = n === 0 || n >= 4;
+    const cible = n >= 4 ? $('blocHaut') : (n > 0 ? $('blocBas') : null);
+    if (cible) cible.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  function rendre(){
+    const T = V.t();
+    V.langs($('langs'));
+    $('h1').textContent        = T.avisH1;
+    $('intro').textContent     = T.avisIntro;
+    $('hautTitre').textContent = T.merciHaut;
+    $('hautSous').textContent  = T.merciHautSous;
+    $('btnGoogleTxt').textContent = T.googleCta;
+    $('btnGoogle').href        = CONFIG.avisGoogle;
+    $('basTitre').textContent  = T.merciBas;
+    $('basSous').textContent   = T.merciBasSous;
+    $('lblMsg').textContent    = T.champMessage;
+    $('lblNom').textContent    = T.champNom;
+    $('lblTable').textContent  = T.champTable;
+    $('btnEnvoyerTxt').textContent = T.envoyer;
+    $('lienGoogle').textContent= T.aussiGoogle;
+    $('lienGoogle').href       = CONFIG.avisGoogle;
+    $('retour').textContent    = T.retourMenu;
+    $('noteLabel').textContent = T.notes[note] || '';
+
+    if (!$('notes').children.length){
+      $('notes').innerHTML = [1,2,3,4,5].map(n =>
+        `<button type="button" class="note" data-n="${n}" aria-pressed="false">${ETOILE}</button>`).join('');
+      $('notes').querySelectorAll('.note').forEach(b =>
+        b.addEventListener('click', () => choisir(Number(b.dataset.n))));
+    }
+    $('notes').querySelectorAll('.note').forEach((b,i) =>
+      b.setAttribute('aria-label', (i+1) + '/5 — ' + (T.notes[i+1] || '')));
+  }
+
+  $('btnEnvoyer').addEventListener('click', e => {
+    e.preventDefault();
+    const T = V.t();
+    if (!$('msg').value.trim()){
+      $('alerte').textContent = T.manqueMessage;
+      $('alerte').hidden = false;
+      $('msg').focus();
+      return;
+    }
+    $('alerte').hidden = true;
+    window.open(V.waLink(messageWhatsApp()), '_blank', 'noopener');
+  });
+
+  V.surChangement(rendre);
+  V.appliquer();
+})();
+</script>
+</body>
+</html>

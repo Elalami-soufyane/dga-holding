@@ -2,7 +2,7 @@
 
 **Projet :** plaque QR + menu digital · **Établissement :** Venezia Ice (Larache)
 **Entité :** Ste F Corner — Holding Benthami (DGA) · **Date :** 16 septembre 2026
-**Version du document :** 1.0 — compte rendu de la session de cadrage et de conception
+**Version du document :** 1.1 — cadrage, conception, puis revue comparative (§ 11)
 
 ---
 
@@ -165,14 +165,17 @@ consultés) — prévu en v2, pas en v1, pour ne pas retarder la mise en service
 | Élément | Fichier | État |
 |---|---|---|
 | Menu digital 4 langues, hors-ligne, installable | `venezia/index.html` | Livré, testé sur mobile |
+| Page de liens (menu, réseaux, avis, itinéraire) | `venezia/liens.html` | Livré (§ 11) |
+| Parcours d'avis et de réclamation | `venezia/avis.html` | Livré (§ 11) |
 | Studio de la plaque QR (aperçu, impression, PNG 300 dpi, SVG vectoriel) | `venezia/plaque.html` | Livré, 4 formats × 2 styles |
 | Encodeur QR autonome | `venezia/assets/qr.js` | Livré, conformité vérifiée |
 | Vérification automatique du QR | `venezia/tools/verifier-qr.py` | 140/140 cas valides |
 | Icônes, manifeste, mode hors-ligne | `venezia/assets/`, `manifest.webmanifest`, `sw.js` | Livrés |
 | Mode d'emploi exploitation | `venezia/README.md` | Livré |
 
-**Formats de plaque disponibles :** A5 mural (148 × 210), chevalet de table
-(100 × 150), affiche vitrine (200 × 280), sticker A6 (105 × 148).
+**Formats de support disponibles :** chevalet de table (60 × 100, avec bandeau
+« Tap or Scan » optionnel), chevalet large (100 × 150), plaque murale A5
+(148 × 210), affiche vitrine (200 × 280), sticker A6 (105 × 148).
 
 ---
 
@@ -246,7 +249,65 @@ d'activité · version « écran » du menu pour un téléviseur au comptoir.
 
 ---
 
-## 11. Points à confirmer avant impression
+
+---
+
+## 11. Deuxième séance — revue comparative d'un concurrent
+
+La direction a transmis le dispositif d'un café-restaurant concurrent
+(*La Vitoriana*) : un chevalet de table blanc et or portant un QR et une puce
+NFC (« Tap or Scan »), qui ouvre une page **Linktree** regroupant le menu, les
+réseaux sociaux, l'avis Google et un bouton « Réclamation ».
+
+### 11.1 Ce que les trois pôles retiennent
+
+| Observation | Analyse | Décision |
+|---|---|---|
+| Un **chevalet compact** posé sur chaque table, pas une plaque A5 | Encombrement minimal, visible dès qu'on s'assoit, coût unitaire faible | Adopté (D15) |
+| **NFC + QR** sur le même support | Le NFC supprime l'étape « ouvrir l'appareil photo » pour les téléphones récents ; le QR reste le filet de sécurité universel | Adopté (D15) |
+| Une **page de liens** avant le menu | Pertinent depuis la vitrine ou la bio Instagram, pénalisant à table | Adopté, mais ciblé (D14) |
+| Un bouton **avis Google** bien visible | Levier de visibilité locale le plus rentable pour un commerce de quartier | Adopté (D16) |
+| Un bouton **Réclamation** | Excellente idée : capte le mécontentement avant qu'il ne devienne un avis public à 1 étoile | Adopté, reformulé (D18) |
+
+### 11.2 Ce que les trois pôles écartent
+
+- **Linktree.** La page affiche « Rejoignez … sur Linktree », un bandeau
+  cookies et les traceurs du prestataire ; retirer tout cela est payant. La
+  page appartient au prestataire, pas au restaurant : si le compte est
+  suspendu ou l'abonnement interrompu, tous les chevalets imprimés pointent
+  vers une page morte. Le concurrent fait en outre la publicité de Linktree à
+  chacun de ses clients.
+- **Le menu sous forme d'image.** Chez le concurrent, « MENU » est une photo :
+  impossible de zoomer proprement, de rechercher un plat, de traduire, de
+  changer un prix sans repasser par un graphiste. C'est le point faible le plus
+  exploitable du dispositif d'en face.
+- **Le pictogramme « colère » rouge** sur le bouton Réclamation : il installe
+  l'idée du conflit dès l'accueil. Une formulation neutre obtient plus de
+  retours utiles.
+
+### 11.3 Décisions complémentaires
+
+| # | Décision | Motif |
+|---|---|---|
+| **D13** | **Page de liens propriétaire** (`liens.html`), pas de Linktree | Aucune publicité pour un tiers, aucun traceur, aucun bandeau cookies, aucun abonnement, et la page reste la propriété du restaurant |
+| **D14** | Le QR **de table** ouvre le menu directement ; le QR **vitrine** et la bio Instagram ouvrent la page de liens | À table, un tap de plus se paie en clients qui abandonnent ; depuis la rue, l'information utile est l'horaire et l'itinéraire |
+| **D15** | **Chevalet 60 × 100 mm** avec bandeau « Tap or Scan » optionnel | Même encombrement que le concurrent ; le NFC accélère, le QR garantit |
+| **D16** | Parcours d'avis en deux temps : 4–5 ★ → avis Google, 1–3 ★ → message privé au responsable, **le lien Google restant visible dans tous les cas** | Capte le mécontentement avant l'avis public, sans filtrer les avis — ce que les règles de Google interdisent explicitement |
+| **D17** | Le menu reste **du texte**, jamais une image | Recherche, traduction, zoom, mise à jour d'un prix en deux minutes |
+| **D18** | Bouton « **Un souci ? Dites-le nous** » plutôt que « Réclamation » | Une formulation ouverte obtient plus de retours exploitables qu'une étiquette conflictuelle |
+
+### 11.4 Ce que le dispositif Venezia Ice a de plus, concrètement
+
+1. Menu **consultable, cherchable et traduit** en 4 langues au lieu d'une image.
+2. **Aucune publicité ni bandeau cookies** : la page n'appartient qu'au restaurant.
+3. **Fonctionne hors-ligne** et **s'installe** sur l'écran d'accueil.
+4. **Statut ouvert / fermé** calculé en direct, y compris les services après minuit.
+5. **Coût récurrent nul** — le concurrent paie un abonnement pour retirer la publicité.
+6. **Parcours d'avis** qui protège la note Google au lieu de subir les mécontents.
+
+---
+
+## 12. Points à confirmer avant impression
 
 1. **Photos non reçues.** Les photos mentionnées dans la demande ne sont pas
    parvenues ; le design est une proposition et sera recalé sur l'enseigne réelle.

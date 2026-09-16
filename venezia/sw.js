@@ -8,10 +8,14 @@
        les anciens caches sont alors supprimés et tous les téléphones
        basculent sur la nouvelle version.
    ═══════════════════════════════════════════════════════════════════════════ */
-const VERSION = 'venezia-v1';
+const VERSION = 'venezia-v2';
 const RESSOURCES = [
   './',
   './index.html',
+  './liens.html',
+  './avis.html',
+  './assets/venezia.css',
+  './assets/venezia.js',
   './manifest.webmanifest',
   './assets/icon-192.png',
   './assets/icon-512.png'

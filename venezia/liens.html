@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E2A3A">
+<title>Venezia Ice — Menu, réseaux et contact · Larache</title>
+<meta name="description" content="Tous les liens de Venezia Ice, Larache : menu digital, Instagram, Facebook, TikTok, avis Google, commande WhatsApp et itinéraire.">
+<meta property="og:title" content="Venezia Ice — Larache">
+<meta property="og:description" content="Menu digital, réseaux sociaux, commande et itinéraire.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/venezia.css">
+<style>
+  .hero.centre .topbar{margin-bottom:18px}
+  .logo-xl{width:76px;height:76px;margin:0 auto 12px;display:block}
+  .hero-nom{font-family:'Playfair Display',Georgia,serif;font-size:clamp(30px,9vw,40px);
+    color:var(--creme);letter-spacing:.01em;margin:0}
+  html[dir="rtl"] .hero-nom{font-family:'Tajawal',sans-serif}
+  .hero-ville{font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--or-clair);margin:6px 0 0}
+  main{padding:20px 0 40px}
+</style>
+</head>
+<body>
+
+<header class="hero centre">
+  <div class="wrap">
+    <div class="topbar">
+      <span style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,246,233,.6)">Ste F Corner</span>
+      <nav class="langs" id="langs" aria-label="Langue"></nav>
+    </div>
+
+    <svg class="logo-xl" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="23" fill="#D8A54A" opacity=".14"/>
+      <path d="M16 20a8 8 0 0 1 16 0" fill="none" stroke="#EFC87C" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="19" cy="18.5" r="4.2" fill="#FFF6E9"/>
+      <circle cx="28.4" cy="18.2" r="4.6" fill="#EFC87C"/>
+      <path d="M15.5 23h17L24 41z" fill="none" stroke="#FFF6E9" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M19 27.5h10M21 32h6" stroke="#D8A54A" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+
+    <h1 class="hero-nom">Venezia Ice</h1>
+    <p class="hero-ville">Larache</p>
+    <p class="hero-sub" id="tagline" style="margin-top:10px"></p>
+    <div class="statut" id="statut"></div>
+    <div class="actions" id="actions"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="principal"></div>
+  <div class="titre-section" id="titreLiens"></div>
+  <div id="liens"></div>
+
+  <section class="bloc" style="margin-top:22px">
+    <h2 id="infosTitre"></h2>
+    <div class="info-row"><div class="k" id="kAdresse"></div><div class="v" id="vAdresse"></div></div>
+    <div class="info-row"><div class="k" id="kTel"></div><div class="v"><a id="vTel" href="#"></a></div></div>
+    <div class="info-row"><div class="k" id="kHoraires"></div><div class="v"><ul class="horaires" id="vHoraires"></ul></div></div>
+  </section>
+</main>
+
+<footer>
+  <div class="f-brand">Venezia Ice · Ste F Corner</div>
+  <div class="maj">Larache — Holding Benthami</div>
+</footer>
+
+<script src="assets/venezia.js"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = V.$, esc = V.esc;
+
+  function rendre(){
+    const T = V.t();
+
+    V.langs($('langs'));
+    V.statut($('statut'));
+    V.actions($('actions'));
+    V.horaires($('vHoraires'));
+
+    $('tagline').textContent   = T.tagline;
+    $('titreLiens').textContent= T.tousLiens;
+    $('infosTitre').textContent= T.infos;
+    $('kAdresse').textContent  = T.adresse;
+    $('vAdresse').textContent  = CONFIG.adresse;
+    $('kTel').textContent      = T.tel;
+    $('vTel').textContent      = CONFIG.telephone;
+    $('vTel').href             = 'tel:' + CONFIG.telephone.replace(/\s/g,'');
+    $('kHoraires').textContent = T.horaires;
+
+    // Le menu d'abord : c'est ce que 9 clients sur 10 viennent chercher.
+    $('principal').innerHTML = V.boutonLien({
+      href:'index.html', icone:'menu', titre:T.voirMenu, sous:T.voirMenuSous, majeur:true});
+
+    const liens = [
+      {href:CONFIG.avisGoogle, icone:'etoile',  titre:T.avisTitre,  sous:T.avisSous,  cible:true},
+      {href:'avis.html',       icone:'message', titre:T.souciTitre, sous:T.souciSous}
+    ];
+    CONFIG.reseaux.forEach(r => liens.push({
+      href:r.url, icone:r.id, titre:r.nom, sous:r.handle, cible:true}));
+    liens.push({href:V.waLink(), icone:'whatsappPlein', titre:'WhatsApp', sous:T.commandeSous, cible:true});
+    liens.push({href:CONFIG.maps, icone:'maps', titre:T.itineraire, sous:T.itineraireSous, cible:true});
+    liens.push({href:'tel:' + CONFIG.telephone.replace(/\s/g,''), icone:'telephone',
+                titre:T.appeler, sous:T.appelerSous});
+
+    $('liens').innerHTML = liens.map(V.boutonLien).join('');
+  }
+
+  V.surChangement(rendre);
+  V.appliquer();
+  V.retourHaut();
+  setInterval(() => V.statut($('statut')), 60000);
+
+  if ('serviceWorker' in navigator)
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+})();
+</script>
+</body>
+</html>
