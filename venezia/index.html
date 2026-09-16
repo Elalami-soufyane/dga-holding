@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#A8123A">
+<title>Venezia Ice — Menu digital · Larache</title>
+<meta name="description" content="Menu digital de Venezia Ice, Larache — glaces artisanales, crêpes, jus et snacks. Commande WhatsApp, itinéraire et réseaux sociaux.">
+<meta property="og:title" content="Venezia Ice — Menu digital">
+<meta property="og:description" content="Glaces artisanales, crêpes, jus frais et snacks · Larache">
+<meta property="og:type" content="restaurant.menu">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Jost:wght@300;400;500;700&family=Parisienne&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/venezia.css">
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     VENEZIA ICE — MENU DIGITAL
+     Ste F Corner · Larache — Holding Benthami (DGA)
+
+     ⚙️  LES PRODUITS ET LES PRIX SE MODIFIENT DANS assets/menu.js.
+         Les coordonnées, liens et horaires sont dans assets/venezia.js (CONFIG).
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ─── Recherche et navigation par catégorie (propres au menu) ─── */
+.sticky{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--bord)}
+.search{position:relative;padding:12px 16px 8px;max-width:var(--max);margin:0 auto}
+.search input{width:100%;padding:11px 14px 11px 40px;border-radius:12px;border:1px solid var(--bord);
+  background:var(--surface);color:var(--texte);font-size:15px}
+html[dir="rtl"] .search input{padding:11px 40px 11px 14px}
+.search input:focus{outline:2px solid var(--or);outline-offset:1px}
+.search svg{position:absolute;left:28px;top:23px;width:18px;height:18px;stroke:var(--texte-2);fill:none;stroke-width:2}
+html[dir="rtl"] .search svg{left:auto;right:28px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 12px;max-width:var(--max);margin:0 auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--bord);
+  background:var(--surface);color:var(--texte-2);font-size:13.5px;font-weight:500;white-space:nowrap}
+.chip[aria-current="true"]{background:var(--vin);border-color:var(--vin);color:var(--creme)}
+
+/* ─── Sections et cartes produits ─── */
+main{padding:18px 0 40px}
+.section{margin-bottom:30px;scroll-margin-top:118px}
+.section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.section-head h2{font-size:23px}
+.section-head .ico{font-size:19px}
+.section-note{margin:0 0 14px;color:var(--texte-2);font-size:13.5px}
+.item{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;margin-bottom:9px;
+  background:var(--surface);border:1px solid var(--bord);border-radius:var(--rayon);box-shadow:var(--ombre)}
+.item-main{flex:1;min-width:0}
+.item-name{font-weight:700;font-size:15.5px;letter-spacing:-.01em}
+.item-desc{margin:3px 0 0;color:var(--texte-2);font-size:13.5px}
+.item-price{flex:0 0 auto;font-weight:700;font-size:15.5px;color:var(--texte);
+  background:var(--surface-2);padding:6px 10px;border-radius:10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.badge{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:6px}
+.b-star{background:rgba(216,165,74,.16);color:#8A6412}
+.b-new{background:rgba(228,87,107,.14);color:#B3283E}
+.b-veg{background:rgba(111,179,138,.16);color:#2F7A55}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .b-star{color:var(--or-clair)}
+  :root:not([data-theme="light"]) .b-new{color:#FF93A4}
+  :root:not([data-theme="light"]) .b-veg{color:#8FD9B0}
+}
+:root[data-theme="dark"] .b-star{color:var(--or-clair)}
+:root[data-theme="dark"] .b-new{color:#FF93A4}
+:root[data-theme="dark"] .b-veg{color:#8FD9B0}
+.vide{text-align:center;color:var(--texte-2);padding:30px 0;font-size:14.5px}
+.fab{padding-inline:15px}
+</style>
+</head>
+
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <span class="marque petit">
+          <span class="sur">Glacier · Café · Restaurant</span>
+          <span class="nom">Venezia</span><span class="filet"></span><span class="ice">Ice</span>
+        </span>
+      </div>
+      <nav class="langs" id="langs" aria-label="Langue"></nav>
+    </div>
+
+    <h1 class="hero-title" id="heroTitle"></h1>
+    <p class="hero-sub" id="heroSub"></p>
+    <div class="statut" id="statut"></div>
+    <div class="actions" id="actions"></div>
+  </div>
+</header>
+
+<div class="sticky">
+  <div class="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" autocomplete="off" aria-label="Rechercher">
+  </div>
+  <nav class="chips" id="chips" aria-label="Catégories"></nav>
+</div>
+
+<main class="wrap">
+  <div id="menu"></div>
+
+  <div class="titre-section" id="titreLiens"></div>
+  <div id="liens"></div>
+
+  <section class="bloc" style="margin-top:6px">
+    <h2 id="infosTitre"></h2>
+    <div class="info-row"><div class="k" id="kAdresse"></div><div class="v" id="vAdresse"></div></div>
+    <div class="info-row"><div class="k" id="kTel"></div><div class="v"><a id="vTel" href="#"></a></div></div>
+    <div class="info-row"><div class="k" id="kHoraires"></div><div class="v"><ul class="horaires" id="vHoraires"></ul></div></div>
+  </section>
+</main>
+
+<footer>
+  <div class="f-brand">Venezia Ice · Ste F Corner</div>
+  <div id="fPrix"></div>
+  <div class="maj" id="fMaj"></div>
+</footer>
+
+<a class="fab" id="fab" href="#" rel="noopener">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2m5.8 14.3c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2 1.2.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.1.1.6-.1 1.3"/></svg>
+  <span id="fabTxt"></span>
+</a>
+
+<script src="assets/venezia.js"></script>
+<script src="assets/menu.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   AFFICHAGE DU MENU — la carte (produits et prix) est dans assets/menu.js,
+   les coordonnées et les liens dans assets/venezia.js. Rien à modifier ici.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+  const $ = V.$, esc = V.esc;
+  let observateur = null;
+
+  function chrome(){
+    const T = V.t();
+    V.langs($('langs'));
+    V.statut($('statut'));
+    V.actions($('actions'));
+    V.horaires($('vHoraires'));
+
+    $('heroTitle').innerHTML   = T.hero;
+    $('heroSub').textContent   = T.tagline;
+    $('q').placeholder         = T.recherche;
+    $('titreLiens').textContent= T.tousLiens;
+    $('infosTitre').textContent= T.infos;
+    $('kAdresse').textContent  = T.adresse;
+    $('vAdresse').textContent  = CONFIG.adresse;
+    $('kTel').textContent      = T.tel;
+    $('vTel').textContent      = CONFIG.telephone;
+    $('vTel').href             = 'tel:' + CONFIG.telephone.replace(/\s/g,'');
+    $('kHoraires').textContent = T.horaires;
+    $('fPrix').textContent     = T.prix;
+    $('fMaj').textContent      = T.maj + ' ' +
+      new Date(CONFIG.majLe).toLocaleDateString(V.lang === 'ar' ? 'ar-MA' : V.lang + '-MA');
+    $('fabTxt').textContent    = T.commander;
+    $('fab').href              = V.waLink();
+
+    // Liens de bas de page : avis, réclamation, réseaux — en pleine largeur,
+    // parce qu'un client qui a fini de lire le menu est le plus disposé à agir.
+    const liens = [
+      {href:CONFIG.avisGoogle, icone:'etoile',  titre:T.avisTitre,  sous:T.avisSous,  cible:true},
+      {href:'avis.html',       icone:'message', titre:T.souciTitre, sous:T.souciSous}
+    ];
+    CONFIG.reseaux.forEach(r => liens.push({href:r.url, icone:r.id, titre:r.nom, sous:r.handle, cible:true}));
+    liens.push({href:'liens.html', icone:'lien', titre:T.liensTitre, sous:T.tousLiens});
+    $('liens').innerHTML = liens.map(V.boutonLien).join('');
+  }
+
+  function renderMenu(filtre){
+    const T = V.t(), f = (filtre || '').trim().toLowerCase();
+    const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+    let html = '', total = 0;
+
+    MENU.forEach(cat => {
+      const items = cat.items.filter(it => {
+        if (it.off) return false;
+        if (!f) return true;
+        // la recherche fonctionne dans les 4 langues, quelle que soit celle affichée
+        const hay = norm(Object.values(it.n).concat(Object.values(it.d || {}),
+                                                    Object.values(cat.nom)).join(' '));
+        return hay.includes(norm(f));
+      });
+      if (!items.length) return;
+      total += items.length;
+      html += `<section class="section" id="sec-${cat.id}">
+        <div class="section-head"><span class="ico">${cat.ico}</span><h2>${esc(V.tr(cat.nom))}</h2></div>
+        ${cat.note ? `<p class="section-note">${esc(V.tr(cat.note))}</p>` : ''}
+        ${items.map(it => `
+          <article class="item">
+            <div class="item-main">
+              <div class="item-name">${esc(V.tr(it.n))}</div>
+              ${it.d ? `<p class="item-desc">${esc(V.tr(it.d))}</p>` : ''}
+              ${it.t ? `<div class="badges">${it.t.map(b =>
+                  `<span class="badge b-${b}">${esc(T[b] || b)}</span>`).join('')}</div>` : ''}
+            </div>
+            <div class="item-price">${it.p} <span style="font-size:11px;opacity:.7">${esc(CONFIG.devise)}</span></div>
+          </article>`).join('')}
+      </section>`;
+    });
+
+    $('menu').innerHTML = total ? html : `<p class="vide">${esc(T.aucun)}</p>`;
+    observerSections();
+  }
+
+  function chips(){
+    $('chips').innerHTML = MENU.map((c,i) =>
+      `<button type="button" class="chip" data-c="${c.id}" aria-current="${i===0}">${c.ico} ${esc(V.tr(c.nom))}</button>`).join('');
+    $('chips').querySelectorAll('.chip').forEach(b =>
+      b.addEventListener('click', () => {
+        const el = document.getElementById('sec-' + b.dataset.c);
+        if (el) el.scrollIntoView({block:'start'});
+      }));
+  }
+
+  // Met en évidence la catégorie visible à l'écran
+  function observerSections(){
+    if (observateur) observateur.disconnect();
+    if (!('IntersectionObserver' in window)) return;
+    observateur = new IntersectionObserver(entrees => {
+      entrees.forEach(en => {
+        if (!en.isIntersecting) return;
+        const id = en.target.id.replace('sec-','');
+        $('chips').querySelectorAll('.chip').forEach(c => {
+          const actif = c.dataset.c === id;
+          c.setAttribute('aria-current', actif);
+          if (actif) c.scrollIntoView({block:'nearest', inline:'center'});
+        });
+      });
+    }, {rootMargin:'-120px 0px -70% 0px'});
+    document.querySelectorAll('.section').forEach(s => observateur.observe(s));
+  }
+
+  let tmr = null;
+  $('q').addEventListener('input', e => {
+    clearTimeout(tmr);
+    tmr = setTimeout(() => renderMenu(e.target.value), 120);
+  });
+
+  V.surChangement(() => { chrome(); chips(); renderMenu($('q').value); });
+  V.appliquer();
+  V.retourHaut();
+  setInterval(() => V.statut($('statut')), 60000);
+
+  if ('serviceWorker' in navigator)
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+})();
+</script>
+</body>
+</html>
