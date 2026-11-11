@@ -1,0 +1,17 @@
+# Application monofichier : aucun build, on sert la racine du depot.
+[build]
+  publish = "."
+
+# index.html contient toute l'application et evolue a chaque mise a jour :
+# on interdit la mise en cache pour que le manager voie la derniere version
+# des le rechargement de la page.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
